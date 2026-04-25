@@ -22,7 +22,7 @@ export default function LoginHomePage() {
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((data) => {
-        if (data.authenticated) {
+        if (data.data?.authenticated) {
           // Already logged in, redirect to home
           router.push("/home");
         }

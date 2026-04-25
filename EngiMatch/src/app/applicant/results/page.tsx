@@ -84,6 +84,7 @@ function RiskTag({ flag, locale }: { flag: string; locale: string }) {
 
 function ResultsContent() {
   const { t, locale } = useLocale();
+  const isZh = locale === "zh";
   const params = useSearchParams();
   const applicantId = params.get("applicantId");
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -95,6 +96,9 @@ function ResultsContent() {
   const [rerunning, setRerunning] = useState(false);
   const [filter, setFilter] = useState<"ALL" | "eligible" | "borderline" | "not_eligible">("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [aiSuggestOpen, setAiSuggestOpen] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     if (!applicantId) return;
@@ -110,9 +114,13 @@ function ResultsContent() {
       ]);
       if (evalRes.ok) {
         const evalData = await evalRes.json();
-        setEvaluations(Array.isArray(evalData) ? evalData : []);
+        const evalArray = evalData.data || evalData;
+        setEvaluations(Array.isArray(evalArray) ? evalArray : []);
       }
-      if (appRes.ok) setApplicant(await appRes.json());
+      if (appRes.ok) {
+        const appData = await appRes.json();
+        setApplicant(appData.data || appData);
+      }
     } finally {
       setLoading(false);
     }
@@ -121,13 +129,43 @@ function ResultsContent() {
   const rerunEvaluation = async () => {
     if (!applicantId) return;
     setRerunning(true);
-    await fetch("/api/eligibility/run", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ applicantId }),
-    });
-    await loadData();
-    setRerunning(false);
+    try {
+      const res = await fetch("/api/eligibility/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicantId }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        console.warn("重新评估失败:", data.error);
+      }
+      await loadData();
+    } finally {
+      setRerunning(false);
+    }
+  };
+
+  const fetchAiSuggestion = async () => {
+    if (!applicantId) return;
+    setAiLoading(true);
+    setAiSuggestion("");
+    try {
+      const res = await fetch("/api/ai-suggest", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ applicantId }),
+      });
+      const data = await res.json();
+      if (data.data?.suggestion) {
+        setAiSuggestion(data.data.suggestion);
+      } else {
+        setAiSuggestion(isZh ? "AI 未能生成建议，请稍后重试。" : "AI could not generate a suggestion. Please try again later.");
+      }
+    } catch {
+      setAiSuggestion(isZh ? "请求失败，请检查网络后重试。" : "Request failed. Please check your network and try again.");
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   const filtered = evaluations.filter((e) => filter === "ALL" || e.eligibility_band === filter);
@@ -202,10 +240,18 @@ function ResultsContent() {
                   </button>
                 ))}
               </div>
-              <button onClick={rerunEvaluation} disabled={rerunning}
-                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium disabled:opacity-50">
-                {rerunning ? t("results.rerun") : t("results.rerun_btn")}
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setAiSuggestOpen(true); fetchAiSuggestion(); }}
+                  className="text-sm bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-1.5 rounded-lg font-medium hover:from-violet-700 hover:to-indigo-700 transition-colors"
+                >
+                  ✨ {isZh ? "AI 申请建议" : "AI Suggestion"}
+                </button>
+                <button onClick={rerunEvaluation} disabled={rerunning}
+                  className="text-sm text-indigo-600 hover:text-indigo-800 font-medium disabled:opacity-50">
+                  {rerunning ? t("results.rerun") : t("results.rerun_btn")}
+                </button>
+              </div>
             </div>
           </>
         )}
@@ -323,6 +369,42 @@ function ResultsContent() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* AI Suggestion Modal */}
+        {aiSuggestOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" onClick={() => setAiSuggestOpen(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h3 className="text-lg font-bold text-slate-800">
+                  ✨ {isZh ? "AI 智能申请建议" : "AI Smart Application Suggestions"}
+                </h3>
+                <button onClick={() => setAiSuggestOpen(false)} className="text-slate-400 hover:text-slate-600 text-xl leading-none">×</button>
+              </div>
+              <div className="p-6 overflow-y-auto">
+                {aiLoading ? (
+                  <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                    <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                    <p className="text-slate-500 text-sm">{isZh ? "AI 正在分析您的申请档案和评估结果，请稍候..." : "AI is analyzing your profile and evaluation results..."}</p>
+                  </div>
+                ) : (
+                  <div className="prose prose-slate max-w-none">
+                    <div className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">
+                      {aiSuggestion}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="px-6 py-4 border-t border-slate-100 flex justify-end">
+                <button
+                  onClick={() => setAiSuggestOpen(false)}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
+                >
+                  {isZh ? "关闭" : "Close"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

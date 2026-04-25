@@ -41,13 +41,19 @@ export function errorResponse(
 /**
  * Wrap an API handler with automatic error formatting and optional rate limiting.
  */
-export function apiHandler(
-  handler: (request: NextRequest) => Promise<NextResponse> | NextResponse,
+export function apiHandler<TContext = unknown>(
+  handler: (
+    request: NextRequest,
+    context: TContext
+  ) => Promise<NextResponse> | NextResponse,
   options?: {
     rateLimit?: { maxRequests?: number; windowMs?: number };
   }
 ) {
-  return async (request: NextRequest): Promise<NextResponse> => {
+  return async (
+    request: NextRequest,
+    context: TContext
+  ): Promise<NextResponse> => {
     try {
       // Rate limiting
       if (options?.rateLimit) {
@@ -60,7 +66,7 @@ export function apiHandler(
         if (!allowed) {
           return errorResponse("请求过于频繁，请稍后再试", 429);
         }
-        const response = await handler(request);
+        const response = await handler(request, context);
         // Attach rate limit headers if it's a standard JSON response
         if (response.headers) {
           response.headers.set("X-RateLimit-Remaining", String(remaining));
@@ -68,7 +74,7 @@ export function apiHandler(
         return response;
       }
 
-      return await handler(request);
+      return await handler(request, context);
     } catch (err) {
       if (err instanceof ApiError) {
         return errorResponse(err.message, err.statusCode, err.details);
@@ -98,11 +104,6 @@ export async function requireAuth(request: NextRequest) {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.userId },
-    include: {
-      applicant: {
-        select: { id: true, full_name: true },
-      },
-    },
   });
 
   if (!user) throw new ApiError("用户不存在", 401);

@@ -28,11 +28,6 @@ export const POST = apiHandler(
     // Find user
     const user = await prisma.user.findUnique({
       where: { email },
-      include: {
-        applicant: {
-          select: { id: true, full_name: true },
-        },
-      },
     });
 
     if (!user) {

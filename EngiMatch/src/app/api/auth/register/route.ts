@@ -62,10 +62,6 @@ export const POST = apiHandler(
       },
     });
 
-    // Generate token and set cookie
-    const token = await generateToken(user.id);
-    const cookie = setAuthCookie(token);
-
     const response = successResponse(
       {
         user,
@@ -77,7 +73,12 @@ export const POST = apiHandler(
       201
     );
 
-    response.cookies.set(cookie.name, cookie.value, cookie.options);
+    if (user.status === "APPROVED") {
+      const token = await generateToken(user.id);
+      const cookie = setAuthCookie(token);
+      response.cookies.set(cookie.name, cookie.value, cookie.options);
+    }
+
     return response;
   },
   { rateLimit: { maxRequests: 5, windowMs: 60_000 } }

@@ -18,7 +18,7 @@ function parseDecimal(v: unknown): number | null {
 
 // GET /api/applicants/[id] - Authenticated
 export const GET = apiHandler(async (request: NextRequest, { params }: RouteParams) => {
-  await requireAuth(request);
+  const user = await requireAuth(request);
 
   const { id } = await params;
   const applicant = await prisma.applicant.findUnique({
@@ -34,14 +34,29 @@ export const GET = apiHandler(async (request: NextRequest, { params }: RoutePara
     },
   });
   if (!applicant) return errorResponse("Not found", 404);
+  if (applicant.user_id !== user.id && applicant.email !== user.email) {
+    return errorResponse("Forbidden", 403);
+  }
   return successResponse(applicant);
 });
 
 // PATCH /api/applicants/[id] - Authenticated
 export const PATCH = apiHandler(async (request: NextRequest, { params }: RouteParams) => {
-  await requireAuth(request);
+  const user = await requireAuth(request);
 
   const { id } = await params;
+  const existingApplicant = await prisma.applicant.findUnique({
+    where: { id },
+    select: { id: true, user_id: true, email: true },
+  });
+  if (!existingApplicant) return errorResponse("Not found", 404);
+  if (
+    existingApplicant.user_id !== user.id &&
+    existingApplicant.email !== user.email
+  ) {
+    return errorResponse("Forbidden", 403);
+  }
+
   const body = await parseJsonBody<Record<string, unknown>>(request);
   const { modules, ...rest } = body;
 
@@ -87,8 +102,17 @@ export const PATCH = apiHandler(async (request: NextRequest, { params }: RoutePa
 
   const applicant = await prisma.applicant.update({
     where: { id },
-    data,
+    data: {
+      ...data,
+      user_id: user.id,
+      email: user.email,
+    },
     include: { modules: true },
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { applicant_id: applicant.id },
   });
 
   return successResponse(applicant);
@@ -96,9 +120,35 @@ export const PATCH = apiHandler(async (request: NextRequest, { params }: RoutePa
 
 // DELETE /api/applicants/[id] - Authenticated
 export const DELETE = apiHandler(async (request: NextRequest, { params }: RouteParams) => {
-  await requireAuth(request);
+  const user = await requireAuth(request);
 
   const { id } = await params;
+  const existingApplicant = await prisma.applicant.findUnique({
+    where: { id },
+    select: { id: true, user_id: true, email: true },
+  });
+  if (!existingApplicant) return errorResponse("Not found", 404);
+  if (
+    existingApplicant.user_id !== user.id &&
+    existingApplicant.email !== user.email
+  ) {
+    return errorResponse("Forbidden", 403);
+  }
+
   await prisma.applicant.delete({ where: { id } });
+
+  const latestApplicant = await prisma.applicant.findFirst({
+    where: {
+      OR: [{ user_id: user.id }, { email: user.email }],
+    },
+    orderBy: { updated_at: "desc" },
+    select: { id: true },
+  });
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { applicant_id: latestApplicant?.id ?? null },
+  });
+
   return successResponse({ message: "Applicant deleted" });
 });

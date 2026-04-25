@@ -20,6 +20,12 @@ function getSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return copy.buffer;
+}
+
 function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) return false;
   let result = 0;
@@ -128,7 +134,7 @@ export async function generateToken(userId: string): Promise<string> {
   const secret = getSecret();
   const key = await crypto.subtle.importKey(
     "raw",
-    secret,
+    toArrayBuffer(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
@@ -136,7 +142,7 @@ export async function generateToken(userId: string): Promise<string> {
   const signature = await crypto.subtle.sign(
     "HMAC",
     key,
-    new TextEncoder().encode(message)
+    toArrayBuffer(new TextEncoder().encode(message))
   );
   const sigB64 = Buffer.from(signature).toString("base64url");
 
@@ -156,7 +162,7 @@ export async function verifyToken(
     const secret = getSecret();
     const key = await crypto.subtle.importKey(
       "raw",
-      secret,
+      toArrayBuffer(secret),
       { name: "HMAC", hash: "SHA-256" },
       false,
       ["verify"]
@@ -165,8 +171,8 @@ export async function verifyToken(
     const valid = await crypto.subtle.verify(
       "HMAC",
       key,
-      signature,
-      new TextEncoder().encode(message)
+      toArrayBuffer(signature),
+      toArrayBuffer(new TextEncoder().encode(message))
     );
     if (!valid) return null;
 
@@ -188,12 +194,16 @@ export function setAuthCookie(token: string): {
   value: string;
   options: object;
 } {
+  const secure =
+    process.env.NODE_ENV === "production" &&
+    process.env.VERCEL === "1";
+
   return {
     name: "engimatch_token",
     value: token,
     options: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure,
       sameSite: "lax" as const,
       maxAge: 7 * 24 * 60 * 60, // 7 days in seconds
       path: "/",
@@ -206,12 +216,16 @@ export function clearAuthCookie(): {
   value: string;
   options: object;
 } {
+  const secure =
+    process.env.NODE_ENV === "production" &&
+    process.env.VERCEL === "1";
+
   return {
     name: "engimatch_token",
     value: "",
     options: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure,
       sameSite: "lax" as const,
       maxAge: 0,
       path: "/",

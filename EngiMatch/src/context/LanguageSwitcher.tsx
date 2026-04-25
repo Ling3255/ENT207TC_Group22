@@ -1,12 +1,16 @@
 "use client";
 
-import { useLocale, Locale } from "./LocaleContext";
+import { useLocale } from "./LocaleContext";
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLocale();
 
   return (
-    <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5" role="group" aria-label="Language selection">
+    <div
+      className="flex items-center gap-1 bg-slate-100 rounded-lg p-0.5"
+      role="group"
+      aria-label="Language selection"
+    >
       <button
         onClick={() => setLocale("zh")}
         aria-pressed={locale === "zh"}
@@ -17,7 +21,7 @@ export default function LanguageSwitcher() {
             : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
         }`}
       >
-        中文
+        ZH
       </button>
       <button
         onClick={() => setLocale("en")}

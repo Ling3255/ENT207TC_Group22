@@ -18,7 +18,8 @@ export const GET = apiHandler(async (request: NextRequest) => {
   );
   const role = searchParams.get("role");
   const status = searchParams.get("status");
-  const search = searchParams.get("search");
+  const search = searchParams.get("search")?.trim() ?? "";
+  const includeStats = searchParams.get("includeStats") !== "false";
 
   const where: Record<string, unknown> = {};
   if (role && ["STUDENT", "STAFF", "SUPER_ADMIN"].includes(role)) {
@@ -52,20 +53,21 @@ export const GET = apiHandler(async (request: NextRequest) => {
         created_at: true,
         last_login_at: true,
         applicant_id: true,
-        applicant: {
-          select: { full_name: true },
-        },
       },
     }),
     prisma.user.count({ where }),
-    prisma.user.groupBy({
-      by: ["status"],
-      _count: true,
-    }),
-    prisma.user.groupBy({
-      by: ["role"],
-      _count: true,
-    }),
+    includeStats
+      ? prisma.user.groupBy({
+          by: ["status"],
+          _count: true,
+        })
+      : Promise.resolve([]),
+    includeStats
+      ? prisma.user.groupBy({
+          by: ["role"],
+          _count: true,
+        })
+      : Promise.resolve([]),
   ]);
 
   return successResponse({
@@ -73,15 +75,19 @@ export const GET = apiHandler(async (request: NextRequest) => {
     total,
     page,
     pageSize,
-    stats: {
-      byStatus: statusCounts.reduce(
-        (acc, s) => ({ ...acc, [s.status]: s._count }),
-        {}
-      ),
-      byRole: roleCounts.reduce(
-        (acc, r) => ({ ...acc, [r.role]: r._count }),
-        {}
-      ),
-    },
+    ...(includeStats
+      ? {
+          stats: {
+            byStatus: statusCounts.reduce(
+              (acc, s) => ({ ...acc, [s.status]: s._count }),
+              {}
+            ),
+            byRole: roleCounts.reduce(
+              (acc, r) => ({ ...acc, [r.role]: r._count }),
+              {}
+            ),
+          },
+        }
+      : {}),
   });
 });

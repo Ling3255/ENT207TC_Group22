@@ -1,0 +1,2310 @@
+
+> engimatch@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://198.18.0.1:3000
+- Environments: .env
+✓ Ready in 217ms
+
+ GET /applicant/results?applicantId=undefined 200 in 349ms (next.js: 247ms, application-code: 103ms)
+ GET /api/applicants/undefined 404 in 625ms (next.js: 601ms, application-code: 24ms)
+ GET /api/eligibility/undefined/results 200 in 633ms (next.js: 529ms, application-code: 104ms)
+ POST /api/auth/login 200 in 46ms (next.js: 18ms, application-code: 28ms)
+ POST /api/applicants 200 in 39ms (next.js: 18ms, application-code: 21ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 17ms (next.js: 5ms, application-code: 12ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 17ms (next.js: 5ms, application-code: 12ms)
+ POST /api/eligibility/run 200 in 81ms (next.js: 19ms, application-code: 61ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 13ms (next.js: 2ms, application-code: 11ms)
+ POST /api/auth/login 200 in 31ms (next.js: 2ms, application-code: 29ms)
+ POST /api/applicants 200 in 15ms (next.js: 1863µs, application-code: 13ms)
+ POST /api/eligibility/run 200 in 35ms (next.js: 1179µs, application-code: 33ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 14ms (next.js: 5ms, application-code: 9ms)
+ GET / 200 in 49ms (next.js: 14ms, application-code: 35ms)
+ GET /api/auth/session 200 in 23ms (next.js: 21ms, application-code: 2ms)
+ GET /applicant/results?applicantId=undefined 200 in 45ms (next.js: 3ms, application-code: 43ms)
+ GET /api/applicants/undefined 404 in 31ms (next.js: 18ms, application-code: 14ms)
+ GET /api/eligibility/undefined/results 200 in 40ms (next.js: 9ms, application-code: 31ms)
+ GET /home 200 in 32ms (next.js: 19ms, application-code: 14ms)
+ GET /api/auth/session 200 in 7ms (next.js: 1439µs, application-code: 5ms)
+ GET /api/auth/session 200 in 6ms (next.js: 1715µs, application-code: 5ms)
+ GET /ai-resume 200 in 46ms (next.js: 24ms, application-code: 22ms)
+ GET /home 200 in 14ms (next.js: 3ms, application-code: 12ms)
+ GET /api/auth/session 200 in 5ms (next.js: 1145µs, application-code: 3ms)
+ GET /api/auth/session 200 in 5ms (next.js: 1267µs, application-code: 4ms)
+ GET /applicant 200 in 28ms (next.js: 17ms, application-code: 11ms)
+ POST /api/applicants 200 in 20ms (next.js: 2ms, application-code: 18ms)
+ POST /api/eligibility/run 200 in 31ms (next.js: 2ms, application-code: 29ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 13ms (next.js: 2ms, application-code: 11ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 19ms (next.js: 9ms, application-code: 10ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 22ms (next.js: 5ms, application-code: 17ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 10ms (next.js: 1009µs, application-code: 9ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 10ms (next.js: 1249µs, application-code: 9ms)
+ GET / 200 in 179ms (next.js: 38ms, application-code: 142ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 180ms (next.js: 59ms, application-code: 120ms)
+ GET / 200 in 103ms (next.js: 1396µs, application-code: 102ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 104ms (next.js: 10ms, application-code: 94ms)
+ GET / 200 in 92ms (next.js: 3ms, application-code: 89ms)
+ GET / 200 in 91ms (next.js: 11ms, application-code: 80ms)
+ GET / 200 in 91ms (next.js: 29ms, application-code: 62ms)
+ GET / 200 in 92ms (next.js: 20ms, application-code: 72ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 124ms (next.js: 37ms, application-code: 87ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 124ms (next.js: 46ms, application-code: 79ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 124ms (next.js: 65ms, application-code: 59ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 56ms, application-code: 68ms)
+ GET / 200 in 122ms (next.js: 2ms, application-code: 120ms)
+ GET / 200 in 112ms (next.js: 14ms, application-code: 98ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 3ms, application-code: 110ms)
+ GET / 200 in 80ms (next.js: 3ms, application-code: 77ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 12ms, application-code: 89ms)
+ GET / 200 in 80ms (next.js: 11ms, application-code: 69ms)
+ GET / 200 in 80ms (next.js: 21ms, application-code: 60ms)
+ GET / 200 in 80ms (next.js: 28ms, application-code: 52ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 1950µs, application-code: 115ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 11ms, application-code: 106ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 31ms, application-code: 86ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 20ms, application-code: 97ms)
+ GET / 200 in 76ms (next.js: 1956µs, application-code: 74ms)
+ GET / 200 in 66ms (next.js: 30ms, application-code: 35ms)
+ GET / 200 in 66ms (next.js: 21ms, application-code: 46ms)
+ GET / 200 in 66ms (next.js: 38ms, application-code: 28ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 68ms (next.js: 3ms, application-code: 65ms)
+ GET / 200 in 67ms (next.js: 54ms, application-code: 13ms)
+ GET / 200 in 67ms (next.js: 46ms, application-code: 21ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 69ms (next.js: 11ms, application-code: 58ms)
+ GET / 200 in 76ms (next.js: 1942µs, application-code: 74ms)
+ GET / 200 in 76ms (next.js: 10ms, application-code: 66ms)
+ GET / 200 in 77ms (next.js: 18ms, application-code: 59ms)
+ GET / 200 in 77ms (next.js: 26ms, application-code: 51ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 3ms, application-code: 116ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 21ms, application-code: 97ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 12ms, application-code: 108ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 32ms, application-code: 88ms)
+ GET / 200 in 43ms (next.js: 11ms, application-code: 31ms)
+ GET / 200 in 43ms (next.js: 19ms, application-code: 24ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 48ms (next.js: 5ms, application-code: 43ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 46ms (next.js: 27ms, application-code: 18ms)
+ GET / 200 in 121ms (next.js: 4ms, application-code: 117ms)
+ GET / 200 in 120ms (next.js: 24ms, application-code: 96ms)
+ GET / 200 in 119ms (next.js: 72ms, application-code: 47ms)
+ GET / 200 in 119ms (next.js: 64ms, application-code: 56ms)
+ GET / 200 in 119ms (next.js: 88ms, application-code: 31ms)
+ GET / 200 in 120ms (next.js: 80ms, application-code: 40ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 13ms, application-code: 109ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 32ms, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 42ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 52ms, application-code: 71ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 1564µs, application-code: 106ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 10ms, application-code: 97ms)
+ GET / 200 in 124ms (next.js: 3ms, application-code: 121ms)
+ GET / 200 in 124ms (next.js: 11ms, application-code: 113ms)
+ GET / 200 in 124ms (next.js: 36ms, application-code: 88ms)
+ GET / 200 in 124ms (next.js: 19ms, application-code: 105ms)
+ GET / 200 in 124ms (next.js: 27ms, application-code: 97ms)
+ GET / 200 in 124ms (next.js: 49ms, application-code: 75ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 59ms, application-code: 66ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 126ms (next.js: 69ms, application-code: 57ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 84ms (next.js: 37ms, application-code: 46ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 84ms (next.js: 47ms, application-code: 36ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 146ms (next.js: 11ms, application-code: 135ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 147ms (next.js: 1796µs, application-code: 145ms)
+ GET / 200 in 144ms (next.js: 13ms, application-code: 131ms)
+ GET / 200 in 145ms (next.js: 4ms, application-code: 141ms)
+ GET / 200 in 143ms (next.js: 21ms, application-code: 123ms)
+ GET / 200 in 143ms (next.js: 40ms, application-code: 103ms)
+ GET / 200 in 144ms (next.js: 31ms, application-code: 112ms)
+ GET / 200 in 143ms (next.js: 48ms, application-code: 95ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 33ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 3ms, application-code: 112ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 131ms (next.js: 43ms, application-code: 88ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 131ms (next.js: 52ms, application-code: 78ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 1332µs, application-code: 96ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 108ms (next.js: 1630µs, application-code: 106ms)
+ GET / 200 in 95ms (next.js: 1816µs, application-code: 93ms)
+ GET / 200 in 95ms (next.js: 10ms, application-code: 85ms)
+ GET / 200 in 95ms (next.js: 18ms, application-code: 78ms)
+ GET / 200 in 105ms (next.js: 26ms, application-code: 78ms)
+ GET / 200 in 105ms (next.js: 34ms, application-code: 71ms)
+ GET / 200 in 91ms (next.js: 19ms, application-code: 72ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 1755µs, application-code: 121ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 11ms, application-code: 112ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 30ms, application-code: 94ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 20ms, application-code: 103ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 2ms, application-code: 122ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 124ms (next.js: 12ms, application-code: 113ms)
+ GET / 200 in 103ms (next.js: 11ms, application-code: 92ms)
+ GET / 200 in 103ms (next.js: 2ms, application-code: 101ms)
+ GET / 200 in 103ms (next.js: 19ms, application-code: 84ms)
+ GET / 200 in 103ms (next.js: 28ms, application-code: 75ms)
+ GET / 200 in 103ms (next.js: 37ms, application-code: 66ms)
+ GET / 200 in 78ms (next.js: 19ms, application-code: 59ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 122ms (next.js: 1523µs, application-code: 121ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 122ms (next.js: 12ms, application-code: 111ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 112ms (next.js: 11ms, application-code: 101ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 112ms (next.js: 20ms, application-code: 92ms)
+ GET / 200 in 112ms (next.js: 30ms, application-code: 81ms)
+ GET / 200 in 112ms (next.js: 22ms, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 124ms (next.js: 12ms, application-code: 112ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 3ms, application-code: 122ms)
+ GET / 200 in 103ms (next.js: 29ms, application-code: 74ms)
+ GET / 200 in 103ms (next.js: 20ms, application-code: 83ms)
+ GET / 200 in 103ms (next.js: 37ms, application-code: 66ms)
+ GET / 200 in 65ms (next.js: 1418µs, application-code: 63ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 2ms, application-code: 123ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 13ms, application-code: 113ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 23ms, application-code: 103ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 22ms, application-code: 92ms)
+ GET / 200 in 74ms (next.js: 11ms, application-code: 63ms)
+ GET / 200 in 75ms (next.js: 3ms, application-code: 72ms)
+ GET / 200 in 74ms (next.js: 37ms, application-code: 37ms)
+ GET / 200 in 74ms (next.js: 45ms, application-code: 29ms)
+ GET / 200 in 86ms (next.js: 53ms, application-code: 33ms)
+ GET / 200 in 78ms (next.js: 43ms, application-code: 35ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 20ms, application-code: 78ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 28ms, application-code: 69ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 3ms, application-code: 122ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 124ms (next.js: 13ms, application-code: 111ms)
+ GET / 200 in 101ms (next.js: 29ms, application-code: 72ms)
+ GET / 200 in 102ms (next.js: 21ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 13ms, application-code: 101ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 104ms (next.js: 12ms, application-code: 92ms)
+ GET / 200 in 83ms (next.js: 27ms, application-code: 56ms)
+ GET / 200 in 83ms (next.js: 19ms, application-code: 65ms)
+ GET / 200 in 68ms (next.js: 20ms, application-code: 48ms)
+ GET / 200 in 50ms (next.js: 11ms, application-code: 39ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 29ms, application-code: 86ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 20ms, application-code: 96ms)
+ GET / 200 in 115ms (next.js: 30ms, application-code: 86ms)
+ GET / 200 in 116ms (next.js: 21ms, application-code: 95ms)
+ GET / 200 in 115ms (next.js: 56ms, application-code: 59ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 3ms, application-code: 115ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 12ms, application-code: 105ms)
+ GET / 200 in 97ms (next.js: 46ms, application-code: 50ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 38ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 47ms, application-code: 71ms)
+ GET / 200 in 53ms (next.js: 11ms, application-code: 42ms)
+ GET / 200 in 44ms (next.js: 11ms, application-code: 33ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 129ms (next.js: 1456µs, application-code: 128ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 129ms (next.js: 10ms, application-code: 119ms)
+ GET / 200 in 127ms (next.js: 12ms, application-code: 115ms)
+ GET / 200 in 128ms (next.js: 3ms, application-code: 125ms)
+ GET / 200 in 127ms (next.js: 21ms, application-code: 106ms)
+ GET / 200 in 127ms (next.js: 40ms, application-code: 87ms)
+ GET / 200 in 108ms (next.js: 41ms, application-code: 67ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 129ms (next.js: 30ms, application-code: 99ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 129ms (next.js: 49ms, application-code: 79ms)
+ GET / 200 in 70ms (next.js: 35ms, application-code: 34ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 50ms, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 129ms (next.js: 59ms, application-code: 70ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 1718µs, application-code: 121ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 123ms (next.js: 11ms, application-code: 112ms)
+ GET / 200 in 99ms (next.js: 3ms, application-code: 97ms)
+ GET / 200 in 99ms (next.js: 11ms, application-code: 88ms)
+ GET / 200 in 99ms (next.js: 28ms, application-code: 70ms)
+ GET / 200 in 99ms (next.js: 20ms, application-code: 79ms)
+ GET / 200 in 81ms (next.js: 20ms, application-code: 62ms)
+ GET / 200 in 64ms (next.js: 31ms, application-code: 32ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 85ms (next.js: 11ms, application-code: 73ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 85ms (next.js: 21ms, application-code: 64ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 76ms (next.js: 31ms, application-code: 45ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 47ms (next.js: 11ms, application-code: 36ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 1614µs, application-code: 125ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 11ms, application-code: 115ms)
+ GET / 200 in 105ms (next.js: 4ms, application-code: 101ms)
+ GET / 200 in 104ms (next.js: 12ms, application-code: 92ms)
+ GET / 200 in 103ms (next.js: 44ms, application-code: 59ms)
+ GET / 200 in 104ms (next.js: 20ms, application-code: 84ms)
+ GET / 200 in 104ms (next.js: 36ms, application-code: 68ms)
+ GET / 200 in 105ms (next.js: 28ms, application-code: 77ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 95ms (next.js: 50ms, application-code: 45ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 47ms (next.js: 13ms, application-code: 33ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 46ms (next.js: 23ms, application-code: 24ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 35ms (next.js: 22ms, application-code: 14ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 12ms, application-code: 105ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 1990µs, application-code: 116ms)
+ GET / 200 in 95ms (next.js: 2ms, application-code: 93ms)
+ GET / 200 in 95ms (next.js: 10ms, application-code: 85ms)
+ GET / 200 in 95ms (next.js: 27ms, application-code: 68ms)
+ GET / 200 in 95ms (next.js: 18ms, application-code: 77ms)
+ GET / 200 in 95ms (next.js: 36ms, application-code: 60ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 97ms (next.js: 44ms, application-code: 53ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 83ms (next.js: 30ms, application-code: 53ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 84ms (next.js: 20ms, application-code: 64ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 83ms (next.js: 39ms, application-code: 45ms)
+ GET / 200 in 42ms (next.js: 1263µs, application-code: 41ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 72ms (next.js: 12ms, application-code: 60ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 73ms (next.js: 1533µs, application-code: 71ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 45ms (next.js: 1917µs, application-code: 43ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 55ms (next.js: 13ms, application-code: 42ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 54ms (next.js: 32ms, application-code: 22ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 56ms (next.js: 22ms, application-code: 34ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 64ms (next.js: 1522µs, application-code: 63ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 52ms (next.js: 2ms, application-code: 50ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 52ms (next.js: 12ms, application-code: 40ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 51ms (next.js: 21ms, application-code: 30ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 51ms (next.js: 30ms, application-code: 21ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 12ms (next.js: 1282µs, application-code: 11ms)
+ GET / 200 in 195ms (next.js: 40ms, application-code: 156ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 191ms (next.js: 55ms, application-code: 137ms)
+ GET / 200 in 121ms (next.js: 1356µs, application-code: 119ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 122ms (next.js: 10ms, application-code: 111ms)
+ GET / 200 in 111ms (next.js: 21ms, application-code: 90ms)
+ GET / 200 in 112ms (next.js: 13ms, application-code: 99ms)
+ GET / 200 in 113ms (next.js: 4ms, application-code: 108ms)
+ GET / 200 in 112ms (next.js: 29ms, application-code: 83ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 132ms (next.js: 38ms, application-code: 94ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 132ms (next.js: 70ms, application-code: 62ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 133ms (next.js: 56ms, application-code: 77ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 133ms (next.js: 83ms, application-code: 49ms)
+ GET / 200 in 128ms (next.js: 1726µs, application-code: 126ms)
+ GET / 200 in 117ms (next.js: 13ms, application-code: 104ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 3ms, application-code: 115ms)
+ GET / 200 in 95ms (next.js: 12ms, application-code: 83ms)
+ GET / 200 in 95ms (next.js: 21ms, application-code: 74ms)
+ GET / 200 in 104ms (next.js: 29ms, application-code: 74ms)
+ GET / 200 in 104ms (next.js: 38ms, application-code: 66ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 3ms, application-code: 104ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 70ms (next.js: 7ms, application-code: 63ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 105ms (next.js: 26ms, application-code: 78ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 105ms (next.js: 17ms, application-code: 88ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 99ms (next.js: 21ms, application-code: 78ms)
+ GET / 200 in 109ms (next.js: 1856µs, application-code: 107ms)
+ GET / 200 in 119ms (next.js: 11ms, application-code: 108ms)
+ GET / 200 in 100ms (next.js: 12ms, application-code: 88ms)
+ GET / 200 in 100ms (next.js: 28ms, application-code: 72ms)
+ GET / 200 in 100ms (next.js: 19ms, application-code: 81ms)
+ GET / 200 in 108ms (next.js: 36ms, application-code: 72ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 120ms (next.js: 3ms, application-code: 117ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 92ms (next.js: 11ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 1974µs, application-code: 105ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 116ms (next.js: 11ms, application-code: 105ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 20ms, application-code: 96ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 1683µs, application-code: 96ms)
+ GET / 200 in 87ms (next.js: 1933µs, application-code: 85ms)
+ GET / 200 in 107ms (next.js: 11ms, application-code: 97ms)
+ GET / 200 in 104ms (next.js: 3ms, application-code: 101ms)
+ GET / 200 in 104ms (next.js: 11ms, application-code: 93ms)
+ GET / 200 in 104ms (next.js: 19ms, application-code: 85ms)
+ GET / 200 in 112ms (next.js: 27ms, application-code: 85ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 97ms (next.js: 11ms, application-code: 87ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 104ms (next.js: 1969µs, application-code: 102ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 2ms, application-code: 100ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 12ms, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 112ms (next.js: 23ms, application-code: 90ms)
+ GET / 200 in 80ms (next.js: 2ms, application-code: 78ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 12ms, application-code: 95ms)
+ GET / 200 in 85ms (next.js: 11ms, application-code: 75ms)
+ GET / 200 in 98ms (next.js: 18ms, application-code: 80ms)
+ GET / 200 in 99ms (next.js: 1886µs, application-code: 98ms)
+ GET / 200 in 99ms (next.js: 10ms, application-code: 89ms)
+ GET / 200 in 92ms (next.js: 2ms, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 1957µs, application-code: 118ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 1980µs, application-code: 115ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 2ms, application-code: 99ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 13ms, application-code: 88ms)
+ GET / 200 in 79ms (next.js: 12ms, application-code: 67ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 23ms, application-code: 78ms)
+ GET / 200 in 81ms (next.js: 12ms, application-code: 69ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 91ms (next.js: 10ms, application-code: 81ms)
+ GET / 200 in 62ms (next.js: 19ms, application-code: 43ms)
+ GET / 200 in 63ms (next.js: 1824µs, application-code: 61ms)
+ GET / 200 in 63ms (next.js: 10ms, application-code: 53ms)
+ GET / 200 in 97ms (next.js: 1636µs, application-code: 95ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 128ms (next.js: 12ms, application-code: 116ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 129ms (next.js: 2ms, application-code: 127ms)
+ GET / 200 in 105ms (next.js: 21ms, application-code: 84ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 108ms (next.js: 3ms, application-code: 105ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 108ms (next.js: 12ms, application-code: 96ms)
+ GET / 200 in 87ms (next.js: 22ms, application-code: 65ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 30ms, application-code: 77ms)
+ GET / 200 in 68ms (next.js: 12ms, application-code: 56ms)
+ GET / 200 in 68ms (next.js: 20ms, application-code: 47ms)
+ GET / 200 in 68ms (next.js: 28ms, application-code: 39ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 89ms (next.js: 11ms, application-code: 78ms)
+ GET / 200 in 124ms (next.js: 1330µs, application-code: 123ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 3ms, application-code: 111ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 13ms, application-code: 100ms)
+ GET / 200 in 90ms (next.js: 4ms, application-code: 86ms)
+ GET / 200 in 89ms (next.js: 31ms, application-code: 57ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 100ms (next.js: 12ms, application-code: 89ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 21ms, application-code: 80ms)
+ GET / 200 in 70ms (next.js: 20ms, application-code: 51ms)
+ GET / 200 in 70ms (next.js: 28ms, application-code: 43ms)
+ GET / 200 in 70ms (next.js: 36ms, application-code: 34ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 40ms, application-code: 62ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 93ms (next.js: 27ms, application-code: 66ms)
+ GET / 200 in 127ms (next.js: 2ms, application-code: 125ms)
+ GET / 200 in 113ms (next.js: 32ms, application-code: 82ms)
+ GET / 200 in 114ms (next.js: 23ms, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 116ms (next.js: 3ms, application-code: 113ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 13ms, application-code: 102ms)
+ GET / 200 in 75ms (next.js: 27ms, application-code: 48ms)
+ GET / 200 in 75ms (next.js: 43ms, application-code: 32ms)
+ GET / 200 in 76ms (next.js: 35ms, application-code: 40ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 95ms (next.js: 20ms, application-code: 75ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 78ms (next.js: 17ms, application-code: 60ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 91ms (next.js: 37ms, application-code: 54ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 92ms (next.js: 1424µs, application-code: 91ms)
+ GET / 200 in 124ms (next.js: 11ms, application-code: 113ms)
+ GET / 200 in 125ms (next.js: 3ms, application-code: 122ms)
+ GET / 200 in 125ms (next.js: 21ms, application-code: 104ms)
+ GET / 200 in 97ms (next.js: 22ms, application-code: 75ms)
+ GET / 200 in 97ms (next.js: 31ms, application-code: 66ms)
+ GET / 200 in 97ms (next.js: 39ms, application-code: 58ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 126ms (next.js: 29ms, application-code: 96ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 100ms (next.js: 13ms, application-code: 87ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 37ms, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 47ms, application-code: 51ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 96ms (next.js: 1743µs, application-code: 95ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 966µs, application-code: 117ms)
+ GET / 200 in 112ms (next.js: 3ms, application-code: 109ms)
+ GET / 200 in 122ms (next.js: 12ms, application-code: 110ms)
+ GET / 200 in 121ms (next.js: 20ms, application-code: 101ms)
+ GET / 200 in 111ms (next.js: 28ms, application-code: 84ms)
+ GET / 200 in 112ms (next.js: 20ms, application-code: 92ms)
+ GET / 200 in 95ms (next.js: 19ms, application-code: 76ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 96ms (next.js: 28ms, application-code: 68ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 105ms (next.js: 21ms, application-code: 84ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 104ms (next.js: 12ms, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 104ms (next.js: 22ms, application-code: 82ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 1793µs, application-code: 96ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 116ms (next.js: 1649µs, application-code: 114ms)
+ GET / 200 in 114ms (next.js: 2ms, application-code: 111ms)
+ GET / 200 in 114ms (next.js: 19ms, application-code: 95ms)
+ GET / 200 in 114ms (next.js: 11ms, application-code: 103ms)
+ GET / 200 in 114ms (next.js: 28ms, application-code: 86ms)
+ GET / 200 in 114ms (next.js: 37ms, application-code: 77ms)
+ GET / 200 in 98ms (next.js: 20ms, application-code: 79ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 7ms, application-code: 110ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 120ms (next.js: 12ms, application-code: 108ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 110ms (next.js: 11ms, application-code: 99ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 110ms (next.js: 20ms, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 81ms (next.js: 1350µs, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 81ms (next.js: 2ms, application-code: 79ms)
+ GET / 200 in 84ms (next.js: 2ms, application-code: 81ms)
+ GET / 200 in 84ms (next.js: 11ms, application-code: 73ms)
+ GET / 200 in 84ms (next.js: 19ms, application-code: 65ms)
+ GET / 200 in 84ms (next.js: 27ms, application-code: 56ms)
+ GET / 200 in 112ms (next.js: 36ms, application-code: 76ms)
+ GET / 200 in 79ms (next.js: 10ms, application-code: 69ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 141ms (next.js: 1290µs, application-code: 139ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 130ms (next.js: 2ms, application-code: 128ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 22ms, application-code: 93ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 130ms (next.js: 17ms, application-code: 112ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 130ms (next.js: 26ms, application-code: 104ms)
+ GET / 200 in 84ms (next.js: 33ms, application-code: 51ms)
+ GET / 200 in 84ms (next.js: 25ms, application-code: 59ms)
+ GET / 200 in 85ms (next.js: 16ms, application-code: 69ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 86ms (next.js: 2ms, application-code: 84ms)
+ GET / 200 in 75ms (next.js: 45ms, application-code: 30ms)
+ GET / 200 in 72ms (next.js: 10ms, application-code: 62ms)
+ GET / 200 in 74ms (next.js: 9ms, application-code: 65ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 3ms, application-code: 115ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 12ms, application-code: 105ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 22ms, application-code: 95ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 31ms, application-code: 85ms)
+ GET / 200 in 76ms (next.js: 13ms, application-code: 63ms)
+ GET / 200 in 70ms (next.js: 19ms, application-code: 51ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 103ms (next.js: 22ms, application-code: 80ms)
+ GET / 200 in 71ms (next.js: 11ms, application-code: 60ms)
+ GET / 200 in 70ms (next.js: 36ms, application-code: 34ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 72ms (next.js: 27ms, application-code: 45ms)
+ GET / 200 in 28ms (next.js: 1993µs, application-code: 26ms)
+ GET / 200 in 38ms (next.js: 10ms, application-code: 29ms)
+ GET / 200 in 117ms (next.js: 13ms, application-code: 105ms)
+ GET / 200 in 106ms (next.js: 47ms, application-code: 60ms)
+ GET / 200 in 107ms (next.js: 29ms, application-code: 78ms)
+ GET / 200 in 107ms (next.js: 37ms, application-code: 70ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 2ms, application-code: 117ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 21ms, application-code: 98ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 30ms, application-code: 89ms)
+ GET / 200 in 55ms (next.js: 11ms, application-code: 44ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 83ms (next.js: 1381µs, application-code: 81ms)
+ GET / 200 in 106ms (next.js: 21ms, application-code: 85ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 12ms, application-code: 115ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 1919µs, application-code: 125ms)
+ GET / 200 in 105ms (next.js: 3ms, application-code: 103ms)
+ GET / 200 in 105ms (next.js: 20ms, application-code: 85ms)
+ GET / 200 in 124ms (next.js: 37ms, application-code: 87ms)
+ GET / 200 in 125ms (next.js: 29ms, application-code: 96ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 11ms, application-code: 116ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 19ms, application-code: 99ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 28ms, application-code: 90ms)
+ GET / 200 in 81ms (next.js: 8ms, application-code: 73ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 95ms (next.js: 10ms, application-code: 85ms)
+ GET / 200 in 75ms (next.js: 1580µs, application-code: 73ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 96ms (next.js: 1810µs, application-code: 94ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 96ms (next.js: 11ms, application-code: 85ms)
+ GET / 200 in 73ms (next.js: 1622µs, application-code: 72ms)
+ GET / 200 in 74ms (next.js: 10ms, application-code: 63ms)
+ GET / 200 in 55ms (next.js: 2ms, application-code: 53ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 65ms (next.js: 11ms, application-code: 55ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 57ms (next.js: 1540µs, application-code: 55ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 57ms (next.js: 11ms, application-code: 46ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 48ms (next.js: 1170µs, application-code: 46ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 72ms (next.js: 1283µs, application-code: 71ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 72ms (next.js: 11ms, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 72ms (next.js: 1462µs, application-code: 71ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 72ms (next.js: 12ms, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 63ms (next.js: 11ms, application-code: 51ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 39ms (next.js: 1203µs, application-code: 37ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 46ms (next.js: 12ms, application-code: 34ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 47ms (next.js: 1303µs, application-code: 46ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 23ms (next.js: 1549µs, application-code: 21ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 23ms (next.js: 12ms, application-code: 11ms)
+✓ Compiled in 53ms
+ GET / 200 in 172ms (next.js: 54ms, application-code: 118ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 182ms (next.js: 76ms, application-code: 106ms)
+ GET / 200 in 92ms (next.js: 1934µs, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 125ms (next.js: 20ms, application-code: 105ms)
+ GET / 200 in 103ms (next.js: 11ms, application-code: 93ms)
+ GET / 200 in 104ms (next.js: 2ms, application-code: 102ms)
+ GET / 200 in 104ms (next.js: 19ms, application-code: 85ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 114ms (next.js: 27ms, application-code: 87ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 36ms, application-code: 79ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 21ms, application-code: 76ms)
+ GET / 200 in 85ms (next.js: 2ms, application-code: 83ms)
+ GET / 200 in 103ms (next.js: 10ms, application-code: 93ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 17ms, application-code: 97ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 25ms, application-code: 89ms)
+ GET / 200 in 80ms (next.js: 3ms, application-code: 77ms)
+ GET / 200 in 91ms (next.js: 11ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 1590µs, application-code: 118ms)
+ GET / 200 in 100ms (next.js: 9ms, application-code: 91ms)
+ GET / 200 in 109ms (next.js: 11ms, application-code: 99ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 1790µs, application-code: 109ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 11ms, application-code: 100ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 1714µs, application-code: 100ms)
+ GET / 200 in 91ms (next.js: 2ms, application-code: 89ms)
+ GET / 200 in 91ms (next.js: 11ms, application-code: 80ms)
+ GET / 200 in 107ms (next.js: 21ms, application-code: 86ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 2ms, application-code: 125ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 127ms (next.js: 12ms, application-code: 116ms)
+ GET / 200 in 107ms (next.js: 1308µs, application-code: 105ms)
+ GET / 200 in 111ms (next.js: 10ms, application-code: 101ms)
+ GET / 200 in 112ms (next.js: 20ms, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 151ms (next.js: 10ms, application-code: 141ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 170ms (next.js: 4ms, application-code: 166ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 170ms (next.js: 13ms, application-code: 156ms)
+ GET / 200 in 132ms (next.js: 2ms, application-code: 130ms)
+ GET / 200 in 132ms (next.js: 20ms, application-code: 113ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 134ms (next.js: 11ms, application-code: 123ms)
+ GET / 200 in 107ms (next.js: 3ms, application-code: 105ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 158ms (next.js: 17ms, application-code: 141ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 160ms (next.js: 3ms, application-code: 157ms)
+ GET / 200 in 127ms (next.js: 4ms, application-code: 123ms)
+ GET / 200 in 139ms (next.js: 15ms, application-code: 124ms)
+ GET / 200 in 127ms (next.js: 15ms, application-code: 112ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 137ms (next.js: 15ms, application-code: 122ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 133ms (next.js: 2ms, application-code: 131ms)
+ GET / 200 in 120ms (next.js: 19ms, application-code: 101ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 142ms (next.js: 14ms, application-code: 128ms)
+ GET / 200 in 112ms (next.js: 13ms, application-code: 100ms)
+ GET / 200 in 101ms (next.js: 25ms, application-code: 76ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 113ms (next.js: 24ms, application-code: 89ms)
+ GET / 200 in 97ms (next.js: 22ms, application-code: 75ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 3ms, application-code: 112ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 13ms, application-code: 102ms)
+ GET / 200 in 93ms (next.js: 10ms, application-code: 84ms)
+ GET / 200 in 85ms (next.js: 9ms, application-code: 76ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 95ms (next.js: 1797µs, application-code: 93ms)
+ GET / 200 in 119ms (next.js: 10ms, application-code: 109ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 121ms (next.js: 1978µs, application-code: 119ms)
+ GET / 200 in 104ms (next.js: 11ms, application-code: 93ms)
+ GET / 200 in 105ms (next.js: 10ms, application-code: 95ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 131ms (next.js: 18ms, application-code: 113ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 106ms (next.js: 17ms, application-code: 89ms)
+ GET / 200 in 105ms (next.js: 1807µs, application-code: 103ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 122ms (next.js: 9ms, application-code: 113ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 131ms (next.js: 18ms, application-code: 113ms)
+ GET / 200 in 102ms (next.js: 4ms, application-code: 98ms)
+ GET / 200 in 101ms (next.js: 12ms, application-code: 89ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 109ms (next.js: 2ms, application-code: 107ms)
+ GET / 200 in 97ms (next.js: 2ms, application-code: 94ms)
+ GET / 200 in 96ms (next.js: 18ms, application-code: 78ms)
+ GET / 200 in 88ms (next.js: 18ms, application-code: 70ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 97ms (next.js: 10ms, application-code: 87ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 82ms (next.js: 9ms, application-code: 73ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 84ms (next.js: 10ms, application-code: 73ms)
+ GET / 200 in 65ms (next.js: 1862µs, application-code: 63ms)
+ GET / 200 in 83ms (next.js: 18ms, application-code: 64ms)
+ GET / 200 in 82ms (next.js: 25ms, application-code: 58ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 93ms (next.js: 10ms, application-code: 83ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 93ms (next.js: 1842µs, application-code: 91ms)
+ GET / 200 in 113ms (next.js: 11ms, application-code: 102ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 114ms (next.js: 1445µs, application-code: 112ms)
+ GET / 200 in 94ms (next.js: 2ms, application-code: 92ms)
+ GET / 200 in 94ms (next.js: 18ms, application-code: 76ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 104ms (next.js: 9ms, application-code: 95ms)
+ GET / 200 in 78ms (next.js: 19ms, application-code: 59ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 80ms (next.js: 2ms, application-code: 78ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 80ms (next.js: 11ms, application-code: 69ms)
+ GET / 200 in 79ms (next.js: 9ms, application-code: 70ms)
+ GET / 200 in 80ms (next.js: 1790µs, application-code: 78ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 25ms, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 115ms (next.js: 16ms, application-code: 99ms)
+ GET / 200 in 95ms (next.js: 1833µs, application-code: 93ms)
+ GET / 200 in 102ms (next.js: 2ms, application-code: 100ms)
+ GET / 200 in 102ms (next.js: 20ms, application-code: 82ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 11ms, application-code: 100ms)
+ GET / 200 in 83ms (next.js: 11ms, application-code: 72ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 19ms, application-code: 83ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 91ms (next.js: 9ms, application-code: 82ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 91ms (next.js: 18ms, application-code: 74ms)
+ GET / 200 in 65ms (next.js: 9ms, application-code: 55ms)
+ GET / 200 in 66ms (next.js: 2ms, application-code: 63ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 120ms (next.js: 1706µs, application-code: 118ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 120ms (next.js: 10ms, application-code: 110ms)
+ GET / 200 in 101ms (next.js: 1610µs, application-code: 99ms)
+ GET / 200 in 92ms (next.js: 2ms, application-code: 90ms)
+ GET / 200 in 92ms (next.js: 9ms, application-code: 83ms)
+ GET / 200 in 101ms (next.js: 11ms, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 110ms (next.js: 2ms, application-code: 108ms)
+ GET / 200 in 74ms (next.js: 20ms, application-code: 54ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 19ms, application-code: 99ms)
+ GET / 200 in 83ms (next.js: 27ms, application-code: 55ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 93ms (next.js: 1945µs, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 94ms (next.js: 11ms, application-code: 83ms)
+ GET / 200 in 110ms (next.js: 20ms, application-code: 91ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 3ms, application-code: 109ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 11ms, application-code: 100ms)
+ GET / 200 in 85ms (next.js: 1356µs, application-code: 83ms)
+ GET / 200 in 77ms (next.js: 1861µs, application-code: 75ms)
+ GET / 200 in 77ms (next.js: 10ms, application-code: 67ms)
+ GET / 200 in 90ms (next.js: 11ms, application-code: 79ms)
+ GET / 200 in 108ms (next.js: 28ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 2ms, application-code: 117ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 119ms (next.js: 19ms, application-code: 100ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 18ms, application-code: 84ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 117ms (next.js: 10ms, application-code: 107ms)
+ GET / 200 in 126ms (next.js: 1941µs, application-code: 124ms)
+ GET / 200 in 125ms (next.js: 16ms, application-code: 109ms)
+ GET / 200 in 125ms (next.js: 25ms, application-code: 100ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 144ms (next.js: 10ms, application-code: 134ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 135ms (next.js: 11ms, application-code: 124ms)
+ GET / 200 in 111ms (next.js: 20ms, application-code: 91ms)
+ GET / 200 in 90ms (next.js: 2ms, application-code: 88ms)
+ GET / 200 in 90ms (next.js: 34ms, application-code: 56ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 98ms (next.js: 11ms, application-code: 87ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 97ms (next.js: 11ms, application-code: 86ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 95ms (next.js: 11ms, application-code: 85ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 87ms (next.js: 10ms, application-code: 78ms)
+ GET / 200 in 77ms (next.js: 1287µs, application-code: 76ms)
+ GET / 200 in 86ms (next.js: 1773µs, application-code: 84ms)
+ GET / 200 in 94ms (next.js: 18ms, application-code: 76ms)
+ GET / 200 in 86ms (next.js: 25ms, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 103ms (next.js: 9ms, application-code: 93ms)
+ GET / 200 in 63ms (next.js: 1888µs, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 95ms (next.js: 17ms, application-code: 78ms)
+ GET / 200 in 63ms (next.js: 9ms, application-code: 54ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 109ms (next.js: 1723µs, application-code: 107ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 109ms (next.js: 10ms, application-code: 99ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 10ms, application-code: 91ms)
+ GET / 200 in 83ms (next.js: 10ms, application-code: 73ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 84ms (next.js: 1427µs, application-code: 83ms)
+ GET / 200 in 77ms (next.js: 2ms, application-code: 75ms)
+ GET / 200 in 86ms (next.js: 17ms, application-code: 69ms)
+ GET / 200 in 96ms (next.js: 10ms, application-code: 86ms)
+ GET / 200 in 89ms (next.js: 10ms, application-code: 79ms)
+ GET / 200 in 98ms (next.js: 26ms, application-code: 71ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 18ms, application-code: 89ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 107ms (next.js: 1646µs, application-code: 106ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 112ms (next.js: 3ms, application-code: 109ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 12ms, application-code: 100ms)
+ GET / 200 in 91ms (next.js: 11ms, application-code: 80ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 101ms (next.js: 12ms, application-code: 90ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 92ms (next.js: 18ms, application-code: 74ms)
+ GET / 200 in 66ms (next.js: 2ms, application-code: 63ms)
+ GET / 200 in 65ms (next.js: 10ms, application-code: 55ms)
+ GET / 200 in 57ms (next.js: 10ms, application-code: 48ms)
+ GET / 200 in 69ms (next.js: 1782µs, application-code: 67ms)
+ GET / 200 in 94ms (next.js: 9ms, application-code: 85ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 9ms, application-code: 102ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 120ms (next.js: 18ms, application-code: 101ms)
+ GET / 200 in 108ms (next.js: 20ms, application-code: 88ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 2ms, application-code: 116ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 118ms (next.js: 11ms, application-code: 107ms)
+ GET / 200 in 89ms (next.js: 20ms, application-code: 69ms)
+ GET / 200 in 88ms (next.js: 28ms, application-code: 61ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 91ms (next.js: 3ms, application-code: 88ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 91ms (next.js: 11ms, application-code: 79ms)
+ GET / 200 in 64ms (next.js: 16ms, application-code: 47ms)
+ GET / 200 in 50ms (next.js: 1663µs, application-code: 49ms)
+ GET / 200 in 50ms (next.js: 10ms, application-code: 41ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 1054µs, application-code: 110ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 102ms (next.js: 1403µs, application-code: 101ms)
+ GET / 200 in 92ms (next.js: 3ms, application-code: 89ms)
+ GET / 200 in 90ms (next.js: 20ms, application-code: 70ms)
+ GET / 200 in 90ms (next.js: 28ms, application-code: 62ms)
+ GET / 200 in 90ms (next.js: 53ms, application-code: 37ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 92ms (next.js: 3ms, application-code: 89ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 92ms (next.js: 11ms, application-code: 81ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 109ms (next.js: 36ms, application-code: 73ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 109ms (next.js: 44ms, application-code: 65ms)
+ GET / 200 in 49ms (next.js: 1594µs, application-code: 47ms)
+ GET / 200 in 55ms (next.js: 9ms, application-code: 46ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 146ms (next.js: 1479µs, application-code: 145ms)
+ GET / 200 in 135ms (next.js: 10ms, application-code: 124ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 136ms (next.js: 2ms, application-code: 134ms)
+ GET / 200 in 117ms (next.js: 8ms, application-code: 108ms)
+ GET / 200 in 110ms (next.js: 11ms, application-code: 99ms)
+ GET / 200 in 110ms (next.js: 39ms, application-code: 72ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 111ms (next.js: 47ms, application-code: 64ms)
+ GET / 200 in 39ms (next.js: 20ms, application-code: 19ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 120ms (next.js: 24ms, application-code: 96ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 50ms (next.js: 12ms, application-code: 38ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 50ms (next.js: 2ms, application-code: 48ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 68ms (next.js: 1483µs, application-code: 66ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 68ms (next.js: 10ms, application-code: 58ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 50ms (next.js: 1709µs, application-code: 48ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 50ms (next.js: 11ms, application-code: 39ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 63ms (next.js: 12ms, application-code: 51ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 53ms (next.js: 12ms, application-code: 41ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 56ms (next.js: 14ms, application-code: 41ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 57ms (next.js: 3ms, application-code: 54ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 31ms (next.js: 11ms, application-code: 20ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 31ms (next.js: 1459µs, application-code: 30ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 11ms (next.js: 1046µs, application-code: 10ms)
+✓ Compiled in 40ms
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 73ms (next.js: 30ms, application-code: 43ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 40ms (next.js: 19ms, application-code: 22ms)
+ POST /api/auth/login 401 in 22ms (next.js: 14ms, application-code: 8ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 40ms
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 14ms (next.js: 11ms, application-code: 3ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 14ms (next.js: 5ms, application-code: 9ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 110ms (next.js: 33ms, application-code: 77ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 15ms (next.js: 2ms, application-code: 13ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 17ms (next.js: 5ms, application-code: 12ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 21ms (next.js: 1618µs, application-code: 19ms)
+✓ Compiled in 32ms
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 26ms (next.js: 4ms, application-code: 22ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 27ms (next.js: 8ms, application-code: 19ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 38ms (next.js: 1858µs, application-code: 36ms)
+✓ Compiled in 20ms
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 27ms (next.js: 4ms, application-code: 22ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 27ms (next.js: 9ms, application-code: 18ms)
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+✓ Compiled in 22ms
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 82ms (next.js: 31ms, application-code: 52ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 25ms (next.js: 9ms, application-code: 16ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 27ms (next.js: 4ms, application-code: 22ms)
+ GET /applicant/results?applicantId=cmo9jhmeh0000fsv5kr3jx4ea 200 in 19ms (next.js: 1991µs, application-code: 17ms)
+ GET /api/eligibility/cmo9jhmeh0000fsv5kr3jx4ea/results 200 in 29ms (next.js: 5ms, application-code: 24ms)
+ GET /api/applicants/cmo9jhmeh0000fsv5kr3jx4ea 200 in 30ms (next.js: 11ms, application-code: 19ms)
+ GET /home 200 in 43ms (next.js: 30ms, application-code: 13ms)
+ GET /api/auth/session 200 in 23ms (next.js: 14ms, application-code: 9ms)
+ GET /api/auth/session 200 in 4ms (next.js: 966µs, application-code: 3ms)
+ GET /applicant 200 in 47ms (next.js: 33ms, application-code: 14ms)
+ GET /applicant/dashboard 200 in 306ms (next.js: 296ms, application-code: 9ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 163ms (next.js: 64ms, application-code: 99ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 59ms (next.js: 868µs, application-code: 58ms)
+ GET /home 200 in 11ms (next.js: 1862µs, application-code: 9ms)
+ GET /api/auth/session 200 in 4ms (next.js: 1015µs, application-code: 3ms)
+ GET /api/auth/session 200 in 4ms (next.js: 851µs, application-code: 3ms)
+ GET /applicant 200 in 9ms (next.js: 1271µs, application-code: 8ms)
+ GET /applicant/dashboard 200 in 10ms (next.js: 1362µs, application-code: 8ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 57ms (next.js: 935µs, application-code: 56ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 53ms (next.js: 787µs, application-code: 52ms)
+ GET /home 200 in 10ms (next.js: 1719µs, application-code: 8ms)
+ GET /api/auth/session 200 in 4ms (next.js: 957µs, application-code: 3ms)
+ GET /api/auth/session 200 in 4ms (next.js: 989µs, application-code: 3ms)
+ GET /applicant 200 in 9ms (next.js: 1342µs, application-code: 8ms)
+ GET /applicant/dashboard 200 in 12ms (next.js: 2ms, application-code: 10ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 53ms (next.js: 934µs, application-code: 52ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 74ms (next.js: 957µs, application-code: 73ms)
+ GET /home 200 in 11ms (next.js: 1528µs, application-code: 9ms)
+ GET /api/auth/session 200 in 4ms (next.js: 884µs, application-code: 3ms)
+ GET /api/auth/session 200 in 4ms (next.js: 810µs, application-code: 3ms)
+ GET /applicant 200 in 11ms (next.js: 2ms, application-code: 9ms)
+ GET /applicant/dashboard 200 in 11ms (next.js: 2ms, application-code: 8ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 51ms (next.js: 964µs, application-code: 50ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 59ms (next.js: 1281µs, application-code: 57ms)
+ GET /applicant 200 in 11ms (next.js: 1532µs, application-code: 9ms)
+ GET /applicant/dashboard 200 in 12ms (next.js: 2ms, application-code: 9ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 54ms (next.js: 912µs, application-code: 53ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 74ms (next.js: 1026µs, application-code: 73ms)
+ GET /home 200 in 11ms (next.js: 2ms, application-code: 9ms)
+ GET /api/auth/session 200 in 4ms (next.js: 905µs, application-code: 3ms)
+ GET /api/auth/session 200 in 4ms (next.js: 849µs, application-code: 3ms)
+✓ Compiled in 21ms
+ GET /home 200 in 79ms (next.js: 31ms, application-code: 48ms)
+ GET /api/auth/session 200 in 10ms (next.js: 1005µs, application-code: 9ms)
+ GET /applicant/dashboard 200 in 12ms (next.js: 1553µs, application-code: 10ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 58ms (next.js: 1065µs, application-code: 57ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 58ms (next.js: 979µs, application-code: 57ms)
+ GET /applicant 200 in 12ms (next.js: 2ms, application-code: 10ms)
+ GET /applicant/dashboard 200 in 11ms (next.js: 1805µs, application-code: 9ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 58ms (next.js: 1028µs, application-code: 57ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 51ms (next.js: 1072µs, application-code: 50ms)
+ GET /applicant 200 in 9ms (next.js: 1774µs, application-code: 7ms)
+ GET /applicant/dashboard 200 in 11ms (next.js: 2ms, application-code: 9ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 52ms (next.js: 900µs, application-code: 51ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 62ms (next.js: 984µs, application-code: 61ms)
+ GET /applicant/dashboard 200 in 33ms (next.js: 3ms, application-code: 30ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 80ms (next.js: 1810µs, application-code: 78ms)
+ GET /applicant 200 in 14ms (next.js: 1781µs, application-code: 12ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.create()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__03w.1ge._.js:840:168
+
+  837         grade_numeric: m.grade_numeric !== undefined && m.grade_numeric !== null ? String(m.grade_numeric) : null,
+  838         credits: m.credits !== undefined && m.credits !== null ? parseInt(String(m.credits)) : null
+  839     })) : undefined;
+→ 840 const applicant = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.create({
+        data: {
+          full_name: "张三",
+          nationality: "中国",
+          email: "student@engimatch.com",
+          user_id: "cmo82ve0l0003vsv5f1k00zvz",
+          ~~~~~~~
+          undergrad_university: "同济大学",
+          undergrad_major: "机械工程",
+          undergrad_major_canonical: "mechanical_engineering",
+          gpa_numeric: 3.5,
+          gpa_scale: 4,
+          grading_scheme: "4.0",
+          graduation_year: 2025,
+          ielts_overall: 6.5,
+          ielts_listening: null,
+          ielts_reading: null,
+          ielts_writing: null,
+          ielts_speaking: null,
+          toefl_total: null,
+          toefl_reading: null,
+          toefl_listening: null,
+          toefl_writing: null,
+          toefl_speaking: null,
+          pte_total: null,
+          duolingo_total: null,
+          target_tracks: [
+            "机械 / Mechanical"
+          ],
+          modules: {
+            create: [
+              {
+                module_name_raw: "工程力学",
+                canonical_module_name: "工程力学",
+                grade_text: "A",
+                grade_numeric: null,
+                credits: 4
+              },
+              {
+                module_name_raw: "热力学与传热学",
+                canonical_module_name: "热力学与传热学",
+                grade_text: "B+",
+                grade_numeric: null,
+                credits: 3
+              },
+              {
+                module_name_raw: "电路原理",
+                canonical_module_name: "电路原理",
+                grade_text: "85",
+                grade_numeric: "85",
+                credits: 3
+              },
+              {
+                module_name_raw: "机械设计基础",
+                canonical_module_name: "机械设计基础",
+                grade_text: "A-",
+                grade_numeric: null,
+                credits: 4
+              },
+              {
+                module_name_raw: "材料力学",
+                canonical_module_name: "solid_mechanics",
+                grade_text: "90",
+                grade_numeric: "90",
+                credits: 3
+              }
+            ]
+          },
+      ?   id?: String,
+      ?   created_at?: DateTime,
+      ?   updated_at?: DateTime,
+      ?   evaluations?: EvaluationCreateNestedManyWithoutApplicantInput
+        },
+        include: {
+          modules: true
+        }
+      })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\route.ts:83:44)
+    at async (src\app\api\applicants\route.ts:83:21)
+    at async (src\lib\api-utils.ts:77:14)
+  81 |     : undefined;
+  82 |
+> 83 |   const applicant = await prisma.applicant.create({
+     |                                            ^
+  84 |     data: {
+  85 |       full_name: fullName,
+  86 |       nationality: typeof body.nationality === "string" ? body.nationality : null, {
+  clientVersion: '7.6.0'
+}
+ POST /api/applicants 500 in 98ms (next.js: 24ms, application-code: 74ms)
+ GET /applicant 200 in 50ms (next.js: 2ms, application-code: 47ms)
+ GET /applicant/dashboard 200 in 14ms (next.js: 3ms, application-code: 11ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 64ms (next.js: 1174µs, application-code: 63ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 74ms (next.js: 1033µs, application-code: 73ms)
+ GET /home 200 in 10ms (next.js: 1799µs, application-code: 8ms)
+ GET /api/auth/session 200 in 4ms (next.js: 910µs, application-code: 3ms)
+ GET /api/auth/session 200 in 5ms (next.js: 844µs, application-code: 4ms)
+ GET /home 200 in 17ms (next.js: 1549µs, application-code: 15ms)
+ GET /api/auth/session 200 in 7ms (next.js: 1847µs, application-code: 5ms)
+ GET /applicant/dashboard 200 in 26ms (next.js: 3ms, application-code: 23ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 69ms (next.js: 2ms, application-code: 67ms)
+[API Error] Error [PrismaClientValidationError]: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany()` invocation in
+G:\ENT207\ENT207TC_Group22\EngiMatch\.next\dev\server\chunks\[root-of-the-server]__133nqys._.js:516:169
+
+  513 ;
+  514 const GET = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiHandler"])(async (request)=>{
+  515     const user = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$api$2d$utils$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["requireAuth"])(request);
+→ 516     const applicants = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].applicant.findMany({
+            where: {
+              user_id: "cmo82ve0l0003vsv5f1k00zvz",
+              ~~~~~~~
+          ?   AND?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   OR?: ApplicantWhereInput[],
+          ?   NOT?: ApplicantWhereInput | ApplicantWhereInput[],
+          ?   id?: StringFilter | String,
+          ?   full_name?: StringNullableFilter | String | Null,
+          ?   nationality?: StringNullableFilter | String | Null,
+          ?   email?: StringFilter | String,
+          ?   undergrad_university?: StringNullableFilter | String | Null,
+          ?   undergrad_major?: StringNullableFilter | String | Null,
+          ?   undergrad_major_canonical?: StringNullableFilter | String | Null,
+          ?   gpa_numeric?: DecimalNullableFilter | Decimal | Null,
+          ?   gpa_scale?: DecimalFilter | Decimal,
+          ?   grading_scheme?: StringNullableFilter | String | Null,
+          ?   graduation_year?: IntNullableFilter | Int | Null,
+          ?   ielts_overall?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_listening?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_reading?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_writing?: DecimalNullableFilter | Decimal | Null,
+          ?   ielts_speaking?: DecimalNullableFilter | Decimal | Null,
+          ?   toefl_total?: IntNullableFilter | Int | Null,
+          ?   toefl_reading?: IntNullableFilter | Int | Null,
+          ?   toefl_listening?: IntNullableFilter | Int | Null,
+          ?   toefl_writing?: IntNullableFilter | Int | Null,
+          ?   toefl_speaking?: IntNullableFilter | Int | Null,
+          ?   pte_total?: IntNullableFilter | Int | Null,
+          ?   duolingo_total?: IntNullableFilter | Int | Null,
+          ?   target_tracks?: StringNullableListFilter,
+          ?   created_at?: DateTimeFilter | DateTime,
+          ?   updated_at?: DateTimeFilter | DateTime,
+          ?   modules?: ApplicantModuleListRelationFilter,
+          ?   evaluations?: EvaluationListRelationFilter
+            },
+            include: {
+              modules: true,
+              _count: {
+                select: {
+                  evaluations: true
+                }
+              }
+            },
+            orderBy: {
+              created_at: "desc"
+            }
+          })
+
+Unknown argument `user_id`. Available options are marked with ?.
+    at <unknown> (src\app\api\applicants\my\route.ts:9:45)
+    at async (src\app\api\applicants\my\route.ts:9:22)
+    at async (src\lib\api-utils.ts:77:14)
+   7 |   const user = await requireAuth(request);
+   8 |
+>  9 |   const applicants = await prisma.applicant.findMany({
+     |                                             ^
+  10 |     where: { user_id: user.id },
+  11 |     include: {
+  12 |       modules: true, {
+  clientVersion: '7.6.0'
+}
+ GET /api/applicants/my 500 in 57ms (next.js: 813µs, application-code: 56ms)
+ GET /home 200 in 14ms (next.js: 3ms, application-code: 12ms)
+ GET /api/auth/session 200 in 5ms (next.js: 1020µs, application-code: 4ms)
+ GET /api/auth/session 200 in 4ms (next.js: 815µs, application-code: 3ms)

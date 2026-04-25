@@ -106,6 +106,7 @@ const dict: Record<string, string> = {
   "home.register": "Register",
   "home.logout": "Logout",
   "home.go_dashboard": "Go to Dashboard",
+  "home.profile": "Profile",
 
   // AI Resume
   "ai.title": "AI Resume Optimizer",
@@ -349,6 +350,25 @@ const dict: Record<string, string> = {
   "timeline.intensity_busy": "Busy",
   "timeline.intensity_current": "Current",
   "timeline.disclaimer": "Based on UKVI requirements and UCAS guidelines for September 2026 intake. Dates are approximate — always check your university's official deadlines.",
+
+  // Profile
+  "profile.title": "Personal Profile",
+  "profile.basic_info": "Basic Information",
+  "profile.role": "Role",
+  "profile.status": "Status",
+  "profile.registered": "Registered",
+  "profile.last_login": "Last Login",
+  "profile.save_changes": "Save Changes",
+  "profile.saving": "Saving...",
+  "profile.change_password": "Change Password",
+  "profile.current_password": "Current Password",
+  "profile.new_password": "New Password",
+  "profile.confirm_password": "Confirm New Password",
+  "profile.collapse": "Collapse",
+  "profile.change": "Change",
+  "profile.confirm_change": "Confirm Change Password",
+  "profile.changing": "Changing...",
+  "profile.email_readonly": "Email cannot be changed",
 
   // Common
   "common.submit": "Submit",

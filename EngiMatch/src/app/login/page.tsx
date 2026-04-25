@@ -38,7 +38,7 @@ export default function LoginPage() {
       } else if (data.user.role === "STAFF") {
         router.push("/staff");
       } else {
-        router.push("/applicant");
+        router.push("/applicant/dashboard");
       }
 
     } catch (err) {

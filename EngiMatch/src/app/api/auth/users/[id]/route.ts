@@ -30,15 +30,6 @@ export const GET = apiHandler(
         created_at: true,
         last_login_at: true,
         applicant_id: true,
-        applicant: {
-          select: {
-            id: true,
-            full_name: true,
-            undergrad_university: true,
-            undergrad_major: true,
-            gpa_numeric: true,
-          },
-        },
       },
     });
 

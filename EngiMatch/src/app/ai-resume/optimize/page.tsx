@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
@@ -27,7 +27,7 @@ const SECTION_ICONS: Record<string, string> = {
   competition: "🏆", skill: "🛠️", award: "🎖️", summary: "📝", other: "📄",
 };
 
-export default function AIRResumeOptimizePage() {
+function AIRResumeOptimizePageContent() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -172,23 +172,23 @@ export default function AIRResumeOptimizePage() {
     const finalSections = sections.map(s => {
       // 优先级：customEdits > aiOptimizations > selectedVariant > 原内容
       let content = s.content;
-      let optimized = false;
+      let isOptimized = false;
 
       if (customEdits[s.id]) {
         content = customEdits[s.id];
-        optimized = true;
+        isOptimized = true;
       } else if (aiOptimizations[s.id]) {
         content = aiOptimizations[s.id];
-        optimized = true;
+        isOptimized = true;
       } else if (selectedVariant[s.id]) {
         content = optimized[s.id]?.variants.find(v => v.id === selectedVariant[s.id])?.text ?? s.content;
-        optimized = true;
+        isOptimized = true;
       }
 
       return {
         ...s,
         content,
-        optimized,
+        optimized: isOptimized,
       };
     });
     sessionStorage.setItem("ai_resume_final", JSON.stringify(finalSections));
@@ -463,5 +463,13 @@ export default function AIRResumeOptimizePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AIRResumeOptimizePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
+      <AIRResumeOptimizePageContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
 
@@ -20,279 +20,448 @@ interface Stats {
   byRole: Record<string, number>;
 }
 
-const STATUS_CONFIG: Record<string, { label: string; labelEn: string; color: string }> = {
-  PENDING: { label: "待审批", labelEn: "Pending", color: "bg-amber-100 text-amber-700" },
-  APPROVED: { label: "已批准", labelEn: "Approved", color: "bg-green-100 text-green-700" },
-  REJECTED: { label: "已拒绝", labelEn: "Rejected", color: "bg-red-100 text-red-700" },
-  SUSPENDED: { label: "已停用", labelEn: "Suspended", color: "bg-slate-100 text-slate-700" },
+const STATUS_CONFIG: Record<
+  User["status"],
+  { label: string; labelEn: string; color: string }
+> = {
+  PENDING: {
+    label: "待审批",
+    labelEn: "Pending",
+    color: "bg-amber-100 text-amber-700",
+  },
+  APPROVED: {
+    label: "已批准",
+    labelEn: "Approved",
+    color: "bg-green-100 text-green-700",
+  },
+  REJECTED: {
+    label: "已拒绝",
+    labelEn: "Rejected",
+    color: "bg-red-100 text-red-700",
+  },
+  SUSPENDED: {
+    label: "已停用",
+    labelEn: "Suspended",
+    color: "bg-slate-100 text-slate-700",
+  },
 };
 
-const ROLE_CONFIG: Record<string, { label: string; labelEn: string; icon: string }> = {
+const ROLE_CONFIG: Record<
+  User["role"],
+  { label: string; labelEn: string; icon: string }
+> = {
   STUDENT: { label: "学生", labelEn: "Student", icon: "🎓" },
-  STAFF: { label: "工作人员", labelEn: "Staff", icon: "👨‍💼" },
-  SUPER_ADMIN: { label: "超级管理员", labelEn: "Super Admin", icon: "🔐" },
+  STAFF: { label: "工作人员", labelEn: "Staff", icon: "🧑‍🏫" },
+  SUPER_ADMIN: { label: "超级管理员", labelEn: "Super Admin", icon: "🛡" },
 };
 
 export default function AdminUsersPage() {
-  const { t, locale } = useLocale();
+  const { locale } = useLocale();
+  const isEnglish = locale === "en";
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [filter, setFilter] = useState<"all" | "pending">("all");
+  const [filter, setFilter] = useState<"all" | "pending" | "student" | "staff">(
+    "all"
+  );
+  const [searchInput, setSearchInput] = useState("");
+  const deferredSearchInput = useDeferredValue(searchInput);
   const [search, setSearch] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [tempPassword, setTempPassword] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    fetchUsers();
-  }, [filter]);
+    const timer = window.setTimeout(() => {
+      setSearch(deferredSearchInput.trim());
+    }, 250);
 
-  const fetchUsers = async () => {
+    return () => window.clearTimeout(timer);
+  }, [deferredSearchInput]);
+
+  useEffect(() => {
+    fetchUsers({
+      searchTerm: search,
+      includeStats: stats === null,
+    });
+
+    return () => {
+      abortRef.current?.abort();
+    };
+  }, [filter, search]);
+
+  async function fetchUsers({
+    searchTerm = search,
+    includeStats = false,
+  }: {
+    searchTerm?: string;
+    includeStats?: boolean;
+  } = {}) {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
+
     try {
       const params = new URLSearchParams();
+
       if (filter === "pending") {
         params.set("status", "PENDING");
+      } else if (filter === "student") {
+        params.set("role", "STUDENT");
+      } else if (filter === "staff") {
+        params.set("role", "STAFF");
       }
-      if (search) {
-        params.set("search", search);
+
+      if (searchTerm) {
+        params.set("search", searchTerm);
       }
-      
-      const res = await fetch(`/api/auth/users?${params}`);
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || "获取用户列表失败");
+
+      if (!includeStats) {
+        params.set("includeStats", "false");
       }
-      
-      setUsers(data.users);
-      setStats(data.stats);
+
+      const response = await fetch(`/api/auth/users?${params.toString()}`, {
+        signal: controller.signal,
+      });
+      const payload = await response.json();
+
+      if (!response.ok || payload?.success === false) {
+        throw new Error(
+          payload?.error ||
+            (isEnglish ? "Failed to load users." : "加载用户列表失败。")
+        );
+      }
+
+      setUsers(payload?.data?.users ?? []);
+      if (payload?.data?.stats) {
+        setStats(payload.data.stats);
+      }
       setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "加载失败");
+    } catch (loadError) {
+      if (loadError instanceof Error && loadError.name === "AbortError") {
+        return;
+      }
+
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : isEnglish
+            ? "Failed to load users."
+            : "加载用户列表失败。"
+      );
     } finally {
-      setLoading(false);
+      if (abortRef.current === controller) {
+        setLoading(false);
+      }
     }
-  };
+  }
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchUsers();
-  };
+  function handleSearch(event: React.FormEvent) {
+    event.preventDefault();
+    setSearch(searchInput.trim());
+  }
 
-  const handleAction = async (userId: string, action: string) => {
+  async function handleAction(userId: string, action: string) {
     setActionLoading(userId);
     setTempPassword(null);
-    
+
     try {
-      const res = await fetch(`/api/auth/users/${userId}`, {
+      const response = await fetch(`/api/auth/users/${userId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action }),
       });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || "操作失败");
+      const payload = await response.json();
+
+      if (!response.ok || payload?.success === false) {
+        throw new Error(
+          payload?.error || (isEnglish ? "Action failed." : "操作失败。")
+        );
       }
 
-      // If password reset, show temp password
-      if (action === "reset_password" && data.tempPassword) {
-        setTempPassword(data.tempPassword);
+      if (action === "reset_password" && payload?.data?.tempPassword) {
+        setTempPassword(payload.data.tempPassword);
       }
-      
-      // Refresh list
-      fetchUsers();
-      
-      // Close modal if not password reset
+
+      await fetchUsers({ searchTerm: search, includeStats: true });
+
       if (action !== "reset_password") {
         setSelectedUser(null);
       }
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "操作失败");
+    } catch (actionError) {
+      alert(
+        actionError instanceof Error
+          ? actionError.message
+          : isEnglish
+            ? "Action failed."
+            : "操作失败。"
+      );
     } finally {
       setActionLoading(null);
     }
-  };
+  }
 
-  const handleLogout = async () => {
+  async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
     window.location.href = "/login";
-  };
+  }
 
   const pendingCount = stats?.byStatus?.PENDING || 0;
+  const totalCount = (Object.values(stats?.byStatus || {}) as number[]).reduce(
+    (sum, value) => sum + value,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-slate-800 text-white py-6 px-4">
-        <div className="max-w-6xl mx-auto">
+      <div className="bg-slate-800 px-4 py-6 text-white">
+        <div className="mx-auto max-w-6xl">
           <div className="flex items-center justify-between">
             <div>
-              <Link href="/home" className="text-sm text-slate-400 hover:text-white mb-2 inline-block">← {locale === "en" ? "Back to Home" : "返回首页"}</Link>
+              <Link
+                href="/home"
+                className="mb-2 inline-block text-sm text-slate-400 hover:text-white"
+              >
+                ← {isEnglish ? "Back to Home" : "返回首页"}
+              </Link>
               <h1 className="text-2xl font-bold">
-                {locale === "en" ? "User Management" : "用户管理"}
+                {isEnglish ? "User Management" : "用户管理"}
               </h1>
-              <p className="text-slate-400 text-sm mt-1">
-                {locale === "en" ? "Manage students and staff accounts" : "管理学生和工作人员账号"}
+              <p className="mt-1 text-sm text-slate-400">
+                {isEnglish
+                  ? "Manage student and staff accounts"
+                  : "管理学生和工作人员账号"}
               </p>
             </div>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors"
-            >
-              {locale === "en" ? "Logout" : "退出登录"}
-            </button>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/profile"
+                className="rounded-lg bg-slate-700 px-4 py-2 text-sm transition-colors hover:bg-slate-600"
+              >
+                {isEnglish ? "Profile" : "个人信息"}
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="rounded-lg bg-slate-600 px-4 py-2 text-sm transition-colors hover:bg-slate-500"
+              >
+                {isEnglish ? "Logout" : "退出登录"}
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-slate-200 p-4">
-            <div className="text-2xl font-bold text-slate-700">{stats?.byRole?.STUDENT || 0}</div>
-            <div className="text-sm text-slate-500">{locale === "en" ? "Students" : "学生"}</div>
-          </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4">
-            <div className="text-2xl font-bold text-slate-700">{stats?.byRole?.STAFF || 0}</div>
-            <div className="text-sm text-slate-500">{locale === "en" ? "Staff" : "工作人员"}</div>
-          </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4">
-            <div className="text-2xl font-bold text-amber-600">{pendingCount}</div>
-            <div className="text-sm text-slate-500">{locale === "en" ? "Pending Approval" : "待审批"}</div>
-          </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-4">
-            <div className="text-2xl font-bold text-slate-700">
-              {(Object.values(stats?.byStatus || {}) as number[]).reduce((a, b) => a + b, 0)}
-            </div>
-            <div className="text-sm text-slate-500">{locale === "en" ? "Total Users" : "总用户数"}</div>
-          </div>
+      <div className="mx-auto max-w-6xl px-4 py-6">
+        <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <StatCard
+            label={isEnglish ? "Students" : "学生"}
+            value={stats?.byRole?.STUDENT || 0}
+          />
+          <StatCard
+            label={isEnglish ? "Staff" : "工作人员"}
+            value={stats?.byRole?.STAFF || 0}
+          />
+          <StatCard
+            label={isEnglish ? "Pending Approval" : "待审批"}
+            value={pendingCount}
+            valueClassName="text-amber-600"
+          />
+          <StatCard
+            label={isEnglish ? "Total Users" : "总用户数"}
+            value={totalCount}
+          />
         </div>
 
-        {/* Search and Filter */}
-        <div className="bg-white rounded-xl border border-slate-200 p-4 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <form onSubmit={handleSearch} className="flex-1 flex gap-2">
+        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <form onSubmit={handleSearch} className="flex flex-1 gap-2">
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={locale === "en" ? "Search by email or name..." : "搜索邮箱或姓名..."}
-                className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder={
+                  isEnglish ? "Search by email or name..." : "搜索邮箱或姓名..."
+                }
+                className="flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchInput("");
+                    setSearch("");
+                  }}
+                  className="rounded-lg border border-slate-300 px-3 py-2 text-slate-600 transition-colors hover:bg-slate-50"
+                >
+                  {isEnglish ? "Clear" : "清空"}
+                </button>
+              )}
               <button
                 type="submit"
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
               >
-                {locale === "en" ? "Search" : "搜索"}
+                {isEnglish ? "Search" : "搜索"}
               </button>
             </form>
-            <div className="flex gap-2">
-              <button
-                onClick={() => { setFilter("all"); fetchUsers(); }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === "all" 
-                    ? "bg-indigo-600 text-white" 
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+
+            <div className="flex flex-wrap gap-2">
+              <FilterButton
+                active={filter === "all"}
+                onClick={() => setFilter("all")}
+                activeClassName="bg-indigo-600 text-white"
+                idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
               >
-                {locale === "en" ? "All Users" : "全部用户"}
-              </button>
-              <button
-                onClick={() => { setFilter("pending"); fetchUsers(); }}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
-                  filter === "pending" 
-                    ? "bg-amber-500 text-white" 
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                }`}
+                {isEnglish ? "All Users" : "全部用户"}
+              </FilterButton>
+              <FilterButton
+                active={filter === "student"}
+                onClick={() => setFilter("student")}
+                activeClassName="bg-blue-600 text-white"
+                idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
               >
-                {locale === "en" ? "Pending" : "待审批"}
+                🎓 {isEnglish ? "Students" : "学生审批"}
+              </FilterButton>
+              <FilterButton
+                active={filter === "staff"}
+                onClick={() => setFilter("staff")}
+                activeClassName="bg-purple-600 text-white"
+                idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
+              >
+                🧑‍🏫 {isEnglish ? "Staff" : "老师审批"}
+              </FilterButton>
+              <FilterButton
+                active={filter === "pending"}
+                onClick={() => setFilter("pending")}
+                activeClassName="bg-amber-500 text-white"
+                idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
+              >
+                {isEnglish ? "Pending" : "待审批"}
                 {pendingCount > 0 && (
-                  <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                    filter === "pending" ? "bg-amber-400" : "bg-amber-500 text-white"
-                  }`}>
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-xs ${
+                      filter === "pending"
+                        ? "bg-amber-400"
+                        : "bg-amber-500 text-white"
+                    }`}
+                  >
                     {pendingCount}
                   </span>
                 )}
-              </button>
+              </FilterButton>
             </div>
+          </div>
+
+          <div className="mt-3 text-xs text-slate-500">
+            {search
+              ? isEnglish
+                ? `Showing approval results for "${search}".`
+                : `正在显示“${search}”的审批结果。`
+              : isEnglish
+                ? "Search updates automatically while you type."
+                : "输入时会自动搜索，无需反复点击按钮。"}
           </div>
         </div>
 
-        {/* Users List */}
         {loading ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400">
-            {locale === "en" ? "Loading..." : "加载中..."}
+          <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-400">
+            {isEnglish ? "Loading..." : "加载中..."}
           </div>
         ) : error ? (
-          <div className="bg-white rounded-xl border border-red-200 p-8 text-center text-red-600">
+          <div className="rounded-xl border border-red-200 bg-white p-8 text-center text-red-600">
             {error}
-            <button onClick={fetchUsers} className="ml-4 underline hover:no-underline">
-              {locale === "en" ? "Retry" : "重试"}
+            <button
+              onClick={() =>
+                fetchUsers({ searchTerm: search, includeStats: stats === null })
+              }
+              className="ml-4 underline hover:no-underline"
+            >
+              {isEnglish ? "Retry" : "重试"}
             </button>
           </div>
         ) : users.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-400">
-            {filter === "pending" 
-              ? (locale === "en" ? "No pending approvals" : "没有待审批的用户")
-              : (locale === "en" ? "No users found" : "没有找到用户")}
+          <div className="rounded-xl border border-slate-200 bg-white p-8 text-center text-slate-400">
+            {filter === "pending"
+              ? isEnglish
+                ? "No pending approvals"
+                : "没有待审批的用户"
+              : filter === "student"
+                ? isEnglish
+                  ? "No students found"
+                  : "没有找到学生"
+                : filter === "staff"
+                  ? isEnglish
+                    ? "No staff found"
+                    : "没有找到老师"
+                  : isEnglish
+                    ? "No users found"
+                    : "没有找到用户"}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
             <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
+              <thead className="border-b border-slate-200 bg-slate-50">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">
-                    {locale === "en" ? "User" : "用户"}
+                  <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                    {isEnglish ? "User" : "用户"}
                   </th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">
-                    {locale === "en" ? "Role" : "角色"}
+                  <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                    {isEnglish ? "Role" : "角色"}
                   </th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">
-                    {locale === "en" ? "Status" : "状态"}
+                  <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                    {isEnglish ? "Status" : "状态"}
                   </th>
-                  <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">
-                    {locale === "en" ? "Registered" : "注册时间"}
+                  <th className="px-4 py-3 text-left text-sm font-medium text-slate-600">
+                    {isEnglish ? "Registered" : "注册时间"}
                   </th>
-                  <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">
-                    {locale === "en" ? "Actions" : "操作"}
+                  <th className="px-4 py-3 text-right text-sm font-medium text-slate-600">
+                    {isEnglish ? "Actions" : "操作"}
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {users.map((user) => {
-                  const statusCfg = STATUS_CONFIG[user.status];
-                  const roleCfg = ROLE_CONFIG[user.role];
+                  const statusConfig = STATUS_CONFIG[user.status];
+                  const roleConfig = ROLE_CONFIG[user.role];
+
                   return (
-                    <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                    <tr key={user.id} className="transition-colors hover:bg-slate-50">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-slate-900">{user.name || "—"}</div>
+                        <div className="font-medium text-slate-900">
+                          {user.name || (isEnglish ? "Unnamed user" : "未填写姓名")}
+                        </div>
                         <div className="text-sm text-slate-500">{user.email}</div>
                       </td>
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center gap-1 text-sm">
-                          <span>{roleCfg.icon}</span>
-                          <span>{locale === "en" ? roleCfg.labelEn : roleCfg.label}</span>
+                          <span>{roleConfig.icon}</span>
+                          <span>
+                            {isEnglish ? roleConfig.labelEn : roleConfig.label}
+                          </span>
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${statusCfg.color}`}>
-                          {locale === "en" ? statusCfg.labelEn : statusCfg.label}
+                        <span
+                          className={`inline-block rounded-full px-2 py-1 text-xs font-medium ${statusConfig.color}`}
+                        >
+                          {isEnglish ? statusConfig.labelEn : statusConfig.label}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-500">
-                        {new Date(user.created_at).toLocaleDateString(locale === "en" ? "en-US" : "zh-CN")}
+                        {new Date(user.created_at).toLocaleDateString(
+                          isEnglish ? "en-US" : "zh-CN"
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() => setSelectedUser(user)}
-                          className="px-3 py-1.5 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                          className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm transition-colors hover:bg-slate-200"
                         >
-                          {locale === "en" ? "Manage" : "管理"}
+                          {isEnglish ? "Manage" : "管理"}
                         </button>
                       </td>
                     </tr>
@@ -304,129 +473,217 @@ export default function AdminUsersPage() {
         )}
       </div>
 
-      {/* User Detail Modal */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-            <div className="flex items-center justify-between mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-900">
-                {locale === "en" ? "User Details" : "用户详情"}
+                {isEnglish ? "User Details" : "用户详情"}
               </h2>
-              <button onClick={() => { setSelectedUser(null); setTempPassword(null); }} className="text-slate-400 hover:text-slate-600">
-                ✕
+              <button
+                onClick={() => {
+                  setSelectedUser(null);
+                  setTempPassword(null);
+                }}
+                className="text-slate-400 hover:text-slate-600"
+              >
+                ×
               </button>
             </div>
 
-            <div className="space-y-3 mb-6">
-              <div className="flex justify-between">
-                <span className="text-slate-500">{locale === "en" ? "Email" : "邮箱"}</span>
-                <span className="font-medium">{selectedUser.email}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">{locale === "en" ? "Name" : "姓名"}</span>
-                <span className="font-medium">{selectedUser.name || "—"}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">{locale === "en" ? "Role" : "角色"}</span>
-                <span className="font-medium">
-                  {ROLE_CONFIG[selectedUser.role]?.icon} {locale === "en" ? ROLE_CONFIG[selectedUser.role]?.labelEn : ROLE_CONFIG[selectedUser.role]?.label}
+            <div className="mb-6 space-y-3">
+              <DetailRow
+                label={isEnglish ? "Email" : "邮箱"}
+                value={selectedUser.email}
+              />
+              <DetailRow
+                label={isEnglish ? "Name" : "姓名"}
+                value={selectedUser.name || (isEnglish ? "Not provided" : "未填写")}
+              />
+              <DetailRow
+                label={isEnglish ? "Role" : "角色"}
+                value={`${ROLE_CONFIG[selectedUser.role].icon} ${
+                  isEnglish
+                    ? ROLE_CONFIG[selectedUser.role].labelEn
+                    : ROLE_CONFIG[selectedUser.role].label
+                }`}
+              />
+              <div className="flex justify-between gap-4">
+                <span className="text-slate-500">
+                  {isEnglish ? "Status" : "状态"}
+                </span>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CONFIG[selectedUser.status].color}`}
+                >
+                  {isEnglish
+                    ? STATUS_CONFIG[selectedUser.status].labelEn
+                    : STATUS_CONFIG[selectedUser.status].label}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">{locale === "en" ? "Status" : "状态"}</span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_CONFIG[selectedUser.status].color}`}>
-                  {locale === "en" ? STATUS_CONFIG[selectedUser.status].labelEn : STATUS_CONFIG[selectedUser.status].label}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-500">{locale === "en" ? "Registered" : "注册时间"}</span>
-                <span className="text-sm">{new Date(selectedUser.created_at).toLocaleString(locale === "en" ? "en-US" : "zh-CN")}</span>
-              </div>
+              <DetailRow
+                label={isEnglish ? "Registered" : "注册时间"}
+                value={new Date(selectedUser.created_at).toLocaleString(
+                  isEnglish ? "en-US" : "zh-CN"
+                )}
+              />
               {selectedUser.last_login_at && (
-                <div className="flex justify-between">
-                  <span className="text-slate-500">{locale === "en" ? "Last Login" : "最后登录"}</span>
-                  <span className="text-sm">{new Date(selectedUser.last_login_at).toLocaleString(locale === "en" ? "en-US" : "zh-CN")}</span>
-                </div>
+                <DetailRow
+                  label={isEnglish ? "Last Login" : "最后登录"}
+                  value={new Date(selectedUser.last_login_at).toLocaleString(
+                    isEnglish ? "en-US" : "zh-CN"
+                  )}
+                />
               )}
             </div>
 
-            {/* Temp Password Display */}
             {tempPassword && (
-              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl">
-                <div className="text-sm text-green-700 font-medium mb-1">
-                  {locale === "en" ? "New Password Generated" : "新密码已生成"}
+              <div className="mb-4 rounded-xl border border-green-200 bg-green-50 p-3">
+                <div className="mb-1 text-sm font-medium text-green-700">
+                  {isEnglish ? "New Password Generated" : "已生成新密码"}
                 </div>
-                <div className="text-2xl font-mono font-bold text-green-800 tracking-wider">
+                <div className="text-2xl font-bold tracking-wider text-green-800">
                   {tempPassword}
                 </div>
-                <div className="text-xs text-green-600 mt-2">
-                  {locale === "en" 
-                    ? "Please share this password with the user securely." 
-                    : "请安全地将此密码分享给用户。"}
+                <div className="mt-2 text-xs text-green-600">
+                  {isEnglish
+                    ? "Please share this password with the user securely."
+                    : "请通过安全方式将该密码告知用户。"}
                 </div>
               </div>
             )}
 
-            {/* Actions */}
             {selectedUser.role !== "SUPER_ADMIN" && (
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-slate-700 mb-2">
-                  {locale === "en" ? "Actions" : "操作"}
+                <h3 className="mb-2 text-sm font-medium text-slate-700">
+                  {isEnglish ? "Actions" : "操作"}
                 </h3>
-                
+
                 {selectedUser.status === "PENDING" && (
                   <>
                     <button
                       onClick={() => handleAction(selectedUser.id, "approve")}
                       disabled={actionLoading === selectedUser.id}
-                      className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+                      className="w-full rounded-lg bg-green-600 py-2 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
                     >
-                      {actionLoading === selectedUser.id 
-                        ? (locale === "en" ? "Processing..." : "处理中...")
-                        : (locale === "en" ? "✓ Approve" : "✓ 批准")}
+                      {actionLoading === selectedUser.id
+                        ? isEnglish
+                          ? "Processing..."
+                          : "处理中..."
+                        : isEnglish
+                          ? "Approve"
+                          : "批准"}
                     </button>
                     <button
                       onClick={() => handleAction(selectedUser.id, "reject")}
                       disabled={actionLoading === selectedUser.id}
-                      className="w-full py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 disabled:opacity-50 transition-colors"
+                      className="w-full rounded-lg bg-red-100 py-2 text-red-700 transition-colors hover:bg-red-200 disabled:opacity-50"
                     >
-                      {locale === "en" ? "✗ Reject" : "✗ 拒绝"}
+                      {isEnglish ? "Reject" : "拒绝"}
                     </button>
                   </>
                 )}
 
-                {(selectedUser.status === "APPROVED" || selectedUser.status === "SUSPENDED") && (
+                {(selectedUser.status === "APPROVED" ||
+                  selectedUser.status === "SUSPENDED") && (
                   <button
-                    onClick={() => handleAction(selectedUser.id, selectedUser.status === "SUSPENDED" ? "activate" : "suspend")}
+                    onClick={() =>
+                      handleAction(
+                        selectedUser.id,
+                        selectedUser.status === "SUSPENDED" ? "activate" : "suspend"
+                      )
+                    }
                     disabled={actionLoading === selectedUser.id}
-                    className={`w-full py-2 rounded-lg disabled:opacity-50 transition-colors ${
+                    className={`w-full rounded-lg py-2 transition-colors disabled:opacity-50 ${
                       selectedUser.status === "SUSPENDED"
                         ? "bg-green-600 text-white hover:bg-green-700"
                         : "bg-amber-100 text-amber-700 hover:bg-amber-200"
                     }`}
                   >
-                    {actionLoading === selectedUser.id 
-                      ? (locale === "en" ? "Processing..." : "处理中...")
+                    {actionLoading === selectedUser.id
+                      ? isEnglish
+                        ? "Processing..."
+                        : "处理中..."
                       : selectedUser.status === "SUSPENDED"
-                      ? (locale === "en" ? "✓ Activate" : "✓ 激活")
-                      : (locale === "en" ? "⚠ Suspend" : "⚠ 停用")}
+                        ? isEnglish
+                          ? "Activate"
+                          : "启用"
+                        : isEnglish
+                          ? "Suspend"
+                          : "停用"}
                   </button>
                 )}
 
                 <button
                   onClick={() => handleAction(selectedUser.id, "reset_password")}
                   disabled={actionLoading === selectedUser.id}
-                  className="w-full py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50 transition-colors"
+                  className="w-full rounded-lg bg-slate-100 py-2 text-slate-700 transition-colors hover:bg-slate-200 disabled:opacity-50"
                 >
-                  {actionLoading === selectedUser.id 
-                    ? (locale === "en" ? "Processing..." : "处理中...")
-                    : (locale === "en" ? "🔑 Reset Password" : "🔑 重置密码")}
+                  {actionLoading === selectedUser.id
+                    ? isEnglish
+                      ? "Processing..."
+                      : "处理中..."
+                    : isEnglish
+                      ? "Reset Password"
+                      : "重置密码"}
                 </button>
               </div>
             )}
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function StatCard({
+  label,
+  value,
+  valueClassName,
+}: {
+  label: string;
+  value: number;
+  valueClassName?: string;
+}) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <div className={`text-2xl font-bold text-slate-700 ${valueClassName || ""}`}>
+        {value}
+      </div>
+      <div className="text-sm text-slate-500">{label}</div>
+    </div>
+  );
+}
+
+function FilterButton({
+  active,
+  onClick,
+  activeClassName,
+  idleClassName,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  activeClassName: string;
+  idleClassName: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+        active ? activeClassName : idleClassName
+      }`}
+    >
+      <span className="inline-flex items-center gap-1">{children}</span>
+    </button>
+  );
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="text-slate-500">{label}</span>
+      <span className="text-right font-medium">{value}</span>
     </div>
   );
 }

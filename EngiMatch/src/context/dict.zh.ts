@@ -106,6 +106,7 @@ const dict: Record<string, string> = {
   "home.register": "注册",
   "home.logout": "退出登录",
   "home.go_dashboard": "进入后台",
+  "home.profile": "个人信息",
 
   // AI Resume
   "ai.title": "AI 优化简历",
@@ -349,6 +350,25 @@ const dict: Record<string, string> = {
   "timeline.intensity_busy": "繁忙",
   "timeline.intensity_current": "当前月",
   "timeline.disclaimer": "基于 UKVI 要求和 UCAS 指南，2026 年 9 月入学。日期为参考值，请以各院校官方截止日期为准。",
+
+  // Profile
+  "profile.title": "个人信息",
+  "profile.basic_info": "基本信息",
+  "profile.role": "角色",
+  "profile.status": "状态",
+  "profile.registered": "注册时间",
+  "profile.last_login": "最后登录",
+  "profile.save_changes": "保存修改",
+  "profile.saving": "保存中...",
+  "profile.change_password": "修改密码",
+  "profile.current_password": "当前密码",
+  "profile.new_password": "新密码",
+  "profile.confirm_password": "确认新密码",
+  "profile.collapse": "收起",
+  "profile.change": "修改",
+  "profile.confirm_change": "确认修改密码",
+  "profile.changing": "修改中...",
+  "profile.email_readonly": "邮箱不可修改",
 
   // Common
   "common.submit": "提交",

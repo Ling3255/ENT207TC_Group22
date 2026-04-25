@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { Suspense, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
@@ -29,7 +29,7 @@ const MAJOR_LABELS: Record<string, { zh: string; en: string }> = {
   other: { zh: "其他工科方向", en: "Other" },
 };
 
-export default function AIRResumeUploadPage() {
+function AIRResumeUploadPageContent() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -286,5 +286,13 @@ Python, MATLAB, AutoCAD, C++`;
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AIRResumeUploadPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
+      <AIRResumeUploadPageContent />
+    </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
 
@@ -182,14 +182,21 @@ const inputClass = "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm 
 const labelClass = "block text-sm font-medium text-slate-700 mb-1";
 const sectionClass = "bg-white rounded-xl border border-slate-200 p-5 mb-4";
 
-export default function ApplicantPage() {
+function ApplicantForm() {
   const { t, locale } = useLocale();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("editId");
+  const isEditMode = !!editId;
+  const [checkingExistingProfile, setCheckingExistingProfile] = useState(!isEditMode);
+
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [modules, setModules] = useState<Module[]>([]);
   const [newModule, setNewModule] = useState<Module>({ module_name_raw: "", grade_text: "", credits: "" });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [loadingEdit, setLoadingEdit] = useState(isEditMode);
+  const [hasDraft, setHasDraft] = useState(false);
   const [form, setForm] = useState<FormData>({
     full_name: "", email: "", nationality: locale === "en" ? "" : "中国",
     undergrad_university: "", undergrad_major: "",
@@ -199,6 +206,122 @@ export default function ApplicantPage() {
     toefl_total: "",
     target_tracks: [],
   });
+
+  useEffect(() => {
+    if (isEditMode) {
+      setCheckingExistingProfile(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    fetch("/api/auth/session")
+      .then((response) => response.json())
+      .then((payload) => {
+        if (cancelled) return;
+        const applicantId = payload?.data?.user?.applicant_id;
+        if (payload?.data?.authenticated && applicantId) {
+          router.replace(`/applicant?editId=${applicantId}`);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) {
+          setCheckingExistingProfile(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isEditMode, router]);
+
+  // ─── Auto-save draft to localStorage ─────────────────────────────────────────
+  const DRAFT_KEY = "applicant_draft";
+
+  // Load draft on mount (only for new profile, not edit mode)
+  useEffect(() => {
+    if (isEditMode) return;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft.form) setForm((prev) => ({ ...prev, ...draft.form }));
+        if (draft.modules) setModules(draft.modules);
+        if (draft.step) setStep(draft.step);
+        setHasDraft(true);
+      }
+    } catch {
+      // ignore corrupt draft
+    }
+  }, [isEditMode]);
+
+  // Auto-save draft whenever form/modules/step changes
+  useEffect(() => {
+    if (isEditMode) return;
+    const timeout = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({ form, modules, step }));
+      } catch {
+        // ignore storage errors
+      }
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [form, modules, step, isEditMode]);
+
+  const clearDraft = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setHasDraft(false);
+    setStep(1);
+    setModules([]);
+    setForm({
+      full_name: "", email: "", nationality: locale === "en" ? "" : "中国",
+      undergrad_university: "", undergrad_major: "",
+      gpa_numeric: "", gpa_scale: "4.0", grading_scheme: "4.0",
+      graduation_year: new Date().getFullYear().toString(),
+      ielts_overall: "", ielts_listening: "", ielts_reading: "", ielts_writing: "", ielts_speaking: "",
+      toefl_total: "",
+      target_tracks: [],
+    });
+  };
+
+  // Load existing data in edit mode
+  useEffect(() => {
+    if (!editId) return;
+    fetch(`/api/applicants/${editId}`)
+      .then((r) => r.json())
+      .then((res) => {
+        const data = res.data;
+        if (!data) return;
+        setForm({
+          full_name: data.full_name || "",
+          email: data.email || "",
+          nationality: data.nationality || (locale === "en" ? "" : "中国"),
+          undergrad_university: data.undergrad_university || "",
+          undergrad_major: data.undergrad_major || "",
+          gpa_numeric: data.gpa_numeric != null ? String(data.gpa_numeric) : "",
+          gpa_scale: data.gpa_scale != null ? String(data.gpa_scale) : "4.0",
+          grading_scheme: data.grading_scheme || "4.0",
+          graduation_year: data.graduation_year != null ? String(data.graduation_year) : new Date().getFullYear().toString(),
+          ielts_overall: data.ielts_overall != null ? String(data.ielts_overall) : "",
+          ielts_listening: data.ielts_listening != null ? String(data.ielts_listening) : "",
+          ielts_reading: data.ielts_reading != null ? String(data.ielts_reading) : "",
+          ielts_writing: data.ielts_writing != null ? String(data.ielts_writing) : "",
+          ielts_speaking: data.ielts_speaking != null ? String(data.ielts_speaking) : "",
+          toefl_total: data.toefl_total != null ? String(data.toefl_total) : "",
+          target_tracks: Array.isArray(data.target_tracks) ? data.target_tracks : [],
+        });
+        if (data.modules) {
+          setModules(data.modules.map((m: any) => ({
+            module_name_raw: m.module_name_raw || "",
+            grade_text: m.grade_text || "",
+            credits: m.credits != null ? String(m.credits) : "",
+          })));
+        }
+      })
+      .catch(() => setError(locale === "en" ? "Failed to load profile" : "加载档案失败"))
+      .finally(() => setLoadingEdit(false));
+  }, [editId, locale]);
 
   const set = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
@@ -223,45 +346,69 @@ export default function ApplicantPage() {
     setError("");
     setSubmitting(true);
     try {
-      const res = await fetch("/api/applicants", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...form,
-          gpa_numeric: form.gpa_numeric ? parseFloat(form.gpa_numeric) : null,
-          gpa_scale: parseFloat(form.gpa_scale),
-          graduation_year: form.graduation_year ? parseInt(form.graduation_year) : null,
-          ielts_overall: form.ielts_overall ? parseFloat(form.ielts_overall) : null,
-          ielts_listening: form.ielts_listening ? parseFloat(form.ielts_listening) : null,
-          ielts_reading: form.ielts_reading ? parseFloat(form.ielts_reading) : null,
-          ielts_writing: form.ielts_writing ? parseFloat(form.ielts_writing) : null,
-          ielts_speaking: form.ielts_speaking ? parseFloat(form.ielts_speaking) : null,
-          toefl_total: form.toefl_total ? parseInt(form.toefl_total) : null,
-          target_tracks: form.target_tracks,
-          modules: modules.map((m) => ({
-            module_name_raw: m.module_name_raw,
-            grade_text: m.grade_text || null,
-            grade_numeric: m.grade_text ? parseFloat(m.grade_text.replace(/[^0-9.]/g, "")) || null : null,
-            credits: m.credits ? parseInt(m.credits) : null,
-          })),
-        }),
-      });
+      const payload = {
+        ...form,
+        gpa_numeric: form.gpa_numeric ? parseFloat(form.gpa_numeric) : null,
+        gpa_scale: parseFloat(form.gpa_scale),
+        graduation_year: form.graduation_year ? parseInt(form.graduation_year) : null,
+        ielts_overall: form.ielts_overall ? parseFloat(form.ielts_overall) : null,
+        ielts_listening: form.ielts_listening ? parseFloat(form.ielts_listening) : null,
+        ielts_reading: form.ielts_reading ? parseFloat(form.ielts_reading) : null,
+        ielts_writing: form.ielts_writing ? parseFloat(form.ielts_writing) : null,
+        ielts_speaking: form.ielts_speaking ? parseFloat(form.ielts_speaking) : null,
+        toefl_total: form.toefl_total ? parseInt(form.toefl_total) : null,
+        target_tracks: form.target_tracks,
+        modules: modules.map((m) => ({
+          module_name_raw: m.module_name_raw,
+          grade_text: m.grade_text || null,
+          grade_numeric: m.grade_text ? parseFloat(m.grade_text.replace(/[^0-9.]/g, "")) || null : null,
+          credits: m.credits ? parseInt(m.credits) : null,
+        })),
+      };
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "创建失败");
+      let applicantId: string;
+
+      if (isEditMode) {
+        const res = await fetch(`/api/applicants/${editId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "更新失败");
+        }
+        applicantId = editId;
+      } else {
+        const res = await fetch("/api/applicants", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "创建失败");
+        }
+        const response = await res.json();
+        applicantId = response.data?.id || response.id;
+        if (!applicantId) {
+          throw new Error("创建失败：未获取到申请者ID");
+        }
       }
 
-      const applicant = await res.json();
-
       // Evaluate all programmes
-      await fetch("/api/eligibility/run", {
+      const evalRes = await fetch("/api/eligibility/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ applicantId: applicant.id }),
+        body: JSON.stringify({ applicantId }),
       });
+      if (!evalRes.ok) {
+        const evalData = await evalRes.json();
+        console.warn("评估运行失败:", evalData.error);
+      }
 
-      router.push(`/applicant/results?applicantId=${applicant.id}`);
+      clearDraft();
+      router.push(`/applicant/results?applicantId=${applicantId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "提交失败，请重试");
     } finally {
@@ -302,13 +449,20 @@ export default function ApplicantPage() {
     <div className="min-h-screen bg-slate-50">
       <div className="bg-indigo-600 text-white py-8 px-4">
         <div className="max-w-2xl mx-auto">
-          <Link href="/home" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← {t("nav.back")}</Link>
-          <h1 className="text-3xl font-bold">{t("applicant.title")}</h1>
-          <p className="text-indigo-200 mt-1">{t("applicant.subtitle")}</p>
+          <Link href="/applicant/dashboard" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← {t("nav.back")}</Link>
+          <h1 className="text-3xl font-bold">{isEditMode ? (locale === "en" ? "Edit Profile" : "编辑申请档案") : t("applicant.title")}</h1>
+          <p className="text-indigo-200 mt-1">{isEditMode ? (locale === "en" ? "Update your application information" : "更新您的申请信息") : t("applicant.subtitle")}</p>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-6">
+      {(loadingEdit || checkingExistingProfile) && (
+        <div className="max-w-2xl mx-auto px-4 pt-8 text-center">
+          <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-slate-500 text-sm">{locale === "en" ? "Loading profile..." : "正在加载档案..."}</p>
+        </div>
+      )}
+
+      {!checkingExistingProfile && <div className="max-w-2xl mx-auto px-4 pt-6">
         {/* Progress */}
         <div className="flex items-center gap-2 mb-8">
           {([1, 2, 3] as const).map((s) => (
@@ -321,6 +475,20 @@ export default function ApplicantPage() {
             </div>
           ))}
         </div>
+
+        {!isEditMode && hasDraft && (
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-between">
+            <span className="text-amber-800 text-sm">
+              💾 {locale === "en" ? "Draft auto-saved. Your data will be restored after refresh." : "已自动保存草稿，刷新页面后可恢复已填写的内容。"}
+            </span>
+            <button
+              onClick={clearDraft}
+              className="text-xs text-amber-700 hover:text-amber-900 underline ml-2"
+            >
+              {locale === "en" ? "Clear & Restart" : "清除并重填"}
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>
@@ -603,12 +771,20 @@ Materials Mechanics | 90 | 3`
                 disabled={submitting}
                 className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-60 transition-colors"
               >
-                {submitting ? t("applicant.submitting") : t("applicant.submit")}
+                {submitting ? t("applicant.submitting") : isEditMode ? (locale === "en" ? "Update & Evaluate" : "更新并评估") : t("applicant.submit")}
               </button>
             </div>
           </div>
         )}
-      </div>
+      </div>}
     </div>
+  );
+}
+
+export default function ApplicantPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Loading...</div>}>
+      <ApplicantForm />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
@@ -63,7 +63,7 @@ interface ResumeProfile {
   optimizedAt: string;
 }
 
-export default function AIRResumeFinalPage() {
+function AIRResumeFinalPageContent() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -330,5 +330,13 @@ export default function AIRResumeFinalPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AIRResumeFinalPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
+      <AIRResumeFinalPageContent />
+    </Suspense>
   );
 }

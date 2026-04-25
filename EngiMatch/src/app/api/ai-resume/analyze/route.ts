@@ -14,12 +14,22 @@ import {
 const REQUEST_TIMEOUT_MS = 60_000;
 
 type Locale = "zh" | "en";
+type ResumeAiSection = {
+  type: string;
+  title: string;
+  content: string;
+};
 
 export const POST = apiHandler(async (req: NextRequest) => {
   await requireAuth(req);
 
   const body = await parseJsonBody<Record<string, unknown>>(req);
-  const sections = assertArray<Record<string, unknown>>(body.sections, "sections");
+  const rawSections = assertArray<Record<string, unknown>>(body.sections, "sections");
+  const sections: ResumeAiSection[] = rawSections.map((section, index) => ({
+    type: assertString(section.type, `sections[${index}].type`),
+    title: typeof section.title === "string" ? section.title : "",
+    content: assertString(section.content, `sections[${index}].content`),
+  }));
   const major = typeof body.major === "string" ? body.major : "";
   const stage = typeof body.stage === "string" ? body.stage : "";
   const action = assertString(body.action, "action");

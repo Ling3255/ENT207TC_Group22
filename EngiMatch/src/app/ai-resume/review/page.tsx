@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
@@ -43,7 +43,7 @@ function typeMapper(aiType: string): ResumeSectionType {
   return "other";
 }
 
-export default function AIRResumeReviewPage() {
+function AIRResumeReviewPageContent() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -328,5 +328,13 @@ export default function AIRResumeReviewPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AIRResumeReviewPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
+      <AIRResumeReviewPageContent />
+    </Suspense>
   );
 }

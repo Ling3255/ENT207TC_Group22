@@ -57,13 +57,13 @@ function parseAIResponse(raw: string): ParsedSection[] {
   for (const objStr of matches) {
     try {
       const titleMatch = objStr.match(
-        /"title"\s*:\s*"(.*?)"(?:\s*,|\s*\})/s
+        /"title"\s*:\s*"([\s\S]*?)"(?:\s*,|\s*\})/
       );
       const typeMatch = objStr.match(
         /"type"\s*:\s*"(.*?)"(?:\s*,|\s*\})/
       );
       const contentMatch = objStr.match(
-        /"content"\s*:\s*"(.*?)"(?:\s*,|\s*\})/s
+        /"content"\s*:\s*"([\s\S]*?)"(?:\s*,|\s*\})/
       );
 
       if (titleMatch || typeMatch) {

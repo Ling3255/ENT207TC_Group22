@@ -69,10 +69,19 @@ export default function AdminVerifyPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-slate-800 text-white py-8 px-4">
-        <div className="max-w-7xl mx-auto">
-          <Link href="/admin" className="text-sm text-slate-400 hover:text-white mb-4 inline-block">← 管理后台</Link>
-          <h1 className="text-3xl font-bold">项目数据审核</h1>
-          <p className="text-slate-400 mt-1">原文对照 · 字段编辑 · 风险标注 · 一键确认</p>
+        <div className="max-w-7xl mx-auto flex items-start justify-between">
+          <div>
+            <Link href="/admin" className="text-sm text-slate-400 hover:text-white mb-4 inline-block">← 管理后台</Link>
+            <h1 className="text-3xl font-bold">项目数据审核</h1>
+            <p className="text-slate-400 mt-1">原文对照 · 字段编辑 · 风险标注 · 一键确认</p>
+          </div>
+          <div className="flex items-center gap-2 mt-8">
+            <Link href="/profile" className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors">个人信息</Link>
+            <button
+              onClick={async () => { await fetch("/api/auth/logout", { method: "POST" }); window.location.href = "/"; }}
+              className="px-4 py-2 bg-slate-600 hover:bg-slate-500 rounded-lg text-sm transition-colors"
+            >退出登录</button>
+          </div>
         </div>
       </div>
 

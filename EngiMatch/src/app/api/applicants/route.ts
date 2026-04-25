@@ -7,7 +7,6 @@ import {
   errorResponse,
   requireAuth,
   parseJsonBody,
-  assertEmail,
   assertString,
 } from "@/lib/api-utils";
 
@@ -40,13 +39,14 @@ export const GET = apiHandler(async (request: NextRequest) => {
   return successResponse({ applicants, total, page, pageSize });
 });
 
-// POST /api/applicants - Authenticated
+// POST /api/applicants - Create a new applicant for current user
 export const POST = apiHandler(async (request: NextRequest) => {
-  await requireAuth(request);
+  const user = await requireAuth(request);
 
   const body = await parseJsonBody<Record<string, unknown>>(request);
 
-  const email = assertEmail(body.email);
+  // Use current user's email
+  const email = user.email;
 
   // Validate field lengths
   const fullName = typeof body.full_name === "string" ? body.full_name : null;
@@ -60,11 +60,6 @@ export const POST = apiHandler(async (request: NextRequest) => {
   const major = typeof body.undergrad_major === "string" ? body.undergrad_major : null;
   if (major && major.length > 500) {
     return errorResponse("Major name too long", 400);
-  }
-
-  const existing = await prisma.applicant.findUnique({ where: { email } });
-  if (existing) {
-    return errorResponse("Email already registered", 409, { existingId: existing.id });
   }
 
   const canonicalMajor = major ? normaliseMajor(major) : null;
@@ -90,6 +85,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
       full_name: fullName,
       nationality: typeof body.nationality === "string" ? body.nationality : null,
       email,
+      user_id: user.id,
       undergrad_university: university,
       undergrad_major: major,
       undergrad_major_canonical: canonicalMajor,
@@ -113,6 +109,12 @@ export const POST = apiHandler(async (request: NextRequest) => {
       modules: modules ? { create: modules } : undefined,
     },
     include: { modules: true },
+  });
+
+  // Update user's active applicant to the new one
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { applicant_id: applicant.id },
   });
 
   return successResponse(applicant, 201);

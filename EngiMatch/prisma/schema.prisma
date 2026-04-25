@@ -8,17 +8,19 @@ datasource db {
 
 // User authentication models
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password_hash String    @map("password_hash")
+  id            String     @id @default(cuid())
+  email         String     @unique
+  password_hash String     @map("password_hash")
   name          String?
-  role          UserRole  @default(STUDENT)
+  timeline_graduation_year Int? @map("timeline_graduation_year")
+  timeline_study_year Int? @map("timeline_study_year")
+  role          UserRole   @default(STUDENT)
   status        UserStatus @default(PENDING)
-  created_at    DateTime  @default(now()) @map("created_at")
-  updated_at    DateTime  @updatedAt @map("updated_at")
-  last_login_at DateTime? @map("last_login_at")
-  // Link to applicant profile (for students)
-  applicant_id  String?   @map("applicant_id")
+  created_at    DateTime   @default(now()) @map("created_at")
+  updated_at    DateTime   @updatedAt @map("updated_at")
+  last_login_at DateTime?  @map("last_login_at")
+  // Active applicant profile (for students)
+  applicant_id  String?    @map("applicant_id")
 
   @@index([email])
   @@index([role])
@@ -181,7 +183,8 @@ model Applicant {
   id                        String            @id @default(cuid())
   full_name                 String?           @map("full_name")
   nationality               String?
-  email                     String            @unique
+  email                     String
+  user_id                   String?           @map("user_id")
   undergrad_university      String?           @map("undergrad_university")
   undergrad_major           String?           @map("undergrad_major")
   undergrad_major_canonical String?           @map("undergrad_major_canonical")
@@ -208,6 +211,7 @@ model Applicant {
   evaluations               Evaluation[]
 
   @@index([email])
+  @@index([user_id])
   @@map("applicants")
 }
 

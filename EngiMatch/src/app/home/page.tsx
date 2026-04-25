@@ -18,8 +18,9 @@ export default function HomePage() {
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((data) => {
-        if (data.authenticated) {
-          setUser(data.user);
+        const session = data.data;
+        if (session?.authenticated) {
+          setUser(session.user);
         } else {
           // Not logged in, redirect to login page
           router.push("/");
@@ -76,11 +77,17 @@ export default function HomePage() {
                     ? "/admin/users"
                     : user.role === "STAFF"
                     ? "/staff"
-                    : "/applicant"
+                    : "/applicant/dashboard"
                 }
                 className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
               >
                 {t("home.go_dashboard")}
+              </Link>
+              <Link
+                href="/profile"
+                className="px-4 py-2 border border-indigo-300 text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors text-sm font-medium"
+              >
+                {t("home.profile")}
               </Link>
               <button
                 onClick={handleLogout}
@@ -110,7 +117,7 @@ export default function HomePage() {
             </div>
           </Link>
           <Link
-            href="/applicant"
+            href="/applicant/dashboard"
             className="flex flex-col items-center gap-2 p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-indigo-200 transition-all focus:ring-4 focus:ring-indigo-300"
             aria-label={`${t("home.create_profile")}: ${t("home.create_profile_desc")}`}
           >
@@ -138,20 +145,43 @@ export default function HomePage() {
             </div>
           </Link>
           <Link
-            href="/admin"
+            href="/budget"
             className="flex flex-col items-center gap-2 p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-indigo-200 transition-all focus:ring-4 focus:ring-indigo-300"
-            aria-label={`${t("home.admin")}: ${t("home.admin_desc")}`}
+            aria-label={
+              locale === "en"
+                ? "Budget Planner: Estimate tuition, living costs and visa funds"
+                : "费用预算器：估算学费、生活费和签证资金证明"
+            }
           >
             <div className="text-4xl" aria-hidden="true">
-              ⚙️
+              £
             </div>
             <div className="font-semibold text-slate-900">
-              {t("home.admin")}
+              {locale === "en" ? "Budget Planner" : "费用预算器"}
             </div>
-            <div className="text-sm text-slate-500">
-              {t("home.admin_desc")}
+            <div className="text-sm text-slate-500 text-center">
+              {locale === "en"
+                ? "Estimate tuition, living costs and visa funds"
+                : "估算学费、生活费和签证资金证明"}
             </div>
           </Link>
+          {(user.role === "SUPER_ADMIN" || user.role === "STAFF") && (
+            <Link
+              href="/admin"
+              className="flex flex-col items-center gap-2 p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:shadow-md hover:border-indigo-200 transition-all focus:ring-4 focus:ring-indigo-300"
+              aria-label={`${t("home.admin")}: ${t("home.admin_desc")}`}
+            >
+              <div className="text-4xl" aria-hidden="true">
+                ⚙️
+              </div>
+              <div className="font-semibold text-slate-900">
+                {t("home.admin")}
+              </div>
+              <div className="text-sm text-slate-500">
+                {t("home.admin_desc")}
+              </div>
+            </Link>
+          )}
         </nav>
       </div>
     </div>

@@ -18,11 +18,6 @@ export const GET = apiHandler(async (request: NextRequest) => {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.userId },
-    include: {
-      applicant: {
-        select: { id: true, full_name: true },
-      },
-    },
   });
 
   if (!user || user.status !== "APPROVED") {
@@ -38,6 +33,8 @@ export const GET = apiHandler(async (request: NextRequest) => {
       role: user.role,
       status: user.status,
       applicant_id: user.applicant_id,
+      timeline_graduation_year: user.timeline_graduation_year,
+      timeline_study_year: user.timeline_study_year,
     },
   });
 });

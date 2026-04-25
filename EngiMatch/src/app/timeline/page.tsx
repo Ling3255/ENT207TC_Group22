@@ -1,38 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
+import {
+  buildTimelineRecommendation,
+  getGraduationYearOptions,
+  getStudyYearLabel,
+  TIMELINE_STUDY_YEAR_OPTIONS,
+} from "@/lib/timeline-preferences";
 
-const PHASE_LABELS: Record<string, { zh: string; en: string; icon: string; color: string }> = {
-  preparation: { zh: "准备阶段", en: "Preparation", icon: "📋", color: "bg-blue-50 border-blue-200 text-blue-700" },
-  application: { zh: "申请阶段", en: "Application", icon: "📨", color: "bg-violet-50 border-violet-200 text-violet-700" },
-  visa: { zh: "CAS 与签证", en: "CAS & Visa", icon: "🛂", color: "bg-amber-50 border-amber-200 text-amber-700" },
-  pre_departure: { zh: "出行准备", en: "Pre-Departure", icon: "✈️", color: "bg-emerald-50 border-emerald-200 text-emerald-700" },
-  arrival: { zh: "抵达注册", en: "Arrival & Registration", icon: "🏫", color: "bg-rose-50 border-rose-200 text-rose-700" },
-};
-
-const CATEGORY_LABELS: Record<string, { zh: string; en: string; icon: string }> = {
-  application: { zh: "申请", en: "Application", icon: "📝" },
-  language: { zh: "语言", en: "Language", icon: "🗣️" },
-  document: { zh: "材料", en: "Documents", icon: "📁" },
-  finance: { zh: "财务", en: "Finance", icon: "💰" },
-  visa: { zh: "签证", en: "Visa", icon: "🛂" },
-  health: { zh: "健康", en: "Health", icon: "🏥" },
-  accommodation: { zh: "住宿", en: "Accommodation", icon: "🏠" },
-  travel: { zh: "出行", en: "Travel", icon: "✈️" },
-  registration: { zh: "注册", en: "Registration", icon: "🏫" },
-  other: { zh: "其他", en: "Other", icon: "📌" },
-};
-
-const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-const MONTH_NAMES_ZH = [
-  "1月", "2月", "3月", "4月", "5月", "6月",
-  "7月", "8月", "9月", "10月", "11月", "12月",
-];
+type EventSource = "public" | "personal";
 
 interface TimelineEvent {
   id: string;
@@ -49,419 +28,1053 @@ interface TimelineEvent {
   icon: string;
 }
 
-const PHASE_ORDER = ["preparation", "application", "visa", "pre_departure", "arrival"];
+interface PersonalTimelineEvent extends TimelineEvent {
+  source: "personal";
+}
+
+interface DisplayTimelineEvent extends TimelineEvent {
+  source: EventSource;
+}
+
+interface SessionUser {
+  id: string;
+  email: string;
+  role: string;
+  timeline_graduation_year?: number | null;
+  timeline_study_year?: number | null;
+}
+
+const PHASE_ORDER = [
+  "preparation",
+  "application",
+  "visa",
+  "pre_departure",
+  "arrival",
+] as const;
+
+const PHASE_META: Record<
+  string,
+  { zh: string; en: string; color: string }
+> = {
+  preparation: {
+    zh: "前期准备",
+    en: "Preparation",
+    color: "bg-sky-50 border-sky-200 text-sky-700",
+  },
+  application: {
+    zh: "正式申请",
+    en: "Application",
+    color: "bg-violet-50 border-violet-200 text-violet-700",
+  },
+  visa: {
+    zh: "签证与CAS",
+    en: "CAS & Visa",
+    color: "bg-amber-50 border-amber-200 text-amber-700",
+  },
+  pre_departure: {
+    zh: "行前准备",
+    en: "Pre-Departure",
+    color: "bg-emerald-50 border-emerald-200 text-emerald-700",
+  },
+  arrival: {
+    zh: "抵达与注册",
+    en: "Arrival",
+    color: "bg-rose-50 border-rose-200 text-rose-700",
+  },
+};
+
+const CATEGORY_META: Record<string, { zh: string; en: string }> = {
+  application: { zh: "申请", en: "Application" },
+  language: { zh: "语言", en: "Language" },
+  document: { zh: "材料", en: "Documents" },
+  finance: { zh: "财务", en: "Finance" },
+  visa: { zh: "签证", en: "Visa" },
+  health: { zh: "健康", en: "Health" },
+  accommodation: { zh: "住宿", en: "Accommodation" },
+  travel: { zh: "出行", en: "Travel" },
+  registration: { zh: "注册", en: "Registration" },
+  other: { zh: "其他", en: "Other" },
+};
+
+const MONTH_NAMES_EN = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+const MONTH_NAMES_ZH = [
+  "1月",
+  "2月",
+  "3月",
+  "4月",
+  "5月",
+  "6月",
+  "7月",
+  "8月",
+  "9月",
+  "10月",
+  "11月",
+  "12月",
+];
+
+function emptyPersonalEvent(): PersonalTimelineEvent {
+  return {
+    id: "",
+    title: "",
+    title_en: "",
+    description: "",
+    description_en: "",
+    phase: "preparation",
+    phase_order: 1,
+    category: "application",
+    month_min: 1,
+    month_max: 1,
+    is_required: false,
+    icon: "Task",
+    source: "personal",
+  };
+}
 
 export default function TimelinePage() {
-  const { t, locale } = useLocale();
-  const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const { locale } = useLocale();
+  const isEnglish = locale === "en";
+
+  const [publicEvents, setPublicEvents] = useState<TimelineEvent[]>([]);
+  const [personalEvents, setPersonalEvents] = useState<PersonalTimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPhase, setSelectedPhase] = useState<string>("all");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedSource, setSelectedSource] = useState<"all" | EventSource>("all");
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
-  const [currentMonth] = useState(new Date().getMonth() + 1);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editorMode, setEditorMode] = useState<"create" | "edit">("create");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState<PersonalTimelineEvent>(emptyPersonalEvent());
+  const [timelineGraduationYear, setTimelineGraduationYear] = useState("");
+  const [timelineStudyYear, setTimelineStudyYear] = useState("");
+  const [savingPreferences, setSavingPreferences] = useState(false);
+  const [preferenceMessage, setPreferenceMessage] = useState<string | null>(null);
+
+  const currentMonth = new Date().getMonth() + 1;
+  const personalStorageKey = useMemo(
+    () => `engimatch_personal_timeline_${user?.id ?? "guest"}`,
+    [user?.id]
+  );
+  const graduationYearOptions = useMemo(() => getGraduationYearOptions(), []);
+  const canShowTimeline = user?.timeline_study_year != null && timelineStudyYear !== "";
 
   useEffect(() => {
-    fetch("/api/timeline")
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setEvents(data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    let cancelled = false;
+
+    async function load() {
+      try {
+        const [timelineResponse, sessionResponse] = await Promise.all([
+          fetch("/api/timeline"),
+          fetch("/api/auth/session"),
+        ]);
+        const timelinePayload = await timelineResponse.json().catch(() => null);
+        const sessionPayload = await sessionResponse.json().catch(() => null);
+
+        if (cancelled) return;
+
+        setPublicEvents(Array.isArray(timelinePayload?.data) ? timelinePayload.data : []);
+
+        const session = sessionPayload?.data;
+        if (session?.authenticated && session.user) {
+          const sessionUser = session.user as SessionUser;
+          setUser(sessionUser);
+          setTimelineGraduationYear(
+            sessionUser.timeline_graduation_year
+              ? String(sessionUser.timeline_graduation_year)
+              : ""
+          );
+          setTimelineStudyYear(
+            sessionUser.timeline_study_year
+              ? String(sessionUser.timeline_study_year)
+              : ""
+          );
+        } else {
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const isInMonth = (event: TimelineEvent) => {
-    return selectedMonth >= event.month_min && selectedMonth <= event.month_max;
-  };
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const raw = window.localStorage.getItem(personalStorageKey);
+    if (!raw) {
+      setPersonalEvents([]);
+      return;
+    }
 
-  const filteredEvents = events.filter((e) => {
-    if (selectedPhase !== "all" && e.phase !== selectedPhase) return false;
-    if (selectedCategory !== "all" && e.category !== selectedCategory) return false;
-    return true;
-  });
+    try {
+      const parsed = JSON.parse(raw) as PersonalTimelineEvent[];
+      setPersonalEvents(Array.isArray(parsed) ? parsed : []);
+    } catch {
+      setPersonalEvents([]);
+    }
+  }, [personalStorageKey]);
 
-  const groupedByPhase = PHASE_ORDER.reduce<Record<string, TimelineEvent[]>>((acc, phase) => {
-    const phaseEvents = filteredEvents.filter((e) => e.phase === phase && isInMonth(e));
-    if (phaseEvents.length > 0) acc[phase] = phaseEvents;
-    return acc;
-  }, {});
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(personalStorageKey, JSON.stringify(personalEvents));
+  }, [personalEvents, personalStorageKey]);
 
-  const getPhaseProgress = (phase: string): number => {
-    const phaseEvents = events.filter((e) => e.phase === phase);
-    if (phaseEvents.length === 0) return 0;
-    const completed = phaseEvents.filter((e) => currentMonth > e.month_max).length;
-    return Math.round((completed / phaseEvents.length) * 100);
-  };
+  const monthLabel = (month: number) =>
+    isEnglish ? MONTH_NAMES_EN[month - 1] : MONTH_NAMES_ZH[month - 1];
 
-  const totalEventsThisMonth = events.filter((e) => isInMonth(e)).length;
-  const requiredEventsThisMonth = events.filter((e) => isInMonth(e) && e.is_required).length;
+  const recommendation = useMemo(
+    () =>
+      buildTimelineRecommendation(
+        {
+          timeline_graduation_year: timelineGraduationYear
+            ? Number(timelineGraduationYear)
+            : null,
+          timeline_study_year: timelineStudyYear ? Number(timelineStudyYear) : null,
+        },
+        locale
+      ),
+    [locale, timelineGraduationYear, timelineStudyYear]
+  );
 
-  const catLabel = (c: string) => CATEGORY_LABELS[c]?.[locale] || c;
-  const catIcon = (c: string) => CATEGORY_LABELS[c]?.icon || "📌";
-  const phLabel = (p: string) => PHASE_LABELS[p]?.[locale] || p;
-  const phIcon = (p: string) => PHASE_LABELS[p]?.icon || "";
-  const phColor = (p: string) => PHASE_LABELS[p]?.color || "";
+  const mergedEvents = useMemo<DisplayTimelineEvent[]>(
+    () => [
+      ...publicEvents.map((event) => ({ ...event, source: "public" as const })),
+      ...personalEvents,
+    ],
+    [publicEvents, personalEvents]
+  );
 
-  const monthLabel = (m: number) => locale === "en" ? MONTH_NAMES[m - 1] : MONTH_NAMES_ZH[m - 1];
+  const filteredEvents = useMemo(
+    () =>
+      mergedEvents.filter((event) => {
+        const matchesMonth =
+          selectedMonth >= event.month_min && selectedMonth <= event.month_max;
+        const matchesPhase =
+          selectedPhase === "all" || event.phase === selectedPhase;
+        const matchesCategory =
+          selectedCategory === "all" || event.category === selectedCategory;
+        const matchesSource =
+          selectedSource === "all" || event.source === selectedSource;
+        return matchesMonth && matchesPhase && matchesCategory && matchesSource;
+      }),
+    [mergedEvents, selectedMonth, selectedPhase, selectedCategory, selectedSource]
+  );
+
+  const groupedByPhase = useMemo(
+    () =>
+      PHASE_ORDER.reduce<Record<string, DisplayTimelineEvent[]>>((acc, phase) => {
+        const items = filteredEvents
+          .filter((event) => event.phase === phase)
+          .sort((a, b) => {
+            if (a.month_min !== b.month_min) return a.month_min - b.month_min;
+            if (a.source !== b.source) return a.source === "public" ? -1 : 1;
+            return a.title_en.localeCompare(b.title_en);
+          });
+
+        if (items.length > 0) {
+          acc[phase] = items;
+        }
+        return acc;
+      }, {}),
+    [filteredEvents]
+  );
+
+  const currentMonthCount = mergedEvents.filter(
+    (event) => selectedMonth >= event.month_min && selectedMonth <= event.month_max
+  ).length;
+
+  async function saveTimelinePreferences() {
+    if (!timelineStudyYear) {
+      setPreferenceMessage(
+        isEnglish
+          ? "Please choose your current university year before viewing the timeline."
+          : "请先选择当前大学年级，再查看时间线。"
+      );
+      return;
+    }
+
+    if (!user) {
+      setPreferenceMessage(
+        isEnglish
+          ? "Please log in to save your year to your profile."
+          : "请先登录，系统才能把年级保存到你的个人信息中。"
+      );
+      return;
+    }
+
+    setSavingPreferences(true);
+    setPreferenceMessage(null);
+
+    try {
+      const response = await fetch("/api/auth/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          timelineGraduationYear: timelineGraduationYear
+            ? Number(timelineGraduationYear)
+            : null,
+          timelineStudyYear: timelineStudyYear ? Number(timelineStudyYear) : null,
+        }),
+      });
+      const payload = await response.json();
+
+      if (!response.ok || payload?.success === false) {
+        throw new Error(
+          payload?.error ||
+            (isEnglish
+              ? "Failed to save timeline settings."
+              : "保存时间线设置失败。")
+        );
+      }
+
+      setUser((previous) =>
+        previous
+          ? {
+              ...previous,
+              timeline_graduation_year: payload?.data?.timeline_graduation_year ?? null,
+              timeline_study_year: payload?.data?.timeline_study_year ?? null,
+            }
+          : previous
+      );
+      setPreferenceMessage(
+        isEnglish ? "Saved to your profile." : "已保存到你的个人资料。"
+      );
+    } catch (error) {
+      setPreferenceMessage(
+        error instanceof Error
+          ? error.message
+          : isEnglish
+            ? "Failed to save timeline settings."
+            : "保存时间线设置失败。"
+      );
+    } finally {
+      setSavingPreferences(false);
+    }
+  }
+
+  function openCreateEditor() {
+    setEditorMode("create");
+    setEditingId(null);
+    setForm(emptyPersonalEvent());
+    setEditorOpen(true);
+  }
+
+  function openEditEditor(event: PersonalTimelineEvent) {
+    setEditorMode("edit");
+    setEditingId(event.id);
+    setForm(event);
+    setEditorOpen(true);
+  }
+
+  function savePersonalEvent() {
+    const titleEn = form.title_en.trim();
+    const titleZh = form.title.trim();
+
+    if (!titleEn || !titleZh) return;
+
+    const event: PersonalTimelineEvent = {
+      ...form,
+      id: editingId ?? `personal_${Date.now()}`,
+      title: titleZh,
+      title_en: titleEn,
+      description: form.description.trim(),
+      description_en: form.description_en.trim(),
+      phase_order: PHASE_ORDER.indexOf(form.phase as (typeof PHASE_ORDER)[number]) + 1,
+      month_min: Math.min(form.month_min, form.month_max),
+      month_max: Math.max(form.month_min, form.month_max),
+      source: "personal",
+      icon: form.icon.trim() || "Task",
+    };
+
+    setPersonalEvents((previous) => {
+      if (editorMode === "edit" && editingId) {
+        return previous.map((item) => (item.id === editingId ? event : item));
+      }
+      return [...previous, event];
+    });
+
+    setEditorOpen(false);
+    setEditingId(null);
+    setForm(emptyPersonalEvent());
+  }
+
+  function deletePersonalEvent(id: string) {
+    setPersonalEvents((previous) => previous.filter((event) => event.id !== id));
+    if (expandedEvent === id) {
+      setExpandedEvent(null);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-white">
-      {/* Header */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/home" className="text-sm text-slate-500 hover:text-slate-800">← {t("nav.home")}</Link>
-          <div className="text-sm font-medium text-slate-700">{locale === "en" ? "Application Timeline" : "申请时间线"}</div>
-          <div className="w-20" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50/40 to-white">
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+          <Link href="/home" className="text-sm text-slate-500 hover:text-slate-800">
+            {isEnglish ? "Back to Home" : "返回首页"}
+          </Link>
+          <div className="text-sm font-medium text-slate-700">
+            {isEnglish ? "Application Timeline" : "申请时间线"}
+          </div>
+          <div className="w-24" />
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Title */}
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-3">📅</div>
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">
-            {locale === "en" ? "UK Study Journey Timeline" : "英国留学全程时间线"}
-          </h1>
-          <p className="text-slate-500 max-w-lg mx-auto">
-            {locale === "en"
-              ? "From offer acceptance to arrival in the UK — track every key milestone for your September 2026 intake"
-              : "从拿到 offer 到抵达英国 — 追踪 2026 年 9 月入学的每个关键节点"}
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        <div className="mb-8 text-center">
+          <div className="mb-2 text-4xl font-semibold text-slate-900">
+            {isEnglish ? "Application Timeline" : "申请时间线"}
+          </div>
+          <p className="mx-auto max-w-2xl text-slate-500">
+            {isEnglish
+              ? "View the standard UK application schedule, save your own stage settings, and maintain a personal checklist."
+              : "查看英国申请的常见时间安排，保存你自己的阶段设置，并维护个人待办清单。"}
           </p>
         </div>
 
-        {/* Current month summary */}
-        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-3xl font-bold">{monthLabel(selectedMonth)}</div>
-              <div className="text-indigo-200 text-sm mt-1">
-                {locale === "en"
-                  ? `${totalEventsThisMonth} events · ${requiredEventsThisMonth} required`
-                  : `共 ${totalEventsThisMonth} 项 · ${requiredEventsThisMonth} 必做`}
+        {canShowTimeline && (
+          <div className="mb-8 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 p-6 text-white">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-sm text-sky-100">
+                  {isEnglish ? "Selected Month" : "当前查看月份"}
+                </div>
+                <div className="mt-1 text-3xl font-bold">{monthLabel(selectedMonth)}</div>
+                <div className="mt-2 text-sm text-sky-100">
+                  {currentMonthCount} {isEnglish ? "items in view" : "个相关事项"}
+                </div>
+              </div>
+              <div className="max-w-md rounded-2xl bg-white/12 p-4 backdrop-blur-sm">
+                <div className="text-sm font-medium text-white">{recommendation.title}</div>
+                <div className="mt-1 text-sm text-sky-50">{recommendation.description}</div>
               </div>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-indigo-200 mb-1">{locale === "en" ? "Now" : "当前"}</div>
-              <div className="text-lg font-semibold">{new Date().toLocaleDateString(locale === "en" ? "en-US" : "zh-CN", { month: "long", year: "numeric" })}</div>
+          </div>
+        )}
+
+        <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-2xl">
+              <h2 className="font-semibold text-slate-900">
+                {isEnglish ? "Choose your year first" : "请先选择你的年级"}
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                {isEnglish
+                  ? "Your current university year is saved to your profile and can be edited later from the profile page."
+                  : "当前大学年级会保存到个人信息中，也可以之后在个人信息页修改。"}
+              </p>
+            </div>
+            <Link
+              href="/profile"
+              className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              {isEnglish ? "Open profile page" : "前往个人资料页"}
+            </Link>
+          </div>
+
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                {isEnglish ? "Current university year" : "当前大学年级"}
+              </label>
+              <select
+                value={timelineStudyYear}
+                onChange={(event) => {
+                  setTimelineStudyYear(event.target.value);
+                  setPreferenceMessage(null);
+                }}
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">
+                  {isEnglish ? "Select your year" : "请选择年级"}
+                </option>
+                {TIMELINE_STUDY_YEAR_OPTIONS.map((year) => (
+                  <option key={year} value={year}>
+                    {getStudyYearLabel(year, locale)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-slate-700">
+                {isEnglish ? "Expected graduation year" : "预计毕业年份"}
+              </label>
+              <select
+                value={timelineGraduationYear}
+                onChange={(event) => {
+                  setTimelineGraduationYear(event.target.value);
+                  setPreferenceMessage(null);
+                }}
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="">{isEnglish ? "Optional" : "选填"}</option>
+                {graduationYearOptions.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button
+              onClick={saveTimelinePreferences}
+              disabled={savingPreferences}
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {savingPreferences
+                ? isEnglish
+                  ? "Saving..."
+                  : "保存中..."
+                : isEnglish
+                  ? "Save to profile"
+                  : "保存到个人资料"}
+            </button>
+            <div className="text-sm text-slate-500">
+              {user
+                ? preferenceMessage ||
+                  (isEnglish
+                    ? "Your profile and timeline page will share the same settings."
+                    : "个人资料页和时间线页会共享同一份设置。")
+                : isEnglish
+                  ? "Log in to save your stage settings to your profile."
+                  : "登录后即可把你的阶段设置保存到个人资料中。"}
             </div>
           </div>
         </div>
 
-        {/* Month selector */}
+        {!canShowTimeline ? (
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
+            <div className="text-lg font-semibold text-slate-900">
+              {isEnglish ? "Your timeline is waiting for your year" : "选择年级后再显示申请时间线"}
+            </div>
+            <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+              {isEnglish
+                ? "Choose your current university year above and save it. EngiMatch will store it in your profile, then show the timeline without assuming you are already a junior or senior."
+                : "请先在上方选择当前大学年级并保存。EngiMatch 会把年级记录到个人信息中，然后再展示时间线，不会默认你是大三或大四。"}
+            </p>
+          </div>
+        ) : (
+          <>
         <div className="mb-6">
-          <div className="text-xs font-medium text-slate-500 mb-2">{locale === "en" ? "Jump to month" : "跳转到月份"}</div>
-          <div className="flex gap-1 overflow-x-auto pb-2 scrollbar-hide" role="tablist" aria-label="Month selection">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => {
-              const isPast = m < currentMonth;
-              const isCurrent = m === currentMonth;
+          <div className="mb-2 text-xs font-medium text-slate-500">
+            {isEnglish ? "Jump to month" : "跳转到月份"}
+          </div>
+          <div className="flex gap-1 overflow-x-auto pb-2">
+            {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => {
+              const isCurrent = month === currentMonth;
               return (
                 <button
-                  key={m}
-                  role="tab"
-                  aria-selected={selectedMonth === m}
-                  onClick={() => setSelectedMonth(m)}
-                  className={`flex-shrink-0 px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium border transition-all focus:ring-2 focus:ring-indigo-500 ${
-                    selectedMonth === m
-                      ? "bg-indigo-600 text-white border-indigo-600"
+                  key={month}
+                  onClick={() => setSelectedMonth(month)}
+                  className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
+                    selectedMonth === month
+                      ? "border-slate-900 bg-slate-900 text-white"
                       : isCurrent
-                      ? "bg-indigo-50 text-indigo-600 border-indigo-200"
-                      : isPast
-                      ? "bg-slate-50 text-slate-400 border-slate-100"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
+                        ? "border-sky-200 bg-sky-50 text-sky-700"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                  {monthLabel(m)}
+                  {monthLabel(month)}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-          {/* Phase filter */}
-          <div>
-            <div className="text-xs font-medium text-slate-500 mb-1.5">{locale === "en" ? "Phase" : "阶段"}</div>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setSelectedPhase("all")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                  selectedPhase === "all"
-                    ? "bg-slate-800 text-white border-slate-800"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                {locale === "en" ? "All Phases" : "全部阶段"}
-              </button>
-              {PHASE_ORDER.map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setSelectedPhase(p)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1 ${
-                    selectedPhase === p
-                      ? "bg-slate-800 text-white border-slate-800"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  <span>{phIcon(p)}</span>
-                  <span>{phLabel(p)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Category filter */}
-          <div>
-            <div className="text-xs font-medium text-slate-500 mb-1.5">{locale === "en" ? "Category" : "类别"}</div>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                  selectedCategory === "all"
-                    ? "bg-slate-800 text-white border-slate-800"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                }`}
-              >
-                {locale === "en" ? "All" : "全部"}
-              </button>
-              {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-                <button
-                  key={k}
-                  onClick={() => setSelectedCategory(k)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all flex items-center gap-1 ${
-                    selectedCategory === k
-                      ? "bg-slate-800 text-white border-slate-800"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  <span>{v.icon}</span>
-                  <span>{v[locale]}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="mb-8 grid grid-cols-1 gap-3 lg:grid-cols-3">
+          <FilterGroup
+            title={isEnglish ? "Phase" : "阶段"}
+            allLabel={isEnglish ? "All phases" : "全部阶段"}
+            value={selectedPhase}
+            onChange={setSelectedPhase}
+            options={PHASE_ORDER.map((phase) => ({
+              value: phase,
+              label: isEnglish ? PHASE_META[phase].en : PHASE_META[phase].zh,
+            }))}
+          />
+          <FilterGroup
+            title={isEnglish ? "Category" : "类别"}
+            allLabel={isEnglish ? "All categories" : "全部类别"}
+            value={selectedCategory}
+            onChange={setSelectedCategory}
+            options={Object.keys(CATEGORY_META).map((category) => ({
+              value: category,
+              label: isEnglish ? CATEGORY_META[category].en : CATEGORY_META[category].zh,
+            }))}
+          />
+          <FilterGroup
+            title={isEnglish ? "Source" : "来源"}
+            allLabel={isEnglish ? "All items" : "全部项目"}
+            value={selectedSource}
+            onChange={(value) => setSelectedSource(value as "all" | EventSource)}
+            options={[
+              { value: "public", label: isEnglish ? "Public timeline" : "公共时间线" },
+              { value: "personal", label: isEnglish ? "My timeline" : "我的时间线" },
+            ]}
+          />
         </div>
 
-        {/* Phase overview cards */}
-        <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-8">
-          {PHASE_ORDER.map((p) => {
-            const phaseEvents = events.filter((e) => e.phase === p);
-            const progress = getPhaseProgress(p);
-            return (
-              <button
-                key={p}
-                onClick={() => setSelectedPhase(selectedPhase === p ? "all" : p)}
-                className={`rounded-xl p-2 sm:p-3 text-center border transition-all focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
-                  selectedPhase === p
-                    ? "bg-indigo-50 border-indigo-300"
-                    : "bg-white border-slate-200 hover:border-indigo-200"
-                }`}
-                aria-label={`${phLabel(p)}: ${progress}% complete`}
-              >
-                <div className="text-lg sm:text-xl mb-1">{phIcon(p)}</div>
-                <div className="text-xs font-medium text-slate-700 leading-tight hidden sm:block">{phLabel(p)}</div>
-                <div className="mt-1 sm:mt-2 h-1 bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-indigo-500 rounded-full transition-all"
-                    style={{ width: `${progress}%` }}
+        <div className="mb-8 rounded-2xl border border-slate-200 bg-white p-5">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-semibold text-slate-900">
+                {isEnglish ? "Build your own student timeline" : "创建你自己的学生时间线"}
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm text-slate-500">
+                {isEnglish
+                  ? "Add custom milestones such as exam dates, portfolio deadlines, scholarship reminders, or personal prep goals."
+                  : "你可以添加考试日期、文书截止、奖学金提醒或自己安排的准备任务。"}
+              </p>
+            </div>
+            <button
+              onClick={openCreateEditor}
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            >
+              {isEnglish ? "Add personal event" : "添加个人事项"}
+            </button>
+          </div>
+
+          {editorOpen && (
+            <div className="mt-5 grid grid-cols-1 gap-4 border-t border-slate-100 pt-5 md:grid-cols-2">
+              <EditorField
+                label={isEnglish ? "English title" : "英文标题"}
+                value={form.title_en}
+                onChange={(value) => setForm((previous) => ({ ...previous, title_en: value }))}
+              />
+              <EditorField
+                label={isEnglish ? "Chinese title" : "中文标题"}
+                value={form.title}
+                onChange={(value) => setForm((previous) => ({ ...previous, title: value }))}
+              />
+              <EditorArea
+                label={isEnglish ? "English description" : "英文说明"}
+                value={form.description_en}
+                onChange={(value) =>
+                  setForm((previous) => ({ ...previous, description_en: value }))
+                }
+              />
+              <EditorArea
+                label={isEnglish ? "Chinese description" : "中文说明"}
+                value={form.description}
+                onChange={(value) =>
+                  setForm((previous) => ({ ...previous, description: value }))
+                }
+              />
+              <SelectField
+                label={isEnglish ? "Phase" : "阶段"}
+                value={form.phase}
+                onChange={(value) => setForm((previous) => ({ ...previous, phase: value }))}
+                options={PHASE_ORDER.map((phase) => ({
+                  value: phase,
+                  label: isEnglish ? PHASE_META[phase].en : PHASE_META[phase].zh,
+                }))}
+              />
+              <SelectField
+                label={isEnglish ? "Category" : "类别"}
+                value={form.category}
+                onChange={(value) =>
+                  setForm((previous) => ({ ...previous, category: value }))
+                }
+                options={Object.entries(CATEGORY_META).map(([value, meta]) => ({
+                  value,
+                  label: isEnglish ? meta.en : meta.zh,
+                }))}
+              />
+              <SelectField
+                label={isEnglish ? "Start month" : "开始月份"}
+                value={String(form.month_min)}
+                onChange={(value) =>
+                  setForm((previous) => ({ ...previous, month_min: Number(value) }))
+                }
+                options={Array.from({ length: 12 }, (_, index) => index + 1).map((month) => ({
+                  value: String(month),
+                  label: monthLabel(month),
+                }))}
+              />
+              <SelectField
+                label={isEnglish ? "End month" : "结束月份"}
+                value={String(form.month_max)}
+                onChange={(value) =>
+                  setForm((previous) => ({ ...previous, month_max: Number(value) }))
+                }
+                options={Array.from({ length: 12 }, (_, index) => index + 1).map((month) => ({
+                  value: String(month),
+                  label: monthLabel(month),
+                }))}
+              />
+              <div className="md:col-span-2">
+                <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+                  <input
+                    type="checkbox"
+                    checked={form.is_required}
+                    onChange={(event) =>
+                      setForm((previous) => ({
+                        ...previous,
+                        is_required: event.target.checked,
+                      }))
+                    }
                   />
-                </div>
-                <div className="text-xs text-slate-400 mt-1">{progress}%</div>
-              </button>
-            );
-          })}
+                  {isEnglish ? "Required item" : "标记为必做事项"}
+                </label>
+              </div>
+              <div className="md:col-span-2 flex gap-3">
+                <button
+                  onClick={savePersonalEvent}
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+                >
+                  {editorMode === "create"
+                    ? isEnglish
+                      ? "Create"
+                      : "创建"
+                    : isEnglish
+                      ? "Update"
+                      : "更新"}
+                </button>
+                <button
+                  onClick={() => {
+                    setEditorOpen(false);
+                    setEditingId(null);
+                    setForm(emptyPersonalEvent());
+                  }}
+                  className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  {isEnglish ? "Cancel" : "取消"}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Events list */}
         {loading ? (
-          <div className="text-center py-16 text-slate-400 text-sm">{t("common.loading")}</div>
+          <div className="py-16 text-center text-sm text-slate-400">
+            {isEnglish ? "Loading..." : "加载中..."}
+          </div>
         ) : Object.keys(groupedByPhase).length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-3">📭</div>
-            <div className="font-semibold text-slate-600 mb-1">
-              {locale === "en" ? "No events for this month" : "本月暂无此类别事件"}
+          <div className="py-16 text-center">
+            <div className="text-xl font-semibold text-slate-700">
+              {isEnglish ? "No events match the current filters." : "当前筛选条件下没有事项。"}
             </div>
-            <div className="text-sm text-slate-400">
-              {locale === "en" ? "Try a different month or filter" : "试试切换月份或筛选条件"}
+            <div className="mt-2 text-sm text-slate-400">
+              {isEnglish
+                ? "Try another month or create your own milestone."
+                : "试试切换月份，或者先添加你自己的时间节点。"}
             </div>
           </div>
         ) : (
           <div className="space-y-6">
-            {Object.entries(groupedByPhase).map(([phase, phaseEvents]) => {
-              const pl = PHASE_LABELS[phase];
-              return (
-                <div key={phase}>
-                  {/* Phase header */}
-                  <div className={`flex items-center gap-3 mb-4 px-4 py-3 rounded-xl border ${pl?.color || "bg-slate-50 border-slate-200"}`}>
-                    <span className="text-2xl">{pl?.icon}</span>
-                    <div>
-                      <div className="font-bold text-base">{pl?.[locale] || phase}</div>
-                      <div className="text-xs opacity-70">
-                        {locale === "en"
-                          ? `${phaseEvents.length} event${phaseEvents.length > 1 ? "s" : ""} this month`
-                          : `本月 ${phaseEvents.length} 项`}
-                      </div>
-                    </div>
+            {Object.entries(groupedByPhase).map(([phase, events]) => (
+              <section key={phase}>
+                <div
+                  className={`mb-4 flex items-center gap-3 rounded-xl border px-4 py-3 ${PHASE_META[phase].color}`}
+                >
+                  <div className="text-lg font-semibold">
+                    {isEnglish ? PHASE_META[phase].en : PHASE_META[phase].zh}
                   </div>
-
-                  {/* Events */}
-                  <div className="space-y-3 pl-4 border-l-2 border-slate-200 ml-4">
-                    {phaseEvents.map((event, idx) => {
-                      const isOpen = expandedEvent === event.id;
-                      const cat = CATEGORY_LABELS[event.category];
-                      const isPast = currentMonth > event.month_max;
-                      const isCurrent = currentMonth >= event.month_min && currentMonth <= event.month_max;
-
-                      return (
-                        <div
-                          key={event.id}
-                          className={`bg-white rounded-xl border shadow-sm transition-all ${
-                            isPast
-                              ? "border-slate-200 opacity-70"
-                              : isCurrent
-                              ? "border-indigo-200 shadow-indigo-100"
-                              : "border-slate-200"
-                          }`}
-                        >
-                          <button
-                            className="w-full px-4 py-3 flex items-start gap-3 text-left"
-                            onClick={() => setExpandedEvent(isOpen ? null : event.id)}
-                          >
-                            {/* Status dot */}
-                            <div className={`mt-1.5 flex-shrink-0 w-3 h-3 rounded-full border-2 ${
-                              isPast
-                                ? "bg-green-400 border-green-400"
-                                : isCurrent
-                                ? "bg-indigo-400 border-indigo-400 animate-pulse"
-                                : "bg-slate-200 border-slate-300"
-                            }`} />
-
-                            {/* Icon */}
-                            <span className="text-xl flex-shrink-0 mt-0.5">{event.icon}</span>
-
-                            {/* Content */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                                <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium border ${
-                                  isPast
-                                    ? "bg-green-50 text-green-600 border-green-200"
-                                    : isCurrent
-                                    ? "bg-indigo-50 text-indigo-600 border-indigo-200"
-                                    : "bg-slate-50 text-slate-500 border-slate-200"
-                                }`}>
-                                  {isPast ? (locale === "en" ? "Done" : "已完成") : isCurrent ? (locale === "en" ? "Current" : "进行中") : (locale === "en" ? "Upcoming" : "待办")}
-                                </span>
-                                {event.is_required && (
-                                  <span className="text-xs px-1.5 py-0.5 rounded-full font-medium bg-red-50 text-red-500 border border-red-200">
-                                    {locale === "en" ? "Required" : "必做"}
-                                  </span>
-                                )}
-                                <span className="text-xs text-slate-400">{cat?.icon} {cat?.[locale]}</span>
-                              </div>
-                              <div className="font-semibold text-slate-800 text-sm leading-snug">
-                                {locale === "en" ? event.title_en : event.title}
-                              </div>
-                              <div className="text-xs text-slate-400 mt-1">
-                                {locale === "en"
-                                  ? `${MONTH_NAMES[event.month_min - 1]} – ${MONTH_NAMES[event.month_max - 1]}`
-                                  : `${MONTH_NAMES_ZH[event.month_min - 1]} – ${MONTH_NAMES_ZH[event.month_max - 1]}`}
-                              </div>
-                            </div>
-
-                            {/* Expand icon */}
-                            <span className="text-slate-400 text-sm flex-shrink-0 mt-1 transition-transform duration-200" style={{ transform: isOpen ? "rotate(180deg)" : "none" }}>
-                              ▼
-                            </span>
-                          </button>
-
-                          {/* Expanded content */}
-                          {isOpen && (
-                            <div className="px-4 pb-4 border-t border-slate-100 pt-3">
-                              <p className="text-sm text-slate-600 leading-relaxed">
-                                {locale === "en" ? event.description_en : event.description}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                  <div className="text-xs opacity-70">
+                    {events.length} {isEnglish ? "items" : "项"}
                   </div>
                 </div>
-              );
-            })}
+
+                <div className="space-y-3">
+                  {events.map((event) => {
+                    const isOpen = expandedEvent === event.id;
+                    const isPast = currentMonth > event.month_max;
+                    const isCurrent =
+                      currentMonth >= event.month_min && currentMonth <= event.month_max;
+
+                    return (
+                      <div
+                        key={event.id}
+                        className="rounded-2xl border border-slate-200 bg-white shadow-sm"
+                      >
+                        <button
+                          className="w-full px-4 py-4 text-left"
+                          onClick={() =>
+                            setExpandedEvent(isOpen ? null : event.id)
+                          }
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              className={`mt-1 h-3 w-3 rounded-full ${
+                                isPast
+                                  ? "bg-emerald-500"
+                                  : isCurrent
+                                    ? "bg-sky-500"
+                                    : "bg-slate-300"
+                              }`}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-2 flex flex-wrap items-center gap-2">
+                                <Tag>
+                                  {event.source === "public"
+                                    ? isEnglish
+                                      ? "Public"
+                                      : "公共"
+                                    : isEnglish
+                                      ? "Personal"
+                                      : "个人"}
+                                </Tag>
+                                <Tag>
+                                  {isEnglish
+                                    ? CATEGORY_META[event.category]?.en ?? event.category
+                                    : CATEGORY_META[event.category]?.zh ?? event.category}
+                                </Tag>
+                                <Tag>
+                                  {isPast
+                                    ? isEnglish
+                                      ? "Done"
+                                      : "已完成"
+                                    : isCurrent
+                                      ? isEnglish
+                                        ? "Current"
+                                        : "进行中"
+                                      : isEnglish
+                                        ? "Upcoming"
+                                        : "待办"}
+                                </Tag>
+                                <Tag>
+                                  {event.is_required
+                                    ? isEnglish
+                                      ? "Required"
+                                      : "必做"
+                                    : isEnglish
+                                      ? "Optional"
+                                      : "选做"}
+                                </Tag>
+                              </div>
+                              <div className="font-semibold text-slate-900">
+                                {isEnglish ? event.title_en : event.title}
+                              </div>
+                              <div className="mt-1 text-sm text-slate-400">
+                                {monthLabel(event.month_min)} - {monthLabel(event.month_max)}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+
+                        {isOpen && (
+                          <div className="border-t border-slate-100 px-4 pb-4">
+                            <p className="pt-4 text-sm leading-6 text-slate-600">
+                              {isEnglish ? event.description_en : event.description}
+                            </p>
+
+                            {event.source === "personal" && (
+                              <div className="mt-4 flex gap-3">
+                                <button
+                                  onClick={() =>
+                                    openEditEditor(event as PersonalTimelineEvent)
+                                  }
+                                  className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                                >
+                                  {isEnglish ? "Edit event" : "编辑事项"}
+                                </button>
+                                <button
+                                  onClick={() => deletePersonalEvent(event.id)}
+                                  className="rounded-lg border border-red-200 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                                >
+                                  {isEnglish ? "Delete event" : "删除事项"}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
           </div>
         )}
 
-        {/* Full year overview */}
-        <div className="mt-12 bg-white rounded-2xl border border-slate-200 p-6">
-          <div className="font-semibold text-slate-800 mb-4">{locale === "en" ? "12-Month Overview" : "12个月总览"}</div>
-          <div className="grid grid-cols-12 gap-1">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => {
-              const monthEvents = events.filter((e) => m >= e.month_min && m <= e.month_max);
-              const requiredCount = monthEvents.filter((e) => e.is_required).length;
-              const isCurrentMonth = m === currentMonth;
-              const maxCount = Math.max(...[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((mm) =>
-                events.filter((e) => mm >= e.month_min && mm <= e.month_max).length
-              ));
-              const intensity = maxCount > 0 ? monthEvents.length / maxCount : 0;
-
+        <div className="mt-10 rounded-2xl border border-slate-200 bg-white p-6">
+          <div className="mb-4 font-semibold text-slate-900">
+            {isEnglish ? "12-Month Overview" : "12个月总览"}
+          </div>
+          <div className="grid grid-cols-12 gap-1.5">
+            {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => {
+              const count = mergedEvents.filter(
+                (event) => month >= event.month_min && month <= event.month_max
+              ).length;
+              const isCurrent = month === currentMonth;
               return (
-                <div
-                  key={m}
-                  className="flex flex-col items-center gap-1 cursor-pointer"
-                  onClick={() => setSelectedMonth(m)}
+                <button
+                  key={month}
+                  onClick={() => setSelectedMonth(month)}
+                  className={`aspect-square rounded-lg text-xs font-semibold ${
+                    isCurrent
+                      ? "bg-slate-900 text-white"
+                      : count > 4
+                        ? "bg-rose-400 text-white"
+                        : count > 2
+                          ? "bg-amber-300 text-slate-900"
+                          : count > 0
+                            ? "bg-sky-100 text-slate-700"
+                            : "bg-slate-100 text-slate-400"
+                  }`}
+                  title={`${monthLabel(month)}: ${count}`}
                 >
-                  <div
-                    className={`w-full aspect-square rounded-lg transition-all ${
-                      isCurrentMonth
-                        ? "bg-indigo-600 text-white ring-2 ring-indigo-300"
-                        : intensity > 0.7
-                        ? "bg-red-400 text-white hover:bg-red-500"
-                        : intensity > 0.3
-                        ? "bg-amber-400 text-white hover:bg-amber-500"
-                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                    }`}
-                    title={`${monthLabel(m)}: ${monthEvents.length} events, ${requiredCount} required`}
-                  >
-                    <div className="flex items-center justify-center h-full text-xs font-bold">
-                      {monthEvents.length > 0 ? monthEvents.length : ""}
-                    </div>
-                  </div>
-                  <div className={`text-xs ${isCurrentMonth ? "text-indigo-600 font-bold" : "text-slate-400"}`}>
-                    {monthLabel(m)}
-                  </div>
-                </div>
+                  {count > 0 ? count : ""}
+                </button>
               );
             })}
           </div>
-          <div className="flex items-center justify-end gap-4 mt-4">
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded bg-slate-100" />
-              <span className="text-xs text-slate-400">{locale === "en" ? "None" : "无"}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded bg-amber-400" />
-              <span className="text-xs text-slate-400">{locale === "en" ? "Some" : "少量"}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded bg-red-400" />
-              <span className="text-xs text-slate-400">{locale === "en" ? "Busy" : "繁忙"}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-4 h-4 rounded bg-indigo-600" />
-              <span className="text-xs text-slate-400">{locale === "en" ? "Current" : "当前月"}</span>
-            </div>
-          </div>
+          <p className="mt-4 text-xs text-slate-400">
+            {isEnglish
+              ? "This overview is a planning aid. Always confirm exact deadlines with your target universities."
+              : "这个总览适合作为规划参考，具体截止日期仍请以目标院校官网为准。"}
+          </p>
         </div>
-
-        {/* Legend */}
-        <div className="mt-6 text-center text-xs text-slate-400">
-          {locale === "en"
-            ? "Based on UKVI requirements and UCAS guidelines for September 2026 intake. Dates are approximate — always check your university's official deadlines."
-            : "基于 UKVI 要求和 UCAS 指南，2026 年 9 月入学。日期为参考值，请以各院校官方截止日期为准。"}
-        </div>
+          </>
+        )}
       </div>
     </div>
+  );
+}
+
+function FilterGroup({
+  title,
+  allLabel,
+  value,
+  onChange,
+  options,
+}: {
+  title: string;
+  allLabel: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <div>
+      <div className="mb-2 text-xs font-medium text-slate-500">{title}</div>
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => onChange("all")}
+          className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+            value === "all"
+              ? "border-slate-900 bg-slate-900 text-white"
+              : "border-slate-200 bg-white text-slate-600"
+          }`}
+        >
+          {allLabel}
+        </button>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => onChange(option.value)}
+            className={`rounded-lg border px-3 py-1.5 text-xs font-medium ${
+              value === option.value
+                ? "border-slate-900 bg-slate-900 text-white"
+                : "border-slate-200 bg-white text-slate-600"
+            }`}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EditorField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+      <input
+        className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
+function EditorArea({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+      <textarea
+        className="min-h-28 w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+      <select
+        className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function Tag({ children }: { children: ReactNode }) {
+  return (
+    <span className="rounded-full border border-slate-200 px-2 py-1 text-xs text-slate-500">
+      {children}
+    </span>
   );
 }
