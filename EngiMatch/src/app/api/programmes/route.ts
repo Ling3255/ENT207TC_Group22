@@ -1,8 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  apiHandler,
+  successResponse,
+  errorResponse,
+  requireRole,
+  parseJsonBody,
+} from "@/lib/api-utils";
 
-// GET /api/programmes
-export async function GET(request: NextRequest) {
+// GET /api/programmes - Public read
+export const GET = apiHandler(async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
   const universityId = searchParams.get("universityId");
   const degreeType = searchParams.get("degreeType");
@@ -39,106 +46,103 @@ export async function GET(request: NextRequest) {
     ],
   });
 
-  return NextResponse.json(programmes);
-}
+  return successResponse(programmes);
+});
 
-// POST /api/programmes
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const {
-      university_id,
-      programme_name,
-      slug,
-      degree_type,
-      department,
-      study_mode,
-      duration_text,
-      intake_term,
-      application_system_type,
-      application_open_date,
-      application_deadline_visa,
-      application_deadline_non_visa,
-      tuition_fee_home_gbp,
-      tuition_fee_overseas_gbp,
-      official_url,
-      source_last_checked_at,
-      source_page_title,
-      raw_requirement_text,
-      parser_version,
-      human_verified,
-      confidence_score,
-      // Nested
-      academic_requirements,
-      language_requirements,
-      documents,
-      compliance,
-      prerequisite_modules,
-    } = body;
+// POST /api/programmes - Admin/Staff only
+export const POST = apiHandler(async (request: NextRequest) => {
+  await requireRole(request, ["SUPER_ADMIN", "STAFF"]);
 
-    if (!university_id || !programme_name || !slug || !degree_type || !official_url) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+  const body = await parseJsonBody<Record<string, unknown>>(request);
+  const {
+    university_id,
+    programme_name,
+    slug,
+    degree_type,
+    official_url,
+  } = body;
 
-    const programme = await prisma.programme.create({
-      data: {
-        university_id,
-        programme_name,
-        slug,
-        degree_type,
-        department,
-        study_mode,
-        duration_text,
-        intake_term,
-        application_system_type,
-        application_open_date: application_open_date ? new Date(application_open_date) : undefined,
-        application_deadline_visa: application_deadline_visa ? new Date(application_deadline_visa) : undefined,
-        application_deadline_non_visa: application_deadline_non_visa ? new Date(application_deadline_non_visa) : undefined,
-        tuition_fee_home_gbp: tuition_fee_home_gbp ? parseFloat(tuition_fee_home_gbp) : null,
-        tuition_fee_overseas_gbp: tuition_fee_overseas_gbp ? parseFloat(tuition_fee_overseas_gbp) : null,
-        official_url,
-        source_last_checked_at: source_last_checked_at ? new Date(source_last_checked_at) : undefined,
-        source_page_title,
-        raw_requirement_text,
-        parser_version,
-        human_verified: human_verified ?? false,
-        confidence_score: confidence_score ? parseInt(confidence_score) : null,
-        academic_requirements: academic_requirements
-          ? { create: academic_requirements }
-          : undefined,
-        language_requirements: language_requirements
-          ? { create: language_requirements }
-          : undefined,
-        documents: documents
-          ? { create: documents }
-          : undefined,
-        compliance: compliance
-          ? { create: compliance }
-          : undefined,
-        prerequisite_modules: prerequisite_modules?.length > 0
-          ? {
-              create: prerequisite_modules.map((m: { canonical_module_name: string; display_text: string; min_grade_rule?: string; required?: boolean }) => ({
-                canonical_module_name: m.canonical_module_name,
-                display_text: m.display_text,
-                min_grade_rule: m.min_grade_rule ?? null,
-                required: m.required ?? true,
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        university: true,
-        academic_requirements: true,
-        language_requirements: true,
-        documents: true,
-        compliance: true,
-        prerequisite_modules: true,
-      },
-    });
-
-    return NextResponse.json(programme, { status: 201 });
-  } catch (error) {
-    console.error("POST /api/programmes error:", error);
-    return NextResponse.json({ error: "Failed to create programme" }, { status: 500 });
+  if (!university_id || !programme_name || !slug || !degree_type || !official_url) {
+    return errorResponse("Missing required fields: university_id, programme_name, slug, degree_type, official_url", 400);
   }
-}
+
+  const programme = await prisma.programme.create({
+    data: {
+      university_id: String(university_id),
+      programme_name: String(programme_name),
+      slug: String(slug),
+      degree_type: String(degree_type),
+      department: body.department ? String(body.department) : null,
+      study_mode: body.study_mode ? String(body.study_mode) : null,
+      duration_text: body.duration_text ? String(body.duration_text) : null,
+      intake_term: body.intake_term ? String(body.intake_term) : null,
+      application_system_type: body.application_system_type
+        ? String(body.application_system_type)
+        : null,
+      application_open_date: body.application_open_date
+        ? new Date(String(body.application_open_date))
+        : undefined,
+      application_deadline_visa: body.application_deadline_visa
+        ? new Date(String(body.application_deadline_visa))
+        : undefined,
+      application_deadline_non_visa: body.application_deadline_non_visa
+        ? new Date(String(body.application_deadline_non_visa))
+        : undefined,
+      tuition_fee_home_gbp: body.tuition_fee_home_gbp
+        ? parseFloat(String(body.tuition_fee_home_gbp))
+        : null,
+      tuition_fee_overseas_gbp: body.tuition_fee_overseas_gbp
+        ? parseFloat(String(body.tuition_fee_overseas_gbp))
+        : null,
+      official_url: String(official_url),
+      source_last_checked_at: body.source_last_checked_at
+        ? new Date(String(body.source_last_checked_at))
+        : undefined,
+      source_page_title: body.source_page_title
+        ? String(body.source_page_title)
+        : null,
+      raw_requirement_text: body.raw_requirement_text
+        ? String(body.raw_requirement_text)
+        : null,
+      parser_version: body.parser_version
+        ? String(body.parser_version)
+        : null,
+      human_verified: body.human_verified === true,
+      confidence_score: body.confidence_score
+        ? parseInt(String(body.confidence_score))
+        : null,
+      academic_requirements: (body.academic_requirements as unknown)
+        ? { create: body.academic_requirements as object }
+        : undefined,
+      language_requirements: (body.language_requirements as unknown)
+        ? { create: body.language_requirements as object }
+        : undefined,
+      documents: (body.documents as unknown)
+        ? { create: body.documents as object }
+        : undefined,
+      compliance: (body.compliance as unknown)
+        ? { create: body.compliance as object }
+        : undefined,
+      prerequisite_modules: Array.isArray(body.prerequisite_modules)
+        ? {
+            create: (body.prerequisite_modules as Array<Record<string, unknown>>).map((m) => ({
+              canonical_module_name: String(m.canonical_module_name),
+              display_text: String(m.display_text),
+              min_grade_rule: m.min_grade_rule ? String(m.min_grade_rule) : null,
+              required: m.required === false ? false : true,
+            })),
+          }
+        : undefined,
+    },
+    include: {
+      university: true,
+      academic_requirements: true,
+      language_requirements: true,
+      documents: true,
+      compliance: true,
+      prerequisite_modules: true,
+    },
+  });
+
+  return successResponse(programme, 201);
+});

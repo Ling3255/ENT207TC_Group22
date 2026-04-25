@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { LocaleProvider } from "@/context/LocaleContext";
+import { ToastProvider } from "@/components/ToastProvider";
+import LanguageSwitcher from "@/context/LanguageSwitcher";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "EngiMatch - 英国工程硕士申请评估",
-  description: "为中国工科本科生评估英国工程硕士项目的适配度",
+  title: "EngiMatch - UK Engineering Master's Programme Matching",
+  description: "Accurately evaluate UK university fit for engineering undergraduates worldwide",
 };
 
 export default function RootLayout({
@@ -14,7 +17,14 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className="antialiased bg-slate-50 text-slate-900">
-        {children}
+        <LocaleProvider>
+          <ToastProvider>
+            <div className="fixed top-4 right-4 z-50">
+              <LanguageSwitcher />
+            </div>
+            {children}
+          </ToastProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

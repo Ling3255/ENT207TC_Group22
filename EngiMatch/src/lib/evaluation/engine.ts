@@ -83,26 +83,35 @@ export interface ComplianceResult {
 
 // ─── Score constants ─────────────────────────────────────────────────
 
-const SCORE_ACADEMIC = {
-  DEGREE_LEVEL: 20,
-  OVERALL_GRADE: 25,
-  BACKGROUND_MATCH: 20,
-  TOTAL: 65,
+export interface EvaluationWeights {
+  academic: {
+    degreeLevel: number;
+    overallGrade: number;
+    backgroundMatch: number;
+  };
+  module: {
+    allMet: number;
+    partial: number;
+    noneMet: number;
+  };
+  language: {
+    pass: number;
+    close: number;
+    fail: number;
+    notProvided: number;
+  };
+}
+
+export const DEFAULT_WEIGHTS: EvaluationWeights = {
+  academic: { degreeLevel: 20, overallGrade: 25, backgroundMatch: 20 },
+  module: { allMet: 35, partial: 15, noneMet: 0 },
+  language: { pass: 100, close: 50, fail: 0, notProvided: 0 },
 };
 
-const SCORE_MODULE = {
-  ALL_MET: 35,
-  PARTIAL: 15,
-  NONE_MET: 0,
-  TOTAL: 35,
-};
-
-const SCORE_LANGUAGE = {
-  PASS: 100,
-  CLOSE: 50,
-  FAIL: 0,
-  NOT_PROVIDED: 0,
-};
+// Keep backward-compatible constants
+const SCORE_ACADEMIC = DEFAULT_WEIGHTS.academic;
+const SCORE_MODULE = DEFAULT_WEIGHTS.module;
+const SCORE_LANGUAGE = DEFAULT_WEIGHTS.language;
 
 // ─── GPA Evaluation ───────────────────────────────────────────────────
 
@@ -386,34 +395,52 @@ function computeBand(missingItems: string[], gradeStatus: string, languageStatus
   return "not_eligible";
 }
 
-function computeScores(result: EvaluationResult): EvaluationResult {
+function computeScores(
+  result: EvaluationResult,
+  weights: EvaluationWeights = DEFAULT_WEIGHTS
+): EvaluationResult {
   // academic_score: degree level + grade + background
   let academic = 0;
-  if (result.explanation.degree_level.status !== "fail") academic += SCORE_ACADEMIC.DEGREE_LEVEL;
-  if (result.explanation.overall_grade.status === "pass") academic += SCORE_ACADEMIC.OVERALL_GRADE;
-  if (result.explanation.overall_grade.status === "close") academic += Math.round(SCORE_ACADEMIC.OVERALL_GRADE * 0.6);
-  if (result.explanation.background.status !== "fail") academic += SCORE_ACADEMIC.BACKGROUND_MATCH;
+  if (result.explanation.degree_level.status !== "fail")
+    academic += weights.academic.degreeLevel;
+  if (result.explanation.overall_grade.status === "pass")
+    academic += weights.academic.overallGrade;
+  if (result.explanation.overall_grade.status === "close")
+    academic += Math.round(weights.academic.overallGrade * 0.6);
+  if (result.explanation.background.status !== "fail")
+    academic += weights.academic.backgroundMatch;
   result.academic_score = academic;
 
   // module_match_score
-  const preModules = result.explanation.prerequisite_modules.filter((m) => m.required);
+  const preModules = result.explanation.prerequisite_modules.filter(
+    (m) => m.required
+  );
   const matchedRequired = preModules.filter((m) => m.matched).length;
   const totalRequired = preModules.length;
-  const moduleScore = totalRequired === 0
-    ? SCORE_MODULE.ALL_MET
-    : matchedRequired === totalRequired
-      ? SCORE_MODULE.ALL_MET
+  const moduleScore =
+    totalRequired === 0
+      ? weights.module.allMet
+      : matchedRequired === totalRequired
+      ? weights.module.allMet
       : matchedRequired > 0
-        ? SCORE_MODULE.PARTIAL
-        : SCORE_MODULE.NONE_MET;
+      ? weights.module.partial
+      : weights.module.noneMet;
   result.module_match_score = moduleScore;
 
   // language_score
   switch (result.explanation.language.status) {
-    case "pass":       result.language_score = SCORE_LANGUAGE.PASS; break;
-    case "close":      result.language_score = SCORE_LANGUAGE.CLOSE; break;
-    case "fail":        result.language_score = SCORE_LANGUAGE.FAIL; break;
-    case "not_provided": result.language_score = SCORE_LANGUAGE.NOT_PROVIDED; break;
+    case "pass":
+      result.language_score = weights.language.pass;
+      break;
+    case "close":
+      result.language_score = weights.language.close;
+      break;
+    case "fail":
+      result.language_score = weights.language.fail;
+      break;
+    case "not_provided":
+      result.language_score = weights.language.notProvided;
+      break;
   }
 
   return result;
@@ -599,18 +626,22 @@ export async function saveEvaluation(result: EvaluationResult): Promise<void> {
 
 // ─── Evaluate all programmes ─────────────────────────────────────────
 
-export async function evaluateApplicantAllProgrammes(applicantId: string): Promise<EvaluationResult[]> {
+export async function evaluateApplicantAllProgrammes(
+  applicantId: string
+): Promise<EvaluationResult[]> {
   const programmes = await prisma.programme.findMany({
     where: { is_active: true },
     select: { id: true },
   });
 
-  const results: EvaluationResult[] = [];
-  for (const prog of programmes) {
-    const result = await evaluateApplicantForProgramme(applicantId, prog.id);
-    await saveEvaluation(result);
-    results.push(result);
-  }
+  // Parallel evaluation for better performance
+  const results = await Promise.all(
+    programmes.map(async (prog) => {
+      const result = await evaluateApplicantForProgramme(applicantId, prog.id);
+      await saveEvaluation(result);
+      return result;
+    })
+  );
 
   return results;
 }

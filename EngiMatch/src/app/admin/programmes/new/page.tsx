@@ -5,6 +5,59 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CANONICAL_MAJORS, CANONICAL_MODULES } from "@/lib/taxonomy";
 
+// ─── Auto-fill parser ──────────────────────────────────────────────────────────
+
+type KeyValueMap = Record<string, string>;
+type StrList = string[];
+
+/** Parse key:value or key = value lines */
+function parseKeyValue(text: string): KeyValueMap {
+  const result: KeyValueMap = {};
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("//")) continue;
+    const idx = trimmed.search(/[:=]/);
+    if (idx === -1) continue;
+    const key = trimmed.slice(0, idx).trim().toLowerCase().replace(/\s+/g, "_");
+    const val = trimmed.slice(idx + 1).trim();
+    if (val) result[key] = val;
+  }
+  return result;
+}
+
+/** Parse module lines: "Module Name | Display Text | Min Grade | Required" */
+function parseModuleLines(text: string): Array<{ canonical_module_name: string; display_text: string; min_grade_rule: string; required: boolean }> {
+  const modules: Array<{ canonical_module_name: string; display_text: string; min_grade_rule: string; required: boolean }> = [];
+  for (const line of text.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("//")) continue;
+    // skip lines that look like key:value
+    if (/^[^\|]+:[^\|]+$/.test(trimmed)) continue;
+    const parts = trimmed.split(/[|]+/).map((p) => p.trim());
+    if (parts.length === 0 || !parts[0]) continue;
+
+    const canonical = parts[0];
+    const display_text = parts[1] || "";
+    const min_grade_rule = parts[2] || "";
+    const required = parts[3] ? !["0", "false", "no", "optional"].includes(parts[3].toLowerCase()) : true;
+
+    // fuzzy-match canonical module name
+    const matched = CANONICAL_MODULES.find((m) =>
+      m.toLowerCase() === canonical.toLowerCase() ||
+      m.toLowerCase().replace(/_/g, " ") === canonical.toLowerCase()
+    );
+
+    modules.push({
+      canonical_module_name: matched || canonical,
+      display_text,
+      min_grade_rule,
+      required,
+    });
+  }
+  return modules;
+}
+
+// ─── Interfaces ───────────────────────────────────────────────────────────────
 interface University {
   id: string;
   name: string;
@@ -77,6 +130,11 @@ export default function NewProgrammePage() {
 
   const [prereqModules, setPrereqModules] = useState<PreModule[]>([]);
   const [rawRequirementText, setRawRequirementText] = useState("");
+  const [showPasteBasic, setShowPasteBasic] = useState(false);
+  const [showPasteAcademic, setShowPasteAcademic] = useState(false);
+  const [showPasteLang, setShowPasteLang] = useState(false);
+  const [showPastePrereq, setShowPastePrereq] = useState(false);
+  const [pasteError, setPasteError] = useState("");
 
   useEffect(() => {
     fetch("/api/universities").then((r) => r.json()).then(setUniversities);
@@ -94,6 +152,58 @@ export default function NewProgrammePage() {
   };
 
   const removePrereq = (i: number) => setPrereqModules((p) => p.filter((_, idx) => idx !== i));
+
+  const handlePaste = (text: string, target: "basic" | "academic" | "language" | "prereqs") => {
+    setPasteError("");
+    try {
+      if (target === "prereqs") {
+        const parsed = parseModuleLines(text);
+        if (parsed.length > 0) {
+          setPrereqModules((p) => [...p, ...parsed]);
+          return;
+        }
+      }
+      const fields = parseKeyValue(text);
+      if (target === "basic") {
+        if (fields.programme_name) setForm((p) => ({ ...p, programme_name: fields.programme_name }));
+        if (fields.slug) setForm((p) => ({ ...p, slug: fields.slug }));
+        if (fields.degree_type) setForm((p) => ({ ...p, degree_type: fields.degree_type }));
+        if (fields.department) setForm((p) => ({ ...p, department: fields.department }));
+        if (fields.duration_text || fields.duration) setForm((p) => ({ ...p, duration_text: fields.duration_text || fields.duration }));
+        if (fields.intake_term || fields.intake) setForm((p) => ({ ...p, intake_term: fields.intake_term || fields.intake }));
+        if (fields.application_system_type || fields.application_system) setForm((p) => ({ ...p, application_system_type: fields.application_system_type || fields.application_system }));
+        if (fields.tuition_fee_overseas_gbp || fields.tuition_fee) setForm((p) => ({ ...p, tuition_fee_overseas_gbp: fields.tuition_fee_overseas_gbp || fields.tuition_fee }));
+        if (fields.official_url || fields.url) setForm((p) => ({ ...p, official_url: fields.official_url || fields.url }));
+        if (fields.application_deadline_visa || fields.visa_deadline) setForm((p) => ({ ...p, application_deadline_visa: fields.application_deadline_visa || fields.visa_deadline }));
+        if (fields.application_deadline_non_visa || fields.non_visa_deadline) setForm((p) => ({ ...p, application_deadline_non_visa: fields.application_deadline_non_visa || fields.non_visa_deadline }));
+      }
+      if (target === "academic") {
+        if (fields.min_degree_level || fields.degree_level) setAcademicReq((p) => ({ ...p, min_degree_level: fields.min_degree_level || fields.degree_level }));
+        if (fields.min_uk_classification || fields.uk_classification) setAcademicReq((p) => ({ ...p, min_uk_classification: fields.min_uk_classification || fields.uk_classification }));
+        if (fields.prerequisite_module_logic || fields.module_logic) setAcademicReq((p) => ({ ...p, prerequisite_module_logic: fields.prerequisite_module_logic || fields.module_logic }));
+        if (fields.work_experience_considered !== undefined) setAcademicReq((p) => ({ ...p, work_experience_considered: ["1", "true", "yes"].includes(fields.work_experience_considered.toLowerCase()) }));
+        if (fields.interview_possible !== undefined) setAcademicReq((p) => ({ ...p, interview_possible: ["1", "true", "yes"].includes(fields.interview_possible.toLowerCase()) }));
+        if (fields.cv_required !== undefined) setAcademicReq((p) => ({ ...p, cv_required: ["1", "true", "yes"].includes(fields.cv_required.toLowerCase()) }));
+        if (fields.portfolio_required !== undefined) setAcademicReq((p) => ({ ...p, portfolio_required: ["1", "true", "yes"].includes(fields.portfolio_required.toLowerCase()) }));
+        if (fields.accepted_backgrounds) {
+          const majors = fields.accepted_backgrounds.split(/[,;|]/).map((s) => s.trim()).filter(Boolean);
+          const matched = CANONICAL_MAJORS.filter((m) => majors.some((j) => m.toLowerCase().includes(j.toLowerCase()) || j.toLowerCase().includes(m.toLowerCase().replace(/_/g, " "))));
+          if (matched.length > 0) setAcademicReq((p) => ({ ...p, accepted_backgrounds: matched }));
+        }
+      }
+      if (target === "language") {
+        if (fields.english_requirement_level || fields.language_level) setLangReq((p) => ({ ...p, english_requirement_level: fields.english_requirement_level || fields.language_level }));
+        if (fields.ielts_overall || fields.ielts) setLangReq((p) => ({ ...p, ielts_overall: fields.ielts_overall || fields.ielts }));
+        if (fields.ielts_lrw_min || fields.ielts_min) setLangReq((p) => ({ ...p, ielts_lrw_min: fields.ielts_lrw_min || fields.ielts_min }));
+        if (fields.toefl_total || fields.toefl) setLangReq((p) => ({ ...p, toefl_total: fields.toefl_total || fields.toefl }));
+        if (fields.pte_total || fields.pte) setLangReq((p) => ({ ...p, pte_total: fields.pte_total || fields.pte }));
+        if (fields.duolingo_total || fields.duolingo) setLangReq((p) => ({ ...p, duolingo_total: fields.duolingo_total || fields.duolingo }));
+        if (fields.validity_window_months || fields.validity) setLangReq((p) => ({ ...p, validity_window_months: fields.validity_window_months || fields.validity }));
+      }
+    } catch {
+      setPasteError("粘贴文本格式无法识别，请参考示例格式");
+    }
+  };
 
   const toggleMajor = (major: string) =>
     setAcademicReq((p) => ({
@@ -172,6 +282,7 @@ export default function NewProgrammePage() {
 
       <div className="max-w-4xl mx-auto px-4 py-6">
         {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
+        {pasteError && <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">{pasteError}</div>}
 
         <div className="flex gap-1 mb-6 bg-white rounded-xl border border-slate-200 p-1 overflow-x-auto">
           {TABS.map((tab) => (
@@ -186,7 +297,36 @@ export default function NewProgrammePage() {
         {activeTab === "basic" && (
           <div className="space-y-4">
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-4">项目基本信息</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-slate-900">项目基本信息</h2>
+                <button onClick={() => setShowPasteBasic(!showPasteBasic)} className="text-xs text-indigo-500 hover:text-indigo-700 underline">
+                  {showPasteBasic ? "收起示例" : "粘贴自动填充"}
+                </button>
+              </div>
+              {showPasteBasic && (
+                <div className="mb-4 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono space-y-1">
+                  <pre className="whitespace-pre-wrap">{`项目名称: MSc Power Systems Engineering
+Slug: power-systems-msc
+学位类型: MSc
+学系: Department of Electrical and Electronic Engineering
+学制: 1 year
+入学时间: 2026-09
+申请系统: university_portal
+海外学生学费: 28000
+签证申请截止: 2026-06-01
+官方链接: https://www.example.ac.uk/power-systems`}</pre>
+                  <textarea
+                    placeholder="粘贴上述格式的文本..."
+                    className="w-full mt-2 px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    rows={11}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      handlePaste(e.clipboardData.getData("text"), "basic");
+                      setShowPasteBasic(false);
+                    }}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className={labelClass}>所属大学 *</label>
@@ -258,7 +398,33 @@ export default function NewProgrammePage() {
         {activeTab === "academic" && (
           <div className="space-y-4">
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-4">学术要求</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-slate-900">学术要求</h2>
+                <button onClick={() => setShowPasteAcademic(!showPasteAcademic)} className="text-xs text-indigo-500 hover:text-indigo-700 underline">
+                  {showPasteAcademic ? "收起示例" : "粘贴自动填充"}
+                </button>
+              </div>
+              {showPasteAcademic && (
+                <div className="mb-4 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono space-y-1">
+                  <pre className="whitespace-pre-wrap">{`最低学历: bachelor
+UK学位等级: 2:1
+可接受本科专业: Mechanical Engineering, Electrical Engineering
+工作经验考虑: false
+面试可能: false
+需要CV: false
+需要作品集: false`}</pre>
+                  <textarea
+                    placeholder="粘贴上述格式的文本..."
+                    className="w-full mt-2 px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    rows={9}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      handlePaste(e.clipboardData.getData("text"), "academic");
+                      setShowPasteAcademic(false);
+                    }}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className={labelClass}>最低学历</label>
@@ -318,7 +484,33 @@ export default function NewProgrammePage() {
         {/* Language Tab */}
         {activeTab === "language" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-4">英语语言要求</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-slate-900">英语语言要求</h2>
+              <button onClick={() => setShowPasteLang(!showPasteLang)} className="text-xs text-indigo-500 hover:text-indigo-700 underline">
+                {showPasteLang ? "收起示例" : "粘贴自动填充"}
+              </button>
+            </div>
+            {showPasteLang && (
+              <div className="mb-4 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono space-y-1">
+                <pre className="whitespace-pre-wrap">{`英语等级: good
+雅思总分: 6.5
+雅思最低单项: 6.0
+托福总分: 92
+PTE总分: 62
+Duolingo总分: 120
+有效期月数: 24`}</pre>
+                <textarea
+                  placeholder="粘贴上述格式的文本..."
+                  className="w-full mt-2 px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                  rows={8}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    handlePaste(e.clipboardData.getData("text"), "language");
+                    setShowPasteLang(false);
+                  }}
+                />
+              </div>
+            )}
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div>
                 <label className={labelClass}>英语等级</label>
@@ -424,8 +616,33 @@ export default function NewProgrammePage() {
         {/* Prerequisites Tab */}
         {activeTab === "prereqs" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-1">先修课程要求</h2>
-            <p className="text-xs text-slate-500 mb-4">系统会尝试将学生的本科课程与以下字段进行匹配。</p>
+            <div className="flex items-center justify-between mb-1">
+              <div>
+                <h2 className="font-semibold text-slate-900">先修课程要求</h2>
+                <p className="text-xs text-slate-500 mt-0.5">系统会尝试将学生的本科课程与以下字段进行匹配。</p>
+              </div>
+              <button onClick={() => setShowPastePrereq(!showPastePrereq)} className="text-xs text-indigo-500 hover:text-indigo-700 underline">
+                {showPastePrereq ? "收起示例" : "粘贴批量添加"}
+              </button>
+            </div>
+            {showPastePrereq && (
+              <div className="mb-4 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono">
+                <pre className="whitespace-pre-wrap mb-2">{`mathematics_i | Calculus and Linear Algebra | 60% | 1
+physics_i | Fundamentals of Physics | 65% | 1
+engineering_mechanics | Engineering Mechanics | 70% | 1
+programming_fundamentals | Introduction to Programming | 60% | 0`}</pre>
+                <textarea
+                  placeholder="粘贴上述格式的先修课程列表（每行一门，用 | 分隔：标准名称 | 显示文本 | 最低成绩 | 是否必修）"
+                  className="w-full px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                  rows={5}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    handlePaste(e.clipboardData.getData("text"), "prereqs");
+                    setShowPastePrereq(false);
+                  }}
+                />
+              </div>
+            )}
             {prereqModules.map((m, i) => (
               <div key={i} className="border border-slate-200 rounded-lg p-3 mb-3 bg-slate-50">
                 <div className="flex gap-2 mb-2">

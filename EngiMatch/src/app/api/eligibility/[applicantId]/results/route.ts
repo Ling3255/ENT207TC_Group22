@@ -1,8 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  apiHandler,
+  successResponse,
+  requireAuth,
+} from "@/lib/api-utils";
+
+type RouteParams = { params: Promise<{ applicantId: string }> };
 
 // GET /api/eligibility/[applicantId]/results
-export async function GET(request: NextRequest, { params }: { params: Promise<{ applicantId: string }> }) {
+export const GET = apiHandler(async (request: NextRequest, { params }: RouteParams) => {
+  await requireAuth(request);
+
   const { applicantId } = await params;
   const { searchParams } = new URL(request.url);
   const band = searchParams.get("band"); // "eligible" | "borderline" | "not_eligible"
@@ -26,5 +35,5 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     orderBy: { created_at: "desc" },
   });
 
-  return NextResponse.json(evaluations);
-}
+  return successResponse(evaluations);
+});

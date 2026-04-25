@@ -1,6 +1,3 @@
-// EngiMatch — UK Engineering Taught Master's Eligibility Platform
-// Schema v0.1 | Prisma 7 + PostgreSQL
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,71 +6,86 @@ datasource db {
   provider = "postgresql"
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 1. universities
-// ══════════════════════════════════════════════════════════════════
+// User authentication models
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password_hash String    @map("password_hash")
+  name          String?
+  role          UserRole  @default(STUDENT)
+  status        UserStatus @default(PENDING)
+  created_at    DateTime  @default(now()) @map("created_at")
+  updated_at    DateTime  @updatedAt @map("updated_at")
+  last_login_at DateTime? @map("last_login_at")
+  // Link to applicant profile (for students)
+  applicant_id  String?   @map("applicant_id")
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+enum UserRole {
+  SUPER_ADMIN  // 超级管理员 - 全权限
+  STAFF        // 工作人员 - 需要审批
+  STUDENT      // 学生 - 普通用户
+}
+
+enum UserStatus {
+  PENDING    // 待审批（仅工作人员需要）
+  APPROVED   // 已批准
+  REJECTED   // 已拒绝
+  SUSPENDED  // 已停用
+}
 
 model University {
-  id            String       @id @default(cuid())
-  name          String       @unique // e.g. "University College London"
-  slug          String       @unique // e.g. "ucl"
-  country       String       @default("UK")
-  official_domain String      // e.g. "ucl.ac.uk"
-  rank          Int?
-  created_at    DateTime     @default(now()) @map("created_at")
-  updated_at    DateTime     @updatedAt @map("updated_at")
-  programmes    Programme[]
+  id              String      @id @default(cuid())
+  name            String      @unique
+  slug            String      @unique
+  country         String      @default("UK")
+  official_domain String
+  rank            Int?
+  created_at      DateTime    @default(now()) @map("created_at")
+  updated_at      DateTime    @updatedAt @map("updated_at")
+  programmes      Programme[]
 
   @@map("universities")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 2. programmes
-// ══════════════════════════════════════════════════════════════════
-
 model Programme {
-  id                       String                      @id @default(cuid())
-  university               University                  @relation(fields: [university_id], references: [id])
-  university_id            String                      @map("university_id")
-
-  programme_name           String                      @map("programme_name")
-  slug                     String
-  degree_type              String                      @map("degree_type") // MSc / MEng / MRes
-  department               String?
-  study_mode               String?                     @map("study_mode") // full-time / part-time
-  duration_text            String?                     @map("duration_text") // "1 year", "2 years"
-  intake_term              String?                     @map("intake_term") // "2026-09"
-
-  // Application
-  application_system_type   String?                     @map("application_system_type") // "university_portal" / "ucas" / ...
-  application_open_date     DateTime?                     @map("application_open_date")
-  application_deadline_visa DateTime?                      @map("application_deadline_visa")
-  application_deadline_non_visa DateTime?                   @map("application_deadline_non_visa")
-
-  // Fees
-  tuition_fee_home_gbp     Decimal?                    @map("tuition_fee_home_gbp") @db.Decimal(10, 2)
-  tuition_fee_overseas_gbp Decimal?                   @map("tuition_fee_overseas_gbp") @db.Decimal(10, 2)
-
-  // Relations
-  academic_requirements    ProgrammeAcademicRequirement?
-  language_requirements    ProgrammeLanguageRequirement?
-  documents                 ProgrammeDocument?
-  compliance                ProgrammeCompliance?
-  prerequisite_modules      PrerequisiteModule[]
-  evaluations               Evaluation[]
-
-  // Source tracking
-  official_url             String                      @map("official_url")
-  source_last_checked_at   DateTime?                  @map("source_last_checked_at")
-  source_page_title        String?                    @map("source_page_title")
-  raw_requirement_text     String?                    @map("raw_requirement_text") @db.Text
-  parser_version           String?                    @map("parser_version")
-  human_verified           Boolean                    @default(false) @map("human_verified")
-  confidence_score         Int?                        @map("confidence_score")
-
-  is_active                Boolean                    @default(true) @map("is_active")
-  created_at               DateTime                   @default(now()) @map("created_at")
-  updated_at               DateTime                   @updatedAt @map("updated_at")
+  id                            String                        @id @default(cuid())
+  university_id                 String                        @map("university_id")
+  programme_name                String                        @map("programme_name")
+  slug                          String
+  degree_type                   String                        @map("degree_type")
+  department                    String?
+  study_mode                    String?                       @map("study_mode")
+  duration_text                 String?                       @map("duration_text")
+  intake_term                   String?                       @map("intake_term")
+  application_system_type       String?                       @map("application_system_type")
+  application_open_date         DateTime?                     @map("application_open_date")
+  application_deadline_visa     DateTime?                     @map("application_deadline_visa")
+  application_deadline_non_visa DateTime?                     @map("application_deadline_non_visa")
+  tuition_fee_home_gbp          Decimal?                      @map("tuition_fee_home_gbp") @db.Decimal(10, 2)
+  tuition_fee_overseas_gbp      Decimal?                      @map("tuition_fee_overseas_gbp") @db.Decimal(10, 2)
+  official_url                  String                        @map("official_url")
+  source_last_checked_at        DateTime?                     @map("source_last_checked_at")
+  source_page_title             String?                       @map("source_page_title")
+  raw_requirement_text          String?                       @map("raw_requirement_text")
+  parser_version                String?                       @map("parser_version")
+  human_verified                Boolean                       @default(false) @map("human_verified")
+  confidence_score              Int?                          @map("confidence_score")
+  is_active                     Boolean                       @default(true) @map("is_active")
+  created_at                    DateTime                      @default(now()) @map("created_at")
+  updated_at                    DateTime                      @updatedAt @map("updated_at")
+  evaluations                   Evaluation[]
+  prerequisite_modules          PrerequisiteModule[]
+  academic_requirements         ProgrammeAcademicRequirement?
+  compliance                    ProgrammeCompliance?
+  documents                     ProgrammeDocument?
+  language_requirements         ProgrammeLanguageRequirement?
+  university                    University                    @relation(fields: [university_id], references: [id])
 
   @@unique([university_id, slug])
   @@index([university_id])
@@ -82,216 +94,152 @@ model Programme {
   @@map("programmes")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 3. programme_academic_requirements
-// ══════════════════════════════════════════════════════════════════
-
 model ProgrammeAcademicRequirement {
-  id                       String     @id @default(cuid())
-  programme                Programme  @relation(fields: [programme_id], references: [id], onDelete: Cascade)
-  programme_id             String     @unique @map("programme_id")
-
-  min_degree_level         String?    @map("min_degree_level") // "bachelor" / "master"
-  min_uk_classification    String?    @map("min_uk_classification") // "2:1" / "2:2" / "first"
-  accepted_backgrounds    String[]   @map("accepted_backgrounds") // canonical taxonomy values
-  disallowed_backgrounds   String[]   @map("disallowed_backgrounds")
-  prerequisite_module_logic String?   @map("prerequisite_module_logic") // "ALL" / "ANY" / "N_OF_K"
-  work_experience_considered Boolean  @default(false) @map("work_experience_considered")
-  interview_possible       Boolean    @default(false) @map("interview_possible")
-  cv_required              Boolean    @default(false) @map("cv_required")
-  portfolio_required       Boolean    @default(false) @map("portfolio_required")
-  notes                    String?    @db.Text
-
-  created_at               DateTime  @default(now()) @map("created_at")
-  updated_at               DateTime  @updatedAt @map("updated_at")
+  id                         String    @id @default(cuid())
+  programme_id               String    @unique @map("programme_id")
+  min_degree_level           String?   @map("min_degree_level")
+  min_uk_classification      String?   @map("min_uk_classification")
+  accepted_backgrounds       String[]  @map("accepted_backgrounds")
+  disallowed_backgrounds     String[]  @map("disallowed_backgrounds")
+  prerequisite_module_logic  String?   @map("prerequisite_module_logic")
+  work_experience_considered Boolean   @default(false) @map("work_experience_considered")
+  interview_possible         Boolean   @default(false) @map("interview_possible")
+  cv_required                Boolean   @default(false) @map("cv_required")
+  portfolio_required         Boolean   @default(false) @map("portfolio_required")
+  notes                      String?
+  created_at                 DateTime  @default(now()) @map("created_at")
+  updated_at                 DateTime  @updatedAt @map("updated_at")
+  programme                  Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
 
   @@map("programme_academic_requirements")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 4. prerequisite_modules
-// ══════════════════════════════════════════════════════════════════
-
 model PrerequisiteModule {
-  id                String      @id @default(cuid())
-  programme         Programme   @relation(fields: [programme_id], references: [id], onDelete: Cascade)
-  programme_id      String      @map("programme_id")
-
-  canonical_module_name String   @map("canonical_module_name") // e.g. "applied_electricity"
-  display_text          String  @map("display_text") // e.g. "basic knowledge of applied electricity"
-  min_grade_rule         String? @map("min_grade_rule") // e.g. "70%" / "B"
-  required               Boolean @default(true)
-
-  created_at               DateTime @default(now()) @map("created_at")
-  updated_at               DateTime @updatedAt @map("updated_at")
+  id                    String    @id @default(cuid())
+  programme_id          String    @map("programme_id")
+  canonical_module_name String    @map("canonical_module_name")
+  display_text          String    @map("display_text")
+  min_grade_rule        String?   @map("min_grade_rule")
+  required              Boolean   @default(true)
+  created_at            DateTime  @default(now()) @map("created_at")
+  updated_at            DateTime  @updatedAt @map("updated_at")
+  programme             Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
 
   @@index([programme_id])
   @@map("prerequisite_modules")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 5. programme_language_requirements
-// ══════════════════════════════════════════════════════════════════
-
 model ProgrammeLanguageRequirement {
-  id                    String    @id @default(cuid())
-  programme             Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
-  programme_id          String    @unique @map("programme_id")
-
-  english_requirement_level String? @map("english_requirement_level") // "standard" / "good" / "advanced"
-  ielts_overall          Decimal?  @map("ielts_overall") @db.Decimal(3, 1)
-  ielts_lrw_min          Decimal?  @map("ielts_lrw_min") @db.Decimal(3, 1)
-  toefl_total            Int?       @map("toefl_total")
-  pte_total              Int?       @map("pte_total")
-  duolingo_total         Int?       @map("duolingo_total")
-  validity_window_months Int?      @map("validity_window_months")
-  notes                  String?   @db.Text
-
-  created_at               DateTime @default(now()) @map("created_at")
-  updated_at               DateTime @updatedAt @map("updated_at")
+  id                        String    @id @default(cuid())
+  programme_id              String    @unique @map("programme_id")
+  english_requirement_level String?   @map("english_requirement_level")
+  ielts_overall             Decimal?  @map("ielts_overall") @db.Decimal(3, 1)
+  ielts_lrw_min             Decimal?  @map("ielts_lrw_min") @db.Decimal(3, 1)
+  toefl_total               Int?      @map("toefl_total")
+  pte_total                 Int?      @map("pte_total")
+  duolingo_total            Int?      @map("duolingo_total")
+  validity_window_months    Int?      @map("validity_window_months")
+  notes                     String?
+  created_at                DateTime  @default(now()) @map("created_at")
+  updated_at                DateTime  @updatedAt @map("updated_at")
+  programme                 Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
 
   @@map("programme_language_requirements")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 6. programme_documents
-// ══════════════════════════════════════════════════════════════════
-
 model ProgrammeDocument {
-  id                    String    @id @default(cuid())
-  programme             Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
-  programme_id          String    @unique @map("programme_id")
-
-  transcript_required   Boolean   @default(false) @map("transcript_required")
-  personal_statement_required Boolean @default(false) @map("personal_statement_required")
-  references_required_count Int? @map("references_required_count")
-  reference_type_academic_min Int? @map("reference_type_academic_min")
-  cv_resume_required    Boolean   @default(false) @map("cv_resume_required")
-  additional_documents  String[]  @map("additional_documents")
-
-  created_at               DateTime @default(now()) @map("created_at")
-  updated_at               DateTime @updatedAt @map("updated_at")
+  id                          String    @id @default(cuid())
+  programme_id                String    @unique @map("programme_id")
+  transcript_required         Boolean   @default(false) @map("transcript_required")
+  personal_statement_required Boolean   @default(false) @map("personal_statement_required")
+  references_required_count   Int?      @map("references_required_count")
+  reference_type_academic_min Int?      @map("reference_type_academic_min")
+  cv_resume_required          Boolean   @default(false) @map("cv_resume_required")
+  additional_documents        String[]  @map("additional_documents")
+  created_at                  DateTime  @default(now()) @map("created_at")
+  updated_at                  DateTime  @updatedAt @map("updated_at")
+  programme                   Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
 
   @@map("programme_documents")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 7. programme_compliance
-// ══════════════════════════════════════════════════════════════════
-
 model ProgrammeCompliance {
-  id              String    @id @default(cuid())
-  programme       Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
-  programme_id    String    @unique @map("programme_id")
-
-  atas_possible   Boolean   @default(false) @map("atas_possible")
-  atas_rule_text  String?   @map("atas_rule_text") @db.Text
-  graduate_route_note String? @map("graduate_route_note") @db.Text
-  visa_deadline_note String? @map("visa_deadline_note") @db.Text
-
-  created_at               DateTime @default(now()) @map("created_at")
-  updated_at               DateTime @updatedAt @map("updated_at")
+  id                  String    @id @default(cuid())
+  programme_id        String    @unique @map("programme_id")
+  atas_possible       Boolean   @default(false) @map("atas_possible")
+  atas_rule_text      String?   @map("atas_rule_text")
+  graduate_route_note String?   @map("graduate_route_note")
+  visa_deadline_note  String?   @map("visa_deadline_note")
+  created_at          DateTime  @default(now()) @map("created_at")
+  updated_at          DateTime  @updatedAt @map("updated_at")
+  programme           Programme @relation(fields: [programme_id], references: [id], onDelete: Cascade)
 
   @@map("programme_compliance")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 8. applicants
-// ══════════════════════════════════════════════════════════════════
-
 model Applicant {
-  id                  String    @id @default(cuid())
-
-  // Personal
-  full_name           String?   @map("full_name")
-  nationality         String?
-  email               String    @unique
-
-  // Academic
-  undergrad_university String?  @map("undergrad_university")
-  undergrad_major     String?   @map("undergrad_major")
-  undergrad_major_canonical String? @map("undergrad_major_canonical") // canonical taxonomy
-  gpa_numeric         Decimal?  @map("gpa_numeric") @db.Decimal(5, 2)
-  gpa_scale           Decimal   @default(4.0) @map("gpa_scale")
-  grading_scheme      String?   @map("grading_scheme") // "percentage" / "4.0" / "5.0" / "other"
-  graduation_year      Int?       @map("graduation_year")
-
-  // English scores
-  ielts_overall       Decimal?  @map("ielts_overall") @db.Decimal(3, 1)
-  ielts_listening     Decimal?  @map("ielts_listening") @db.Decimal(3, 1)
-  ielts_reading       Decimal?  @map("ielts_reading") @db.Decimal(3, 1)
-  ielts_writing       Decimal?  @map("ielts_writing") @db.Decimal(3, 1)
-  ielts_speaking      Decimal?  @map("ielts_speaking") @db.Decimal(3, 1)
-  toefl_total         Int?       @map("toefl_total")
-  toefl_reading       Int?       @map("toefl_reading")
-  toefl_listening     Int?       @map("toefl_listening")
-  toefl_writing       Int?       @map("toefl_writing")
-  toefl_speaking      Int?       @map("toefl_speaking")
-  pte_total           Int?       @map("pte_total")
-  duolingo_total      Int?       @map("duolingo_total")
-
-  // Target
-  target_tracks       String[]  @map("target_tracks") // engineering sub-direction
-
-  // Relations
-  modules             ApplicantModule[]
-  evaluations          Evaluation[]
-
-  created_at          DateTime  @default(now()) @map("created_at")
-  updated_at          DateTime  @updatedAt @map("updated_at")
+  id                        String            @id @default(cuid())
+  full_name                 String?           @map("full_name")
+  nationality               String?
+  email                     String            @unique
+  undergrad_university      String?           @map("undergrad_university")
+  undergrad_major           String?           @map("undergrad_major")
+  undergrad_major_canonical String?           @map("undergrad_major_canonical")
+  gpa_numeric               Decimal?          @map("gpa_numeric") @db.Decimal(5, 2)
+  gpa_scale                 Decimal           @default(4.0) @map("gpa_scale")
+  grading_scheme            String?           @map("grading_scheme")
+  graduation_year           Int?              @map("graduation_year")
+  ielts_overall             Decimal?          @map("ielts_overall") @db.Decimal(3, 1)
+  ielts_listening           Decimal?          @map("ielts_listening") @db.Decimal(3, 1)
+  ielts_reading             Decimal?          @map("ielts_reading") @db.Decimal(3, 1)
+  ielts_writing             Decimal?          @map("ielts_writing") @db.Decimal(3, 1)
+  ielts_speaking            Decimal?          @map("ielts_speaking") @db.Decimal(3, 1)
+  toefl_total               Int?              @map("toefl_total")
+  toefl_reading             Int?              @map("toefl_reading")
+  toefl_listening           Int?              @map("toefl_listening")
+  toefl_writing             Int?              @map("toefl_writing")
+  toefl_speaking            Int?              @map("toefl_speaking")
+  pte_total                 Int?              @map("pte_total")
+  duolingo_total            Int?              @map("duolingo_total")
+  target_tracks             String[]          @map("target_tracks")
+  created_at                DateTime          @default(now()) @map("created_at")
+  updated_at                DateTime          @updatedAt @map("updated_at")
+  modules                   ApplicantModule[]
+  evaluations               Evaluation[]
 
   @@index([email])
   @@map("applicants")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 9. applicant_modules
-// ══════════════════════════════════════════════════════════════════
-
 model ApplicantModule {
   id                    String    @id @default(cuid())
-  applicant             Applicant @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
   applicant_id          String    @map("applicant_id")
-
-  module_name_raw       String    @map("module_name_raw") // e.g. "高等数学"
-  canonical_module_name String?   @map("canonical_module_name") // e.g. "mathematics"
-  grade_text            String?   @map("grade_text") // e.g. "A" / "85"
+  module_name_raw       String    @map("module_name_raw")
+  canonical_module_name String?   @map("canonical_module_name")
+  grade_text            String?   @map("grade_text")
   grade_numeric         Decimal?  @map("grade_numeric") @db.Decimal(5, 2)
-  credits               Int?       @map("credits")
-
-  created_at          DateTime  @default(now()) @map("created_at")
+  credits               Int?      @map("credits")
+  created_at            DateTime  @default(now()) @map("created_at")
+  applicant             Applicant @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
 
   @@index([applicant_id])
   @@map("applicant_modules")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// 10. eligibility_results
-// ══════════════════════════════════════════════════════════════════
-
 model Evaluation {
-  id                  String    @id @default(cuid())
-  applicant           Applicant @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
-  applicant_id        String    @map("applicant_id")
-  programme           Programme @relation(fields: [programme_id], references: [id])
-  programme_id        String    @map("programme_id")
-
-  // Scores (0-100 each)
-  academic_score      Int?       @map("academic_score")
-  module_match_score  Int?       @map("module_match_score")
-  language_score      Int?       @map("language_score")
-
-  // Band
-  eligibility_band    String     @map("eligibility_band") // "eligible" / "borderline" / "not_eligible"
-
-  // Compliance
-  compliance_flags    String[]   @map("compliance_flags")
-  missing_items       String[]   @map("missing_items")
-
-  // Detailed explanation (JSONB)
-  explanation         Json?      @map("explanation")
-
-  created_at          DateTime   @default(now()) @map("created_at")
+  id                 String    @id @default(cuid())
+  applicant_id       String    @map("applicant_id")
+  programme_id       String    @map("programme_id")
+  academic_score     Int?      @map("academic_score")
+  module_match_score Int?      @map("module_match_score")
+  language_score     Int?      @map("language_score")
+  eligibility_band   String    @map("eligibility_band")
+  compliance_flags   String[]  @map("compliance_flags")
+  missing_items      String[]  @map("missing_items")
+  explanation        Json?     @map("explanation")
+  created_at         DateTime  @default(now()) @map("created_at")
+  applicant          Applicant @relation(fields: [applicant_id], references: [id], onDelete: Cascade)
+  programme          Programme @relation(fields: [programme_id], references: [id])
 
   @@unique([applicant_id, programme_id])
   @@index([applicant_id])
@@ -300,22 +248,36 @@ model Evaluation {
   @@map("evaluations")
 }
 
-// ══════════════════════════════════════════════════════════════════
-// Canonical taxonomy enums (stored as String in DB for flexibility)
-// ══════════════════════════════════════════════════════════════════
-// Undergrad majors:
-//   mechanical_engineering, aerospace_engineering, electrical_engineering
-//   electronic_engineering, mechatronics, energy_engineering,
-//   control_engineering, robotics, materials_engineering, civil_engineering,
-//   chemical_engineering, computer_engineering
-//
-// Canonical modules:
-//   mathematics, engineering_mathematics, circuits, applied_electricity,
-//   control_theory, signals_and_systems, machine_learning_basic,
-//   thermodynamics, fluid_dynamics, heat_transfer, solid_mechanics,
-//   structural_dynamics, finite_element_analysis, power_systems,
-//   power_electronics, embedded_systems, programming, data_structures,
-//   optimisation
-//
-// English levels: standard, good, advanced
-// Eligibility bands: eligible, borderline, not_eligible
+model SavedResume {
+  id          String   @id @default(cuid())
+  name        String
+  major       String
+  stage       String?
+  raw_text    String   @db.Text
+  sections    Json
+  optimized_at DateTime @default(now()) @map("optimized_at")
+  created_at  DateTime @default(now()) @map("created_at")
+  updated_at  DateTime @updatedAt @map("updated_at")
+
+  @@map("saved_resumes")
+}
+
+model TimelineEvent {
+  id            String   @id @default(cuid())
+  title         String
+  title_en      String   @map("title_en")
+  description   String   @db.Text
+  description_en String @db.Text @map("description_en")
+  phase         String
+  phase_order   Int      @map("phase_order")
+  category      String
+  month_min     Int      @map("month_min")
+  month_max     Int      @map("month_max")
+  is_required   Boolean  @default(false) @map("is_required")
+  icon          String   @default("📌")
+  created_at    DateTime @default(now()) @map("created_at")
+
+  @@index([phase])
+  @@index([category])
+  @@map("timeline_events")
+}

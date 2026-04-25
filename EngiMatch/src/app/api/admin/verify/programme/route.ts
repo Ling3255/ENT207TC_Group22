@@ -1,86 +1,113 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  apiHandler,
+  successResponse,
+  errorResponse,
+  requireRole,
+  parseJsonBody,
+  assertString,
+} from "@/lib/api-utils";
 
 // POST /api/admin/verify/programme
-// Mark a programme as human-verified and update fields
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { programmeId, human_verified, corrections } = body;
+export const POST = apiHandler(async (request: NextRequest) => {
+  await requireRole(request, ["SUPER_ADMIN", "STAFF"]);
 
-    if (!programmeId) {
-      return NextResponse.json({ error: "programmeId is required" }, { status: 400 });
-    }
+  const body = await parseJsonBody<Record<string, unknown>>(request);
+  const programmeId = assertString(body.programmeId, "programmeId");
+  const humanVerified = body.human_verified === true;
+  const corrections = body.corrections as Record<string, unknown> | undefined;
 
-    const updateData: Record<string, unknown> = {
-      human_verified: human_verified ?? true,
-    };
+  const updateData: Record<string, unknown> = {
+    human_verified: humanVerified,
+  };
 
-    // Apply any field corrections from the admin review
-    if (corrections) {
-      const { academic_requirements, language_requirements, documents, compliance, prerequisite_modules, ...flat } = corrections;
+  if (corrections && typeof corrections === "object") {
+    const {
+      academic_requirements,
+      language_requirements,
+      documents,
+      compliance,
+      prerequisite_modules,
+      ...flat
+    } = corrections;
 
-      if (flat.human_verified !== undefined) updateData.human_verified = flat.human_verified;
-      if (flat.parser_version !== undefined) updateData.parser_version = flat.parser_version;
-      if (flat.confidence_score !== undefined) updateData.confidence_score = parseInt(flat.confidence_score);
+    if (flat.human_verified !== undefined)
+      updateData.human_verified = flat.human_verified === true;
+    if (flat.parser_version !== undefined)
+      updateData.parser_version = String(flat.parser_version);
+    if (flat.confidence_score !== undefined)
+      updateData.confidence_score = parseInt(String(flat.confidence_score));
 
-      if (academic_requirements) {
-        await prisma.programmeAcademicRequirement.upsert({
+    const upsertTasks = [];
+    if (academic_requirements && typeof academic_requirements === "object") {
+      upsertTasks.push(
+        prisma.programmeAcademicRequirement.upsert({
           where: { programme_id: programmeId },
           update: academic_requirements,
-          create: { programme_id: programmeId, ...academic_requirements },
-        });
-      }
-      if (language_requirements) {
-        await prisma.programmeLanguageRequirement.upsert({
+          create: { programme_id: programmeId, ...(academic_requirements as object) },
+        })
+      );
+    }
+    if (language_requirements && typeof language_requirements === "object") {
+      upsertTasks.push(
+        prisma.programmeLanguageRequirement.upsert({
           where: { programme_id: programmeId },
           update: language_requirements,
-          create: { programme_id: programmeId, ...language_requirements },
-        });
-      }
-      if (documents) {
-        await prisma.programmeDocument.upsert({
+          create: { programme_id: programmeId, ...(language_requirements as object) },
+        })
+      );
+    }
+    if (documents && typeof documents === "object") {
+      upsertTasks.push(
+        prisma.programmeDocument.upsert({
           where: { programme_id: programmeId },
           update: documents,
-          create: { programme_id: programmeId, ...documents },
-        });
-      }
-      if (compliance) {
-        await prisma.programmeCompliance.upsert({
+          create: { programme_id: programmeId, ...(documents as object) },
+        })
+      );
+    }
+    if (compliance && typeof compliance === "object") {
+      upsertTasks.push(
+        prisma.programmeCompliance.upsert({
           where: { programme_id: programmeId },
           update: compliance,
-          create: { programme_id: programmeId, ...compliance },
-        });
-      }
-      if (prerequisite_modules) {
-        await prisma.prerequisiteModule.deleteMany({ where: { programme_id: programmeId } });
-        if (prerequisite_modules.length > 0) {
-          await prisma.prerequisiteModule.createMany({
-            data: prerequisite_modules.map((m: { canonical_module_name: string; display_text: string; min_grade_rule?: string; required?: boolean }) => ({
-              programme_id: programmeId,
-              ...m,
-            })),
-          });
-        }
+          create: { programme_id: programmeId, ...(compliance as object) },
+        })
+      );
+    }
+    if (Array.isArray(prerequisite_modules)) {
+      await prisma.prerequisiteModule.deleteMany({
+        where: { programme_id: programmeId },
+      });
+      if (prerequisite_modules.length > 0) {
+        upsertTasks.push(
+          prisma.prerequisiteModule.createMany({
+            data: prerequisite_modules.map(
+              (m: { canonical_module_name: string; display_text: string; min_grade_rule?: string; required?: boolean }) => ({
+                programme_id: programmeId,
+                ...m,
+              })
+            ),
+          })
+        );
       }
     }
-
-    const programme = await prisma.programme.update({
-      where: { id: programmeId },
-      data: updateData,
-      include: {
-        university: true,
-        academic_requirements: true,
-        language_requirements: true,
-        documents: true,
-        compliance: true,
-        prerequisite_modules: true,
-      },
-    });
-
-    return NextResponse.json({ success: true, programme });
-  } catch (error) {
-    console.error("POST /api/admin/verify/programme error:", error);
-    return NextResponse.json({ error: "Verify failed" }, { status: 500 });
+    if (upsertTasks.length > 0) await Promise.all(upsertTasks);
   }
-}
+
+  const programme = await prisma.programme.update({
+    where: { id: programmeId },
+    data: updateData,
+    include: {
+      university: true,
+      academic_requirements: true,
+      language_requirements: true,
+      documents: true,
+      compliance: true,
+      prerequisite_modules: true,
+    },
+  });
+
+  return successResponse({ programme });
+});

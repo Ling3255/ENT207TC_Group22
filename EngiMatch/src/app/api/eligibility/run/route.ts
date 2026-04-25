@@ -1,50 +1,52 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
   evaluateApplicantForProgramme,
-  evaluateApplicantAllProgrammes,
   saveEvaluation,
 } from "@/lib/evaluation/engine";
+import {
+  apiHandler,
+  successResponse,
+  errorResponse,
+  requireAuth,
+  parseJsonBody,
+  assertString,
+} from "@/lib/api-utils";
 
 // POST /api/eligibility/run
 // Body: { applicantId, programmeId? }
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { applicantId, programmeId, programmeIds } = body;
+export const POST = apiHandler(async (request: NextRequest) => {
+  await requireAuth(request);
 
-    if (!applicantId) {
-      return NextResponse.json({ error: "applicantId is required" }, { status: 400 });
-    }
+  const body = await parseJsonBody<Record<string, unknown>>(request);
+  const applicantId = assertString(body.applicantId, "applicantId");
 
-    const applicant = await prisma.applicant.findUnique({ where: { id: applicantId } });
-    if (!applicant) {
-      return NextResponse.json({ error: "Applicant not found" }, { status: 404 });
-    }
+  const applicant = await prisma.applicant.findUnique({ where: { id: applicantId } });
+  if (!applicant) {
+    return errorResponse("Applicant not found", 404);
+  }
 
-    let targetIds: string[] = [];
-    if (programmeId) {
-      targetIds = [programmeId];
-    } else if (programmeIds?.length > 0) {
-      targetIds = programmeIds;
-    } else {
-      const all = await prisma.programme.findMany({
-        where: { is_active: true },
-        select: { id: true },
-      });
-      targetIds = all.map((p) => p.id);
-    }
+  let targetIds: string[] = [];
+  if (typeof body.programmeId === "string") {
+    targetIds = [body.programmeId];
+  } else if (Array.isArray(body.programmeIds) && body.programmeIds.length > 0) {
+    targetIds = body.programmeIds.map(String);
+  } else {
+    const all = await prisma.programme.findMany({
+      where: { is_active: true },
+      select: { id: true },
+    });
+    targetIds = all.map((p) => p.id);
+  }
 
-    const results = [];
-    for (const pid of targetIds) {
+  // Parallel evaluation for better performance
+  const results = await Promise.all(
+    targetIds.map(async (pid) => {
       const result = await evaluateApplicantForProgramme(applicantId, pid);
       await saveEvaluation(result);
-      results.push(result);
-    }
+      return result;
+    })
+  );
 
-    return NextResponse.json({ applicantId, evaluatedCount: results.length, results });
-  } catch (error) {
-    console.error("POST /api/eligibility/run error:", error);
-    return NextResponse.json({ error: "Evaluation failed" }, { status: 500 });
-  }
-}
+  return successResponse({ applicantId, evaluatedCount: results.length, results });
+});

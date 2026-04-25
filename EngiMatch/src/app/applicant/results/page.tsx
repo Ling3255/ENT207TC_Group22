@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useLocale } from "@/context/LocaleContext";
 
 interface EvaluationExplanation {
   degree_level: { status: string; detail: string };
@@ -46,7 +47,7 @@ interface Evaluation {
   };
 }
 
-const BAND_CONFIG = {
+const BAND_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
   eligible:     { label: "符合条件",    color: "green",  icon: "✓" },
   borderline:   { label: "条件边缘",    color: "amber",  icon: "~" },
   not_eligible: { label: "暂不符合",    color: "red",    icon: "✗" },
@@ -66,11 +67,11 @@ function ScoreBar({ score, label }: { score: number | null; label: string }) {
   );
 }
 
-function RiskTag({ flag }: { flag: string }) {
+function RiskTag({ flag, locale }: { flag: string; locale: string }) {
   const configs: Record<string, { label: string; color: string }> = {
-    atas_possible:            { label: "ATAS", color: "bg-orange-100 text-orange-700 border-orange-200" },
-    visa_deadline_passed:     { label: "签证截止已过", color: "bg-red-100 text-red-700 border-red-200" },
-    non_visa_deadline_passed:  { label: "申请截止已过", color: "bg-red-100 text-red-700 border-red-200" },
+    atas_possible:            { label: locale === "en" ? "ATAS" : "ATAS", color: "bg-orange-100 text-orange-700 border-orange-200" },
+    visa_deadline_passed:     { label: locale === "en" ? "Visa Deadline Passed" : "签证截止已过", color: "bg-red-100 text-red-700 border-red-200" },
+    non_visa_deadline_passed:  { label: locale === "en" ? "App Deadline Passed" : "申请截止已过", color: "bg-red-100 text-red-700 border-red-200" },
   };
   const cfg = configs[flag];
   if (!cfg) return null;
@@ -82,6 +83,7 @@ function RiskTag({ flag }: { flag: string }) {
 }
 
 function ResultsContent() {
+  const { t, locale } = useLocale();
   const params = useSearchParams();
   const applicantId = params.get("applicantId");
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -136,10 +138,16 @@ function ResultsContent() {
     notEligible: evaluations.filter((e) => e.eligibility_band === "not_eligible").length,
   };
 
+  const bandLabels = {
+    eligible: locale === "en" ? "Eligible" : "符合条件",
+    borderline: locale === "en" ? "Borderline" : "条件边缘",
+    not_eligible: locale === "en" ? "Not Eligible" : "暂不符合",
+  };
+
   if (!applicantId) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-slate-500">缺少申请者信息，请从申请入口重新进入。</p>
+        <p className="text-slate-500">{t("results.no_applicant")}</p>
       </div>
     );
   }
@@ -148,8 +156,8 @@ function ResultsContent() {
     <div className="min-h-screen bg-slate-50">
       <div className="bg-indigo-600 text-white py-8 px-4">
         <div className="max-w-3xl mx-auto">
-          <Link href="/" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← 返回首页</Link>
-          <h1 className="text-3xl font-bold">评估结果</h1>
+          <Link href="/home" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← {t("nav.back")}</Link>
+          <h1 className="text-3xl font-bold">{t("results.title")}</h1>
           {applicant && (
             <p className="text-indigo-200 mt-1">
               {applicant.full_name} · {applicant.undergrad_university} · {applicant.undergrad_major} · GPA {Number(applicant.gpa_numeric).toFixed(2)}/{Number(applicant.gpa_scale)}
@@ -164,19 +172,19 @@ function ResultsContent() {
             <div className="grid grid-cols-4 gap-3 mb-6">
               <div className="bg-white rounded-xl border border-slate-200 p-4 text-center">
                 <div className="text-2xl font-bold text-slate-700">{stats.total}</div>
-                <div className="text-xs text-slate-500">全部项目</div>
+                <div className="text-xs text-slate-500">{t("results.total")}</div>
               </div>
               <div className="bg-green-50 rounded-xl border border-green-200 p-4 text-center">
                 <div className="text-2xl font-bold text-green-700">{stats.eligible}</div>
-                <div className="text-xs text-green-600">符合条件</div>
+                <div className="text-xs text-green-600">{t("results.eligible")}</div>
               </div>
               <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 text-center">
                 <div className="text-2xl font-bold text-amber-700">{stats.borderline}</div>
-                <div className="text-xs text-amber-600">条件边缘</div>
+                <div className="text-xs text-amber-600">{t("results.borderline")}</div>
               </div>
               <div className="bg-red-50 rounded-xl border border-red-200 p-4 text-center">
                 <div className="text-2xl font-bold text-red-700">{stats.notEligible}</div>
-                <div className="text-xs text-red-600">暂不符合</div>
+                <div className="text-xs text-red-600">{t("results.not_eligible")}</div>
               </div>
             </div>
 
@@ -190,23 +198,23 @@ function ResultsContent() {
                       filter === f ? "bg-indigo-600 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
-                    {f === "ALL" ? "全部" : f === "eligible" ? "符合条件" : f === "borderline" ? "边缘" : "不符"}
+                    {f === "ALL" ? t("results.filter.all") : f === "eligible" ? t("results.filter.eligible") : f === "borderline" ? t("results.filter.borderline") : t("results.filter.not_eligible")}
                   </button>
                 ))}
               </div>
               <button onClick={rerunEvaluation} disabled={rerunning}
                 className="text-sm text-indigo-600 hover:text-indigo-800 font-medium disabled:opacity-50">
-                {rerunning ? "重新评估中..." : "♻ 重新评估"}
+                {rerunning ? t("results.rerun") : t("results.rerun_btn")}
               </button>
             </div>
           </>
         )}
 
-        {loading && <div className="text-center py-16 text-slate-400">加载评估结果中...</div>}
+        {loading && <div className="text-center py-16 text-slate-400">{t("results.loading")}</div>}
         {!loading && evaluations.length === 0 && (
           <div className="text-center py-16">
-            <p className="text-slate-500 mb-4">暂无评估结果</p>
-            <Link href="/applicant" className="text-indigo-600 hover:underline">去创建申请档案 →</Link>
+            <p className="text-slate-500 mb-4">{t("results.no_results")}</p>
+            <Link href="/applicant" className="text-indigo-600 hover:underline">{t("results.go_create")}</Link>
           </div>
         )}
 
@@ -215,7 +223,8 @@ function ResultsContent() {
             {filtered.map((ev) => {
               const prog = ev.programme;
               const isExpanded = expanded === ev.id;
-              const bandCfg = BAND_CONFIG[ev.eligibility_band as keyof typeof BAND_CONFIG] ?? BAND_CONFIG.not_eligible;
+              const bandCfg = BAND_CONFIG[ev.eligibility_band] ?? BAND_CONFIG.not_eligible;
+              const bandLabel = bandLabels[ev.eligibility_band as keyof typeof bandLabels] || bandCfg.label;
 
               return (
                 <div key={ev.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -236,9 +245,9 @@ function ResultsContent() {
                         ev.eligibility_band === "borderline" ? "bg-amber-100 text-amber-700" :
                         "bg-red-100 text-red-700"
                       }`}>
-                        {bandCfg.icon} {bandCfg.label}
+                        {bandCfg.icon} {bandLabel}
                       </span>
-                      {ev.compliance_flags.map((f) => <RiskTag key={f} flag={f} />)}
+                      {ev.compliance_flags.map((f) => <RiskTag key={f} flag={f} locale={locale} />)}
                     </div>
                   </div>
 
@@ -246,29 +255,29 @@ function ResultsContent() {
                     <div className="border-t border-slate-100 p-4 bg-slate-50">
                       {/* Three score bars */}
                       <div className="space-y-1 mb-4">
-                        <ScoreBar score={ev.academic_score} label="学术" />
-                        <ScoreBar score={ev.module_match_score} label="模块匹配" />
-                        <ScoreBar score={ev.language_score} label="语言" />
+                        <ScoreBar score={ev.academic_score} label={locale === "en" ? "Academic" : "学术"} />
+                        <ScoreBar score={ev.module_match_score} label={locale === "en" ? "Module Match" : "模块匹配"} />
+                        <ScoreBar score={ev.language_score} label={locale === "en" ? "Language" : "语言"} />
                       </div>
 
                       {/* Detail sections */}
                       <div className="space-y-2 text-sm">
                         {/* GPA */}
                         <div className={`p-3 rounded-lg ${ev.explanation.overall_grade.status === "pass" ? "bg-green-50 border border-green-200" : ev.explanation.overall_grade.status === "close" ? "bg-amber-50 border border-amber-200" : "bg-red-50 border border-red-200"}`}>
-                          <div className="text-xs font-semibold text-slate-500 mb-1">GPA / 学位等级</div>
+                          <div className="text-xs font-semibold text-slate-500 mb-1">{t("results.gpa_title")}</div>
                           <div className="text-slate-700 leading-relaxed whitespace-pre-line">{ev.explanation.overall_grade.detail}</div>
                         </div>
 
                         {/* Language */}
                         <div className={`p-3 rounded-lg ${ev.explanation.language.status === "pass" ? "bg-green-50 border border-green-200" : ev.explanation.language.status === "close" ? "bg-amber-50 border border-amber-200" : ev.explanation.language.status === "not_provided" ? "bg-slate-50 border border-slate-200" : "bg-red-50 border border-red-200"}`}>
-                          <div className="text-xs font-semibold text-slate-500 mb-1">英语成绩</div>
+                          <div className="text-xs font-semibold text-slate-500 mb-1">{t("results.language_title")}</div>
                           <div className="text-slate-700 leading-relaxed whitespace-pre-line">{ev.explanation.language.detail}</div>
                         </div>
 
                         {/* Prerequisite modules */}
                         {ev.explanation.prerequisite_modules.length > 0 && (
                           <div className="p-3 rounded-lg bg-white border border-slate-200">
-                            <div className="text-xs font-semibold text-slate-500 mb-2">先修课程匹配</div>
+                            <div className="text-xs font-semibold text-slate-500 mb-2">{t("results.prerequisite_title")}</div>
                             <div className="space-y-1">
                               {ev.explanation.prerequisite_modules.map((m, i) => (
                                 <div key={i} className="flex items-center gap-2 text-sm">
@@ -277,7 +286,7 @@ function ResultsContent() {
                                   }`}>{m.matched ? "✓" : "✗"}</span>
                                   <span className="text-slate-700">{m.display_text}</span>
                                   {m.matched_applicant_modules.length > 0 && (
-                                    <span className="text-slate-400 text-xs">← 匹配 {m.matched_applicant_modules.join(", ")}</span>
+                                    <span className="text-slate-400 text-xs">{locale === "en" ? "← Matched: " : "← 匹配 "}{m.matched_applicant_modules.join(", ")}</span>
                                   )}
                                 </div>
                               ))}
@@ -286,16 +295,16 @@ function ResultsContent() {
                         )}
 
                         {/* Compliance */}
-                        {ev.explanation.compliance.detail && ev.explanation.compliance.detail !== "无特殊合规风险。" && (
+                        {ev.explanation.compliance.detail && ev.explanation.compliance.detail !== (locale === "en" ? "No special compliance risks." : "无特殊合规风险。") && (
                           <div className="p-3 rounded-lg bg-orange-50 border border-orange-200">
-                            <div className="text-xs font-semibold text-orange-500 mb-1">合规 / 签证提示</div>
+                            <div className="text-xs font-semibold text-orange-500 mb-1">{t("results.compliance_title")}</div>
                             <div className="text-sm text-orange-700">{ev.explanation.compliance.detail}</div>
                           </div>
                         )}
 
                         {/* Summary */}
                         <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
-                          <div className="text-xs font-semibold text-indigo-500 mb-1">综合评估</div>
+                          <div className="text-xs font-semibold text-indigo-500 mb-1">{t("results.summary_title")}</div>
                           <div className="text-sm text-indigo-800 whitespace-pre-line leading-relaxed">{ev.explanation.summary_zh}</div>
                         </div>
 
@@ -304,7 +313,7 @@ function ResultsContent() {
                           <div className="text-center">
                             <a href={prog.official_url} target="_blank" rel="noopener noreferrer"
                               className="text-xs text-indigo-600 hover:underline">
-                              查看官方项目页面 →
+                              {t("results.view_official")}
                             </a>
                           </div>
                         )}
@@ -323,7 +332,7 @@ function ResultsContent() {
 
 export default function ResultsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">加载中...</div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">{/* Loading */}</div>}>
       <ResultsContent />
     </Suspense>
   );

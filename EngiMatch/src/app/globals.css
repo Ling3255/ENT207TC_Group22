@@ -27,6 +27,26 @@ body {
   font-family: "Inter", system-ui, sans-serif;
 }
 
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Focus visible styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for interactive elements */
+button, a {
+  transition: background-color 150ms ease-in-out, border-color 150ms ease-in-out, color 150ms ease-in-out;
+}
+
 .status-eligible {
   background-color: #dcfce7;
   color: #166534;
@@ -41,4 +61,15 @@ body {
   background-color: #fee2e2;
   color: #991b1b;
   border: 1px solid #fca5a5;
+}
+
+/* Loading skeleton animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

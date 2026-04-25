@@ -3,6 +3,145 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useLocale } from "@/context/LocaleContext";
+
+// ─── Auto-fill parser ──────────────────────────────────────────────────────────
+
+type FieldMap = {
+  name?: string;
+  email?: string;
+  university?: string;
+  major?: string;
+  gpa?: string;
+  gpa_scale?: string;
+  ielts?: string;
+  toefl?: string;
+  year?: string;
+  tracks?: string;
+  modules?: Array<{ name: string; grade: string; credits?: string }>;
+};
+
+/**
+ * Parse a single-line key:value format:
+ *   姓名: 张三
+ *   邮箱: zhang@example.com
+ *   ...
+ */
+function parseKeyValue(text: string): Partial<FieldMap> {
+  const result: Partial<FieldMap> = {};
+  const lines = text.split("\n");
+
+  for (const line of lines) {
+    const idx = line.indexOf(":");
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim().toLowerCase();
+    const val = line.slice(idx + 1).trim();
+
+    if (!val) continue;
+
+    switch (key) {
+      case "姓名": case "name": case "full_name": case "fullname": result.name = val; break;
+      case "邮箱": case "email": case "mail": result.email = val; break;
+      case "学校": case "本科院校": case "大学": case "university": case "undergrad_university": result.university = val; break;
+      case "专业": case "major": case "undergrad_major": case "本科专业": result.major = val; break;
+      case "gpa": case "绩点": case "成绩": result.gpa = val; break;
+      case "gpa_scale": case "满分": case "满分制": result.gpa_scale = val; break;
+      case "雅思": case "ielts": case "overall": result.ielts = val; break;
+      case "托福": case "toefl": result.toefl = val; break;
+      case "毕业年份": case "year": case "graduation_year": result.year = val; break;
+      case "目标方向": case "tracks": case "track": case "方向": result.tracks = val; break;
+    }
+  }
+  return result;
+}
+
+/**
+ * Parse multi-line module block:
+ *   课程名称1 | A | 3
+ *   课程名称2 | 85 | 4
+ */
+function parseModuleBlock(text: string): Array<{ module_name_raw: string; grade_text: string; credits: string }> {
+  const modules: Array<{ module_name_raw: string; grade_text: string; credits: string }> = [];
+  const lines = text.split("\n");
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#") || trimmed.startsWith("//")) continue;
+
+    // Split by | or \t, take up to 3 parts
+    const parts = trimmed.split(/[|]+/).map((p) => p.trim()).filter(Boolean);
+    if (parts.length === 0) continue;
+
+    const module_name_raw = parts[0];
+    const grade_text = parts[1] || "";
+    const credits = parts[2] || "";
+
+    // Only treat as module if it looks like a course name (not just key:value)
+    if (!module_name_raw.includes(":")) {
+      modules.push({ module_name_raw, grade_text, credits });
+    }
+  }
+  return modules;
+}
+
+/** Detect which section a pasted text belongs to */
+function detectSection(text: string): "personal" | "academic" | "modules" | "mixed" | "unknown" {
+  const lower = text.toLowerCase();
+  const hasAcademic = /gpa|绩点|雅思|ielts|托福|toefl|总分|满分|scale/i.test(text);
+  const hasModules = /[|]/.test(text) && !/:/i.test(text.split("\n")[0]);
+
+  const keyCount = (text.match(/[^\n]+:/g) || []).length;
+  const lineCount = text.trim().split("\n").length;
+
+  if (hasModules || (keyCount === 0 && lineCount > 2)) return "modules";
+  if (hasAcademic) return "academic";
+  if (keyCount > 2) return "personal";
+  if (keyCount > 0) return "mixed";
+  return "unknown";
+}
+
+function applyFields(fields: Partial<FieldMap>, form: FormData, modules: Module[], setForm: (fn: (prev: FormData) => FormData) => void, setModules: (fn: (prev: Module[]) => Module[]) => void) {
+  if (fields.name) setForm((p) => ({ ...p, full_name: fields.name! }));
+  if (fields.email) setForm((p) => ({ ...p, email: fields.email! }));
+  if (fields.university) setForm((p) => ({ ...p, undergrad_university: fields.university! }));
+  if (fields.major) setForm((p) => ({ ...p, undergrad_major: fields.major! }));
+  if (fields.gpa) {
+    setForm((p) => {
+      let val = fields.gpa!;
+      // Remove non-numeric except dot
+      val = val.replace(/[^0-9.]/g, "");
+      return { ...p, gpa_numeric: val };
+    });
+  }
+  if (fields.gpa_scale) {
+    setForm((p) => {
+      let val = fields.gpa_scale!.replace(/[^0-9.]/g, "");
+      return { ...p, gpa_scale: val };
+    });
+  }
+  if (fields.ielts) {
+    const match = fields.ielts!.match(/([0-9.]+)/);
+    if (match) setForm((p) => ({ ...p, ielts_overall: match[1] }));
+  }
+  if (fields.toefl) {
+    const match = fields.toefl!.match(/([0-9]+)/);
+    if (match) setForm((p) => ({ ...p, toefl_total: match[1] }));
+  }
+  if (fields.year) setForm((p) => ({ ...p, graduation_year: fields.year!.replace(/\D/g, "") }));
+  if (fields.tracks && modules.length === 0) {
+    const matched = TRACK_OPTIONS.filter((t) => fields.tracks!.toLowerCase().includes(t.split("/")[0].toLowerCase()));
+    if (matched.length > 0) setForm((p) => ({ ...p, target_tracks: matched }));
+  }
+  if (fields.modules && fields.modules.length > 0) {
+    setModules((prev) => [...prev, ...fields.modules!.map((m) => ({
+      module_name_raw: m.name,
+      grade_text: m.grade,
+      credits: m.credits || "",
+    }))]);
+  }
+}
+
+// ─── Interfaces & Component ──────────────────────────────────────────────────
 
 interface Module {
   module_name_raw: string;
@@ -44,6 +183,7 @@ const labelClass = "block text-sm font-medium text-slate-700 mb-1";
 const sectionClass = "bg-white rounded-xl border border-slate-200 p-5 mb-4";
 
 export default function ApplicantPage() {
+  const { t, locale } = useLocale();
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [modules, setModules] = useState<Module[]>([]);
@@ -51,7 +191,7 @@ export default function ApplicantPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState<FormData>({
-    full_name: "", email: "", nationality: "中国",
+    full_name: "", email: "", nationality: locale === "en" ? "" : "中国",
     undergrad_university: "", undergrad_major: "",
     gpa_numeric: "", gpa_scale: "4.0", grading_scheme: "4.0",
     graduation_year: new Date().getFullYear().toString(),
@@ -129,16 +269,42 @@ export default function ApplicantPage() {
     }
   };
 
-  const STEP_LABELS = ["个人信息", "学术成绩", "课程列表"];
+  const STEP_LABELS = [
+    locale === "en" ? "Personal Info" : "个人信息",
+    locale === "en" ? "Academic Scores" : "学术成绩",
+    locale === "en" ? "Course List" : "课程列表",
+  ];
   const canNext1 = form.full_name.trim() && form.email.trim() && form.undergrad_university.trim() && form.undergrad_major.trim();
+
+  const [showExample1, setShowExample1] = useState(false);
+  const [showExample2, setShowExample2] = useState(false);
+  const [showExample3, setShowExample3] = useState(false);
+  const [pasteError, setPasteError] = useState("");
+
+  const handlePaste = (text: string, section: "personal" | "academic" | "modules") => {
+    setPasteError("");
+    try {
+      if (section === "modules") {
+        const parsed = parseModuleBlock(text);
+        if (parsed.length > 0) {
+          setModules((prev) => [...prev, ...parsed]);
+          return;
+        }
+      }
+      const fields = parseKeyValue(text);
+      applyFields(fields, form, modules, setForm, setModules);
+    } catch {
+      setPasteError("粘贴文本格式无法识别，请参考示例格式");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="bg-indigo-600 text-white py-8 px-4">
         <div className="max-w-2xl mx-auto">
-          <Link href="/" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← 返回首页</Link>
-          <h1 className="text-3xl font-bold">创建申请档案</h1>
-          <p className="text-indigo-200 mt-1">录入你的学术背景，获取英国工程硕士项目匹配结果</p>
+          <Link href="/home" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← {t("nav.back")}</Link>
+          <h1 className="text-3xl font-bold">{t("applicant.title")}</h1>
+          <p className="text-indigo-200 mt-1">{t("applicant.subtitle")}</p>
         </div>
       </div>
 
@@ -164,38 +330,75 @@ export default function ApplicantPage() {
         {step === 1 && (
           <div className="space-y-4">
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-4">个人信息</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-semibold text-slate-900">{locale === "en" ? "Personal Information" : "个人信息"}</h2>
+                <button
+                  onClick={() => setShowExample1(!showExample1)}
+                  className="text-xs text-indigo-500 hover:text-indigo-700 underline"
+                >
+                  {showExample1 ? t("applicant.hide_example") : t("applicant.auto_fill")}
+                </button>
+              </div>
+              {showExample1 && (
+                <div className="mb-4 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono space-y-1">
+                  <p className="font-semibold text-slate-700 mb-2">{locale === "en" ? "Example format (copy and paste to any text field):" : "示例格式（复制以下内容粘贴到任意文本框）："}</p>
+                  <pre className="whitespace-pre-wrap">{locale === "en"
+                    ? `Name: Zhang San
+Email: zhangsan@example.com
+University: Tongji University
+Major: Mechanical Engineering
+Graduation Year: 2025
+Target Direction: Mechanical, Aerospace`
+                    : `姓名: 张三
+邮箱: zhangsan@example.com
+学校: 同济大学
+专业: 机械工程
+毕业年份: 2025
+目标方向: 机械, 航空航天`}</pre>
+                  <textarea
+                    placeholder={locale === "en" ? "Paste in the above format..." : "在此粘贴上述格式的文本..."}
+                    className="w-full mt-2 px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    rows={7}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const text = e.clipboardData.getData("text");
+                      handlePaste(text, "personal");
+                      setShowExample1(false);
+                    }}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className={labelClass}>姓名 *</label>
-                  <input className={inputClass} value={form.full_name} onChange={set("full_name")} placeholder="你的真实姓名" />
+                  <label className={labelClass}>{t("applicant.name")}</label>
+                  <input className={inputClass} value={form.full_name} onChange={set("full_name")} placeholder={t("applicant.name_placeholder")} />
                 </div>
                 <div>
-                  <label className={labelClass}>邮箱 *</label>
-                  <input className={inputClass} type="email" value={form.email} onChange={set("email")} placeholder="用于查看结果" />
+                  <label className={labelClass}>{t("applicant.email")}</label>
+                  <input className={inputClass} type="email" value={form.email} onChange={set("email")} placeholder={t("applicant.email_placeholder")} />
                 </div>
                 <div>
-                  <label className={labelClass}>国籍</label>
-                  <input className={inputClass} value={form.nationality} onChange={set("nationality")} placeholder="如：中国" />
+                  <label className={labelClass}>{t("applicant.nationality")}</label>
+                  <input className={inputClass} value={form.nationality} onChange={set("nationality")} placeholder={t("applicant.nationality_placeholder")} />
                 </div>
                 <div className="col-span-2">
-                  <label className={labelClass}>本科院校 *</label>
-                  <input className={inputClass} value={form.undergrad_university} onChange={set("undergrad_university")} placeholder="如：同济大学" />
+                  <label className={labelClass}>{t("applicant.university")}</label>
+                  <input className={inputClass} value={form.undergrad_university} onChange={set("undergrad_university")} placeholder={t("applicant.university_placeholder")} />
                 </div>
                 <div>
-                  <label className={labelClass}>本科专业 *</label>
-                  <input className={inputClass} value={form.undergrad_major} onChange={set("undergrad_major")} placeholder="如：机械工程" />
+                  <label className={labelClass}>{t("applicant.major")}</label>
+                  <input className={inputClass} value={form.undergrad_major} onChange={set("undergrad_major")} placeholder={t("applicant.major_placeholder")} />
                 </div>
                 <div>
-                  <label className={labelClass}>预计毕业年份</label>
+                  <label className={labelClass}>{t("applicant.graduation_year")}</label>
                   <input className={inputClass} type="number" value={form.graduation_year} onChange={set("graduation_year")} />
                 </div>
               </div>
             </div>
 
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-3">目标申请方向</h2>
-              <p className="text-xs text-slate-500 mb-3">可多选，帮助我们筛选最相关的项目</p>
+              <h2 className="font-semibold text-slate-900 mb-3">{t("applicant.target_direction")}</h2>
+              <p className="text-xs text-slate-500 mb-3">{t("applicant.target_hint")}</p>
               <div className="flex flex-wrap gap-2">
                 {TRACK_OPTIONS.map((track) => (
                   <button
@@ -218,7 +421,7 @@ export default function ApplicantPage() {
               disabled={!canNext1}
               className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
-              下一步：学术成绩 →
+              {t("applicant.next_step")}
             </button>
           </div>
         )}
@@ -227,35 +430,62 @@ export default function ApplicantPage() {
         {step === 2 && (
           <div className="space-y-4">
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-4">GPA 成绩 *</h2>
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="font-semibold text-slate-900">{locale === "en" ? "GPA Score *" : "GPA 成绩 *"}</h2>
+                <button
+                  onClick={() => setShowExample2(!showExample2)}
+                  className="text-xs text-indigo-500 hover:text-indigo-700 underline"
+                >
+                  {showExample2 ? t("applicant.hide_example") : t("applicant.auto_fill")}
+                </button>
+              </div>
+              {showExample2 && (
+                <div className="mb-4 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono space-y-1">
+                  <pre className="whitespace-pre-wrap">{`GPA: 3.5
+Scale: 4.0
+IELTS: 6.5
+TOEFL: 92`}</pre>
+                  <textarea
+                    placeholder={locale === "en" ? "Paste in the above format..." : "在此粘贴上述格式的文本..."}
+                    className="w-full mt-2 px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    rows={5}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const text = e.clipboardData.getData("text");
+                      handlePaste(text, "academic");
+                      setShowExample2(false);
+                    }}
+                  />
+                </div>
+              )}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className={labelClass}>GPA 数值</label>
-                  <input className={inputClass} type="number" step="0.01" value={form.gpa_numeric} onChange={set("gpa_numeric")} placeholder="如：3.5" />
+                  <label className={labelClass}>{t("applicant.gpa_value")}</label>
+                  <input className={inputClass} type="number" step="0.01" value={form.gpa_numeric} onChange={set("gpa_numeric")} placeholder={t("applicant.gpa_value_placeholder")} />
                 </div>
                 <div>
-                  <label className={labelClass}>满分制</label>
-                  <input className={inputClass} type="number" value={form.gpa_scale} onChange={set("gpa_scale")} placeholder="如：4.0" />
+                  <label className={labelClass}>{t("applicant.gpa_scale")}</label>
+                  <input className={inputClass} type="number" value={form.gpa_scale} onChange={set("gpa_scale")} placeholder={t("applicant.gpa_scale_placeholder")} />
                 </div>
                 <div>
-                  <label className={labelClass}>成绩制度</label>
+                  <label className={labelClass}>{t("applicant.grading_scheme")}</label>
                   <select className={inputClass} value={form.grading_scheme} onChange={set("grading_scheme")}>
-                    <option value="4.0">4.0制</option>
-                    <option value="5.0">5.0制</option>
-                    <option value="percentage">百分制</option>
-                    <option value="other">其他</option>
+                    <option value="4.0">{t("applicant.scheme_4")}</option>
+                    <option value="5.0">{t("applicant.scheme_5")}</option>
+                    <option value="percentage">{t("applicant.scheme_percentage")}</option>
+                    <option value="other">{t("applicant.scheme_other")}</option>
                   </select>
                 </div>
               </div>
             </div>
 
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-1">雅思成绩 (IELTS)</h2>
-              <p className="text-xs text-slate-500 mb-4">如有雅思成绩请填写，否则留空</p>
+              <h2 className="font-semibold text-slate-900 mb-1">{t("applicant.ielts")}</h2>
+              <p className="text-xs text-slate-500 mb-4">{t("applicant.ielts_hint")}</p>
               <div className="grid grid-cols-5 gap-3">
                 {(["ielts_overall", "ielts_reading", "ielts_listening", "ielts_writing", "ielts_speaking"] as const).map((field, i) => (
                   <div key={field}>
-                    <label className={labelClass}>{i === 0 ? "总分" : ["阅读", "听力", "写作", "口语"][i - 1]}</label>
+                    <label className={labelClass}>{i === 0 ? t("applicant.total") : [t("applicant.reading"), t("applicant.listening"), t("applicant.writing"), t("applicant.speaking")][i - 1]}</label>
                     <input className={inputClass} type="number" step="0.5" value={form[field]} onChange={set(field)} />
                   </div>
                 ))}
@@ -263,22 +493,22 @@ export default function ApplicantPage() {
             </div>
 
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-1">托福成绩 (TOEFL)</h2>
-              <p className="text-xs text-slate-500 mb-4">如无雅思，填写托福成绩</p>
+              <h2 className="font-semibold text-slate-900 mb-1">{t("applicant.toefl")}</h2>
+              <p className="text-xs text-slate-500 mb-4">{t("applicant.toefl_hint")}</p>
               <div>
-                <label className={labelClass}>总分</label>
-                <input className={inputClass} type="number" value={form.toefl_total} onChange={set("toefl_total")} placeholder="如：92" />
+                <label className={labelClass}>{t("applicant.toefl_total")}</label>
+                <input className={inputClass} type="number" value={form.toefl_total} onChange={set("toefl_total")} placeholder={t("applicant.toefl_placeholder")} />
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button onClick={() => setStep(1)} className="flex-1 py-3 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-100 transition-colors">← 上一步</button>
+              <button onClick={() => setStep(1)} className="flex-1 py-3 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-100 transition-colors">{t("applicant.prev_step")}</button>
               <button
                 onClick={() => setStep(3)}
                 disabled={!form.gpa_numeric}
                 className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                下一步：课程列表 →
+                {t("applicant.next_modules")}
               </button>
             </div>
           </div>
@@ -288,16 +518,24 @@ export default function ApplicantPage() {
         {step === 3 && (
           <div className="space-y-4">
             <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-1">本科课程列表</h2>
-              <p className="text-xs text-slate-500 mb-4">添加你学过的主要课程（含必修课、专业课），系统将据此评估先修要求匹配度</p>
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="font-semibold text-slate-900">{t("applicant.modules_title")}</h2>
+                <button
+                  onClick={() => setShowExample3(!showExample3)}
+                  className="text-xs text-indigo-500 hover:text-indigo-700 underline"
+                >
+                  {showExample3 ? t("applicant.hide_example") : t("applicant.bulk_add")}
+                </button>
+              </div>
+              <p className="text-xs text-slate-500 mb-4">{t("applicant.modules_hint")}</p>
 
               {modules.length > 0 && (
                 <div className="mb-4 space-y-2">
                   {modules.map((m, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm bg-slate-50 rounded-lg px-3 py-2">
                       <span className="flex-1 font-medium text-slate-800">{m.module_name_raw}</span>
-                      {m.grade_text && <span className="text-slate-500">成绩: {m.grade_text}</span>}
-                      {m.credits && <span className="text-slate-400">{m.credits}学分</span>}
+                      {m.grade_text && <span className="text-slate-500">{locale === "en" ? "Grade: " : "成绩: "}{m.grade_text}</span>}
+                      {m.credits && <span className="text-slate-400">{m.credits}{locale === "en" ? " credits" : "学分"}</span>}
                       <button onClick={() => removeModule(i)} className="text-red-400 hover:text-red-600 ml-2 text-lg leading-none">×</button>
                     </div>
                   ))}
@@ -305,33 +543,67 @@ export default function ApplicantPage() {
               )}
 
               <div className="grid grid-cols-3 gap-2 mb-2">
-                <input className={inputClass} placeholder="课程名称 *" value={newModule.module_name_raw} onChange={(e) => setNewModule((p) => ({ ...p, module_name_raw: e.target.value }))} />
-                <input className={inputClass} placeholder="成绩 (如 A / 85)" value={newModule.grade_text} onChange={(e) => setNewModule((p) => ({ ...p, grade_text: e.target.value }))} />
-                <input className={inputClass} placeholder="学分 (选填)" value={newModule.credits} onChange={(e) => setNewModule((p) => ({ ...p, credits: e.target.value }))} />
+                <input className={inputClass} placeholder={t("applicant.course_name")} value={newModule.module_name_raw} onChange={(e) => setNewModule((p) => ({ ...p, module_name_raw: e.target.value }))} />
+                <input className={inputClass} placeholder={t("applicant.grade")} value={newModule.grade_text} onChange={(e) => setNewModule((p) => ({ ...p, grade_text: e.target.value }))} />
+                <input className={inputClass} placeholder={t("applicant.credits")} value={newModule.credits} onChange={(e) => setNewModule((p) => ({ ...p, credits: e.target.value }))} />
               </div>
               <button onClick={addModule} className="w-full py-2 border-2 border-dashed border-slate-300 rounded-lg text-sm text-slate-500 hover:border-indigo-400 hover:text-indigo-600 transition-colors">
-                + 添加课程
+                {t("applicant.add_course")}
               </button>
+
+              {/* Bulk paste area */}
+              {showExample3 && (
+                <div className="mt-3 p-3 bg-slate-100 rounded-lg text-xs text-slate-600 font-mono">
+                  <p className="mb-1 font-medium text-slate-700">{locale === "en"
+                    ? "Bulk add courses (one per line, use | to separate name, grade, credits):"
+                    : "批量添加课程（每行一门，用 | 分隔课程名、成绩、学分）："}</p>
+                  <pre className="whitespace-pre-wrap mb-2">{locale === "en"
+                    ? `Engineering Mechanics | A | 4
+Thermodynamics | B+ | 3
+Circuit Principles | 85 | 3
+Mechanical Design | A- | 4
+Materials Mechanics | 90 | 3`
+                    : `工程力学 | A | 4
+热力学与传热学 | B+ | 3
+电路原理 | 85 | 3
+机械设计基础 | A- | 4
+材料力学 | 90 | 3`}</pre>
+                  <textarea
+                    placeholder={locale === "en" ? "Paste course list in the above format..." : "粘贴上述格式的课程列表..."}
+                    className="w-full px-2 py-1.5 border border-indigo-300 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                    rows={6}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const text = e.clipboardData.getData("text");
+                      handlePaste(text, "modules");
+                      setShowExample3(false);
+                    }}
+                  />
+                </div>
+              )}
             </div>
+            {pasteError && (
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">{pasteError}</div>
+            )}
 
             <div className={sectionClass}>
-              <h3 className="font-semibold text-slate-900 mb-2">档案确认</h3>
+              <h3 className="font-semibold text-slate-900 mb-2">{t("applicant.confirm_title")}</h3>
               <div className="text-sm text-slate-600 space-y-1">
                 <p><span className="font-medium">{form.full_name}</span> · {form.undergrad_university} · {form.undergrad_major}</p>
-                <p>GPA: {form.gpa_numeric}/{form.gpa_scale} · 目标方向: {form.target_tracks.join("、") || "全部"}</p>
-                {form.ielts_overall && <p>雅思: {form.ielts_overall}</p>}
-                <p>已添加 {modules.length} 门课程</p>
+                <p>GPA: {form.gpa_numeric}/{form.gpa_scale} · {locale === "en" ? "Target: " : "目标方向: "} {form.target_tracks.join(", ") || (locale === "en" ? "All" : "全部")}</p>
+                {form.ielts_overall && <p>IELTS: {form.ielts_overall}</p>}
+                <p>{t("applicant.confirmed").replace("{count}", modules.length.toString())}</p>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button onClick={() => setStep(2)} className="flex-1 py-3 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-100 transition-colors">← 上一步</button>
+              <button onClick={() => setStep(2)} className="flex-1 py-3 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-100 transition-colors">{t("applicant.prev_step")}</button>
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
                 className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-60 transition-colors"
               >
-                {submitting ? "提交评估中..." : "提交评估 →"}
+                {submitting ? t("applicant.submitting") : t("applicant.submit")}
               </button>
             </div>
           </div>
