@@ -26,6 +26,14 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    document.documentElement.lang = locale === "en" ? "en" : "zh-CN";
+    document.title =
+      locale === "en"
+        ? "EngiMatch - UK Engineering Master's Programme Matching"
+        : "EngiMatch - 英国工程硕士项目智能匹配";
+  }, [locale]);
+
+  useEffect(() => {
     const stored = localStorage.getItem("engimatch_locale") as Locale;
     if (stored === "zh" || stored === "en") {
       setLocaleState(stored);
