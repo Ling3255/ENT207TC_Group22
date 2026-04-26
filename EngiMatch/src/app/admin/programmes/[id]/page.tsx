@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLocale } from "@/context/LocaleContext";
 import { CANONICAL_MAJORS, CANONICAL_MODULES } from "@/lib/taxonomy";
 
 interface PreModule {
@@ -18,25 +19,43 @@ interface University {
   rank: number | null;
 }
 
-const inputClass = "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent";
-const labelClass = "block text-sm font-medium text-slate-700 mb-1";
-const sectionClass = "bg-white rounded-xl border border-slate-200 p-5 mb-4";
+const inputClass =
+  "w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100";
+const labelClass = "mb-1 block text-sm font-medium text-slate-700";
+const sectionClass = "rounded-2xl border border-slate-200 bg-white p-5";
 
-export default function EditProgrammePage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditProgrammePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = require("react").use(params);
   const router = useRouter();
+  const { locale } = useLocale();
+  const isEnglish = locale === "en";
+
   const [universities, setUniversities] = useState<University[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"basic" | "academic" | "language" | "documents" | "compliance" | "prereqs" | "source">("basic");
+  const [activeTab, setActiveTab] = useState<
+    "basic" | "academic" | "language" | "documents" | "compliance" | "prereqs" | "source"
+  >("basic");
 
   const [form, setForm] = useState({
-    university_id: "", programme_name: "", slug: "", degree_type: "MSc",
-    department: "", study_mode: "full-time", duration_text: "1 year",
-    intake_term: "", application_system_type: "university_portal",
-    application_deadline_visa: "", application_deadline_non_visa: "",
-    tuition_fee_overseas_gbp: "", official_url: "",
+    university_id: "",
+    programme_name: "",
+    slug: "",
+    degree_type: "MSc",
+    department: "",
+    study_mode: "full-time",
+    duration_text: "1 year",
+    intake_term: "",
+    application_system_type: "university_portal",
+    application_deadline_visa: "",
+    application_deadline_non_visa: "",
+    tuition_fee_overseas_gbp: "",
+    official_url: "",
   });
 
   const [academicReq, setAcademicReq] = useState({
@@ -80,111 +99,186 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
   const [prereqModules, setPrereqModules] = useState<PreModule[]>([]);
   const [rawRequirementText, setRawRequirementText] = useState("");
 
-  const setField = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    setForm((p) => ({ ...p, [field]: e.target.value }));
+  const setField =
+    (field: keyof typeof form) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      setForm((previous) => ({ ...previous, [field]: event.target.value }));
 
   const toggleMajor = (major: string) =>
-    setAcademicReq((p) => ({
-      ...p,
-      accepted_backgrounds: p.accepted_backgrounds.includes(major)
-        ? p.accepted_backgrounds.filter((m) => m !== major)
-        : [...p.accepted_backgrounds, major],
+    setAcademicReq((previous) => ({
+      ...previous,
+      accepted_backgrounds: previous.accepted_backgrounds.includes(major)
+        ? previous.accepted_backgrounds.filter((item) => item !== major)
+        : [...previous.accepted_backgrounds, major],
     }));
 
-  const addPrereq = () => setPrereqModules((p) => [...p, { canonical_module_name: "", display_text: "", min_grade_rule: "", required: true }]);
-  const updatePrereq = (i: number, field: keyof PreModule) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setPrereqModules((p) => p.map((m, idx) => idx === i ? { ...m, [field]: e.target.value } : m));
-  const removePrereq = (i: number) => setPrereqModules((p) => p.filter((_, idx) => idx !== i));
+  const addPrereq = () =>
+    setPrereqModules((previous) => [
+      ...previous,
+      { canonical_module_name: "", display_text: "", min_grade_rule: "", required: true },
+    ]);
+
+  const updatePrereq =
+    (index: number, field: keyof PreModule) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setPrereqModules((previous) =>
+        previous.map((module, moduleIndex) =>
+          moduleIndex === index
+            ? {
+                ...module,
+                [field]:
+                  field === "required"
+                    ? String((event.target as HTMLInputElement).checked) === "true"
+                    : event.target.value,
+              }
+            : module
+        )
+      );
+
+  const removePrereq = (index: number) =>
+    setPrereqModules((previous) => previous.filter((_, moduleIndex) => moduleIndex !== index));
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/universities").then((r) => r.json()),
-      fetch(`/api/programmes/${id}`).then((r) => r.json()),
-    ]).then(([unis, prog]) => {
-      setUniversities(unis);
-      if (!prog.id) return;
+      fetch("/api/universities").then((response) => response.json()),
+      fetch(`/api/programmes/${id}`).then((response) => response.json()),
+    ])
+      .then(([universitiesPayload, programmePayload]) => {
+        const nextUniversities = Array.isArray(universitiesPayload?.data)
+          ? universitiesPayload.data
+          : [];
+        const programme = programmePayload?.data;
 
-      const fmt = (d: string | null) => d ? new Date(d).toISOString().slice(0, 10) : "";
-      setForm({
-        university_id: prog.university_id ?? "",
-        programme_name: prog.programme_name ?? "",
-        slug: prog.slug ?? "",
-        degree_type: prog.degree_type ?? "MSc",
-        department: prog.department ?? "",
-        study_mode: prog.study_mode ?? "full-time",
-        duration_text: prog.duration_text ?? "1 year",
-        intake_term: prog.intake_term ?? "",
-        application_system_type: prog.application_system_type ?? "university_portal",
-        application_deadline_visa: fmt(prog.application_deadline_visa),
-        application_deadline_non_visa: fmt(prog.application_deadline_non_visa),
-        tuition_fee_overseas_gbp: prog.tuition_fee_overseas_gbp ? String(prog.tuition_fee_overseas_gbp) : "",
-        official_url: prog.official_url ?? "",
-      });
+        setUniversities(nextUniversities);
+        if (!programme?.id) return;
 
-      if (prog.academic_requirements) {
-        setAcademicReq({
-          min_degree_level: prog.academic_requirements.min_degree_level ?? "bachelor",
-          min_uk_classification: prog.academic_requirements.min_uk_classification ?? "",
-          accepted_backgrounds: prog.academic_requirements.accepted_backgrounds ?? [],
-          disallowed_backgrounds: prog.academic_requirements.disallowed_backgrounds ?? [],
-          prerequisite_module_logic: prog.academic_requirements.prerequisite_module_logic ?? "ALL",
-          work_experience_considered: prog.academic_requirements.work_experience_considered ?? false,
-          interview_possible: prog.academic_requirements.interview_possible ?? false,
-          cv_required: prog.academic_requirements.cv_required ?? false,
-          portfolio_required: prog.academic_requirements.portfolio_required ?? false,
+        const formatDate = (value: string | null) =>
+          value ? new Date(value).toISOString().slice(0, 10) : "";
+
+        setForm({
+          university_id: programme.university_id ?? "",
+          programme_name: programme.programme_name ?? "",
+          slug: programme.slug ?? "",
+          degree_type: programme.degree_type ?? "MSc",
+          department: programme.department ?? "",
+          study_mode: programme.study_mode ?? "full-time",
+          duration_text: programme.duration_text ?? "1 year",
+          intake_term: programme.intake_term ?? "",
+          application_system_type: programme.application_system_type ?? "university_portal",
+          application_deadline_visa: formatDate(programme.application_deadline_visa),
+          application_deadline_non_visa: formatDate(programme.application_deadline_non_visa),
+          tuition_fee_overseas_gbp: programme.tuition_fee_overseas_gbp
+            ? String(programme.tuition_fee_overseas_gbp)
+            : "",
+          official_url: programme.official_url ?? "",
         });
-      }
-      if (prog.language_requirements) {
-        setLangReq({
-          english_requirement_level: prog.language_requirements.english_requirement_level ?? "",
-          ielts_overall: prog.language_requirements.ielts_overall ? String(prog.language_requirements.ielts_overall) : "",
-          ielts_lrw_min: prog.language_requirements.ielts_lrw_min ? String(prog.language_requirements.ielts_lrw_min) : "",
-          toefl_total: prog.language_requirements.toefl_total ? String(prog.language_requirements.toefl_total) : "",
-          pte_total: prog.language_requirements.pte_total ? String(prog.language_requirements.pte_total) : "",
-          duolingo_total: prog.language_requirements.duolingo_total ? String(prog.language_requirements.duolingo_total) : "",
-          validity_window_months: String(prog.language_requirements.validity_window_months ?? 24),
-        });
-      }
-      if (prog.documents) {
-        setDocs({
-          transcript_required: prog.documents.transcript_required ?? false,
-          personal_statement_required: prog.documents.personal_statement_required ?? false,
-          references_required_count: prog.documents.references_required_count ? String(prog.documents.references_required_count) : "",
-          reference_type_academic_min: prog.documents.reference_type_academic_min ? String(prog.documents.reference_type_academic_min) : "",
-          cv_resume_required: prog.documents.cv_resume_required ?? false,
-          additional_documents: prog.documents.additional_documents ?? [],
-        });
-      }
-      if (prog.compliance) {
-        setCompliance({
-          atas_possible: prog.compliance.atas_possible ?? false,
-          atas_rule_text: prog.compliance.atas_rule_text ?? "",
-          graduate_route_note: prog.compliance.graduate_route_note ?? "",
-          visa_deadline_note: prog.compliance.visa_deadline_note ?? "",
-        });
-      }
-      if (prog.prerequisite_modules) {
-        setPrereqModules(prog.prerequisite_modules.map((m: { canonical_module_name: string; display_text: string; min_grade_rule: string | null; required: boolean }) => ({
-          canonical_module_name: m.canonical_module_name,
-          display_text: m.display_text,
-          min_grade_rule: m.min_grade_rule ?? "",
-          required: m.required ?? true,
-        })));
-      }
-      setRawRequirementText(prog.raw_requirement_text ?? "");
-    }).finally(() => setLoading(false));
+
+        if (programme.academic_requirements) {
+          setAcademicReq({
+            min_degree_level: programme.academic_requirements.min_degree_level ?? "bachelor",
+            min_uk_classification:
+              programme.academic_requirements.min_uk_classification ?? "",
+            accepted_backgrounds: programme.academic_requirements.accepted_backgrounds ?? [],
+            disallowed_backgrounds:
+              programme.academic_requirements.disallowed_backgrounds ?? [],
+            prerequisite_module_logic:
+              programme.academic_requirements.prerequisite_module_logic ?? "ALL",
+            work_experience_considered:
+              programme.academic_requirements.work_experience_considered ?? false,
+            interview_possible:
+              programme.academic_requirements.interview_possible ?? false,
+            cv_required: programme.academic_requirements.cv_required ?? false,
+            portfolio_required:
+              programme.academic_requirements.portfolio_required ?? false,
+          });
+        }
+
+        if (programme.language_requirements) {
+          setLangReq({
+            english_requirement_level:
+              programme.language_requirements.english_requirement_level ?? "",
+            ielts_overall: programme.language_requirements.ielts_overall
+              ? String(programme.language_requirements.ielts_overall)
+              : "",
+            ielts_lrw_min: programme.language_requirements.ielts_lrw_min
+              ? String(programme.language_requirements.ielts_lrw_min)
+              : "",
+            toefl_total: programme.language_requirements.toefl_total
+              ? String(programme.language_requirements.toefl_total)
+              : "",
+            pte_total: programme.language_requirements.pte_total
+              ? String(programme.language_requirements.pte_total)
+              : "",
+            duolingo_total: programme.language_requirements.duolingo_total
+              ? String(programme.language_requirements.duolingo_total)
+              : "",
+            validity_window_months: String(
+              programme.language_requirements.validity_window_months ?? 24
+            ),
+          });
+        }
+
+        if (programme.documents) {
+          setDocs({
+            transcript_required: programme.documents.transcript_required ?? false,
+            personal_statement_required:
+              programme.documents.personal_statement_required ?? false,
+            references_required_count: programme.documents.references_required_count
+              ? String(programme.documents.references_required_count)
+              : "",
+            reference_type_academic_min: programme.documents.reference_type_academic_min
+              ? String(programme.documents.reference_type_academic_min)
+              : "",
+            cv_resume_required: programme.documents.cv_resume_required ?? false,
+            additional_documents: programme.documents.additional_documents ?? [],
+          });
+        }
+
+        if (programme.compliance) {
+          setCompliance({
+            atas_possible: programme.compliance.atas_possible ?? false,
+            atas_rule_text: programme.compliance.atas_rule_text ?? "",
+            graduate_route_note: programme.compliance.graduate_route_note ?? "",
+            visa_deadline_note: programme.compliance.visa_deadline_note ?? "",
+          });
+        }
+
+        if (programme.prerequisite_modules) {
+          setPrereqModules(
+            programme.prerequisite_modules.map(
+              (module: {
+                canonical_module_name: string;
+                display_text: string;
+                min_grade_rule: string | null;
+                required: boolean;
+              }) => ({
+                canonical_module_name: module.canonical_module_name,
+                display_text: module.display_text,
+                min_grade_rule: module.min_grade_rule ?? "",
+                required: module.required ?? true,
+              })
+            )
+          );
+        }
+
+        setRawRequirementText(programme.raw_requirement_text ?? "");
+      })
+      .finally(() => setLoading(false));
   }, [id]);
 
   const handleSave = async () => {
     setError("");
     setSaving(true);
+
     try {
-      const res = await fetch(`/api/programmes/${id}`, {
+      const response = await fetch(`/api/programmes/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
-          tuition_fee_overseas_gbp: form.tuition_fee_overseas_gbp ? parseFloat(form.tuition_fee_overseas_gbp) : null,
+          tuition_fee_overseas_gbp: form.tuition_fee_overseas_gbp
+            ? parseFloat(form.tuition_fee_overseas_gbp)
+            : null,
           application_deadline_visa: form.application_deadline_visa || null,
           application_deadline_non_visa: form.application_deadline_non_visa || null,
           academic_requirements: academicReq,
@@ -192,98 +286,215 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
             ...langReq,
             ielts_overall: langReq.ielts_overall ? parseFloat(langReq.ielts_overall) : null,
             ielts_lrw_min: langReq.ielts_lrw_min ? parseFloat(langReq.ielts_lrw_min) : null,
-            toefl_total: langReq.toefl_total ? parseInt(langReq.toefl_total) : null,
-            pte_total: langReq.pte_total ? parseInt(langReq.pte_total) : null,
-            duolingo_total: langReq.duolingo_total ? parseInt(langReq.duolingo_total) : null,
-            validity_window_months: langReq.validity_window_months ? parseInt(langReq.validity_window_months) : null,
+            toefl_total: langReq.toefl_total ? parseInt(langReq.toefl_total, 10) : null,
+            pte_total: langReq.pte_total ? parseInt(langReq.pte_total, 10) : null,
+            duolingo_total: langReq.duolingo_total
+              ? parseInt(langReq.duolingo_total, 10)
+              : null,
+            validity_window_months: langReq.validity_window_months
+              ? parseInt(langReq.validity_window_months, 10)
+              : null,
           },
           documents: {
             ...docs,
-            references_required_count: docs.references_required_count ? parseInt(docs.references_required_count) : null,
-            reference_type_academic_min: docs.reference_type_academic_min ? parseInt(docs.reference_type_academic_min) : null,
+            references_required_count: docs.references_required_count
+              ? parseInt(docs.references_required_count, 10)
+              : null,
+            reference_type_academic_min: docs.reference_type_academic_min
+              ? parseInt(docs.reference_type_academic_min, 10)
+              : null,
           },
-          compliance: compliance,
-          prerequisite_modules: prereqModules.filter((m) => m.canonical_module_name && m.display_text),
+          compliance,
+          prerequisite_modules: prereqModules.filter(
+            (module) => module.canonical_module_name && module.display_text
+          ),
           raw_requirement_text: rawRequirementText,
         }),
       });
-      if (!res.ok) throw new Error((await res.json()).error || "保存失败");
+
+      if (!response.ok) {
+        throw new Error(
+          (await response.json()).error ||
+            (isEnglish ? "Failed to save changes." : "保存修改失败。")
+        );
+      }
+
       router.push("/admin/programmes");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "保存失败");
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : isEnglish
+            ? "Failed to save changes."
+            : "保存修改失败。"
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  const TABS = [
-    { id: "basic", label: "基本信息" },
-    { id: "academic", label: "学术要求" },
-    { id: "language", label: "语言要求" },
-    { id: "documents", label: "材料要求" },
-    { id: "compliance", label: "合规/签证" },
-    { id: "prereqs", label: "先修课程" },
-    { id: "source", label: "原文文本" },
+  const tabs = [
+    { id: "basic", label: isEnglish ? "Basic" : "基本信息" },
+    { id: "academic", label: isEnglish ? "Academic" : "学术要求" },
+    { id: "language", label: isEnglish ? "Language" : "语言要求" },
+    { id: "documents", label: isEnglish ? "Documents" : "材料要求" },
+    { id: "compliance", label: isEnglish ? "Compliance" : "合规信息" },
+    { id: "prereqs", label: isEnglish ? "Prereqs" : "先修课程" },
+    { id: "source", label: isEnglish ? "Source" : "原文来源" },
   ] as const;
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-slate-400">加载中...</div>;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-500">
+        {isEnglish ? "Loading..." : "正在加载..."}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-slate-800 text-white py-6 px-4">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/admin/programmes" className="text-sm text-slate-400 hover:text-white mb-3 inline-block">← 返回项目列表</Link>
-          <h1 className="text-2xl font-bold">编辑项目 — {form.programme_name}</h1>
+      <div className="bg-slate-900 py-6 text-white">
+        <div className="mx-auto max-w-5xl px-4">
+          <Link
+            href="/admin/programmes"
+            className="mb-3 inline-block text-sm text-slate-300 transition hover:text-white"
+          >
+            {isEnglish ? "< Back to programmes" : "< 返回专业列表"}
+          </Link>
+          <h1 className="text-2xl font-bold">
+            {isEnglish ? "Edit programme" : "编辑专业"}: {form.programme_name}
+          </h1>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        {error && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{error}</div>}
+      <div className="mx-auto max-w-5xl px-4 py-6">
+        {error && (
+          <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+            {error}
+          </div>
+        )}
 
-        <div className="flex gap-1 mb-6 bg-white rounded-xl border border-slate-200 p-1 overflow-x-auto">
-          {TABS.map((tab) => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${activeTab === tab.id ? "bg-indigo-600 text-white" : "text-slate-600 hover:bg-slate-100"}`}>
+        <div className="mb-6 flex gap-1 overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={`whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition ${
+                activeTab === tab.id
+                  ? "bg-cyan-600 text-white"
+                  : "text-slate-600 hover:bg-slate-100"
+              }`}
+            >
               {tab.label}
             </button>
           ))}
         </div>
 
         {activeTab === "basic" && (
-          <div className="space-y-4">
-            <div className={sectionClass}>
-              <h2 className="font-semibold text-slate-900 mb-4">项目基本信息</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className={labelClass}>所属大学</label>
-                  <select className={inputClass} value={form.university_id} onChange={setField("university_id")}>
-                    <option value="">选择大学...</option>
-                    {universities.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                  </select>
-                </div>
-                <div className="col-span-2">
-                  <label className={labelClass}>项目名称</label>
-                  <input className={inputClass} value={form.programme_name} onChange={setField("programme_name")} />
-                </div>
-                <div><label className={labelClass}>Slug</label><input className={inputClass} value={form.slug} onChange={setField("slug")} /></div>
-                <div>
-                  <label className={labelClass}>学位类型</label>
-                  <select className={inputClass} value={form.degree_type} onChange={setField("degree_type")}>
-                    <option value="MSc">MSc</option><option value="MEng">MEng</option><option value="MRes">MRes</option>
-                  </select>
-                </div>
-                <div className="col-span-2"><label className={labelClass}>学系</label><input className={inputClass} value={form.department} onChange={setField("department")} /></div>
-                <div><label className={labelClass}>学制</label><input className={inputClass} value={form.duration_text} onChange={setField("duration_text")} /></div>
-                <div><label className={labelClass}>入学时间</label><input className={inputClass} value={form.intake_term} onChange={setField("intake_term")} /></div>
-                <div><label className={labelClass}>申请系统</label>
-                  <select className={inputClass} value={form.application_system_type} onChange={setField("application_system_type")}>
-                    <option value="university_portal">大学官网</option><option value="ucas">UCAS</option><option value="other">其他</option>
-                  </select>
-                </div>
-                <div><label className={labelClass}>海外学费 (GBP)</label><input className={inputClass} type="number" value={form.tuition_fee_overseas_gbp} onChange={setField("tuition_fee_overseas_gbp")} /></div>
-                <div><label className={labelClass}>签证截���</label><input className={inputClass} type="date" value={form.application_deadline_visa} onChange={setField("application_deadline_visa")} /></div>
-                <div><label className={labelClass}>非签证截止</label><input className={inputClass} type="date" value={form.application_deadline_non_visa} onChange={setField("application_deadline_non_visa")} /></div>
-                <div className="col-span-2"><label className={labelClass}>官方链接</label><input className={inputClass} type="url" value={form.official_url} onChange={setField("official_url")} /></div>
+          <div className={sectionClass}>
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              {isEnglish ? "Basic programme information" : "专业基础信息"}
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <label className={labelClass}>
+                  {isEnglish ? "University" : "所属学校"}
+                </label>
+                <select
+                  className={inputClass}
+                  value={form.university_id}
+                  onChange={setField("university_id")}
+                >
+                  <option value="">{isEnglish ? "Select a university" : "选择学校"}</option>
+                  {universities.map((university) => (
+                    <option key={university.id} value={university.id}>
+                      {university.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label className={labelClass}>
+                  {isEnglish ? "Programme name" : "专业名称"}
+                </label>
+                <input
+                  className={inputClass}
+                  value={form.programme_name}
+                  onChange={setField("programme_name")}
+                />
+              </div>
+              <Field
+                label={isEnglish ? "Slug" : "Slug"}
+                value={form.slug}
+                onChange={setField("slug")}
+              />
+              <div>
+                <label className={labelClass}>{isEnglish ? "Degree type" : "学位类型"}</label>
+                <select
+                  className={inputClass}
+                  value={form.degree_type}
+                  onChange={setField("degree_type")}
+                >
+                  <option value="MSc">MSc</option>
+                  <option value="MEng">MEng</option>
+                  <option value="MRes">MRes</option>
+                  <option value="MPhil">MPhil</option>
+                  <option value="MSt">MSt</option>
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <Field
+                  label={isEnglish ? "Department" : "院系"}
+                  value={form.department}
+                  onChange={setField("department")}
+                />
+              </div>
+              <Field
+                label={isEnglish ? "Study mode" : "学习方式"}
+                value={form.study_mode}
+                onChange={setField("study_mode")}
+              />
+              <Field
+                label={isEnglish ? "Duration" : "学制"}
+                value={form.duration_text}
+                onChange={setField("duration_text")}
+              />
+              <Field
+                label={isEnglish ? "Intake term" : "入学学期"}
+                value={form.intake_term}
+                onChange={setField("intake_term")}
+              />
+              <Field
+                label={isEnglish ? "Application system" : "申请系统"}
+                value={form.application_system_type}
+                onChange={setField("application_system_type")}
+              />
+              <Field
+                label={isEnglish ? "Visa deadline" : "签证类截止日期"}
+                type="date"
+                value={form.application_deadline_visa}
+                onChange={setField("application_deadline_visa")}
+              />
+              <Field
+                label={isEnglish ? "Non-visa deadline" : "非签证类截止日期"}
+                type="date"
+                value={form.application_deadline_non_visa}
+                onChange={setField("application_deadline_non_visa")}
+              />
+              <Field
+                label={isEnglish ? "International tuition (GBP)" : "国际学生学费 (GBP)"}
+                type="number"
+                value={form.tuition_fee_overseas_gbp}
+                onChange={setField("tuition_fee_overseas_gbp")}
+              />
+              <div className="md:col-span-2">
+                <Field
+                  label={isEnglish ? "Official URL" : "官方链接"}
+                  type="url"
+                  value={form.official_url}
+                  onChange={setField("official_url")}
+                />
               </div>
             </div>
           </div>
@@ -291,72 +502,247 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
 
         {activeTab === "academic" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-4">学术要求</h2>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div><label className={labelClass}>最低学历</label>
-                <select className={inputClass} value={academicReq.min_degree_level} onChange={(e) => setAcademicReq((p) => ({ ...p, min_degree_level: e.target.value }))}>
-                  <option value="bachelor">本科</option><option value="master">硕士</option>
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              {isEnglish ? "Academic requirements" : "学术要求"}
+            </h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className={labelClass}>
+                  {isEnglish ? "Minimum degree level" : "最低学历"}
+                </label>
+                <select
+                  className={inputClass}
+                  value={academicReq.min_degree_level}
+                  onChange={(event) =>
+                    setAcademicReq((previous) => ({
+                      ...previous,
+                      min_degree_level: event.target.value,
+                    }))
+                  }
+                >
+                  <option value="bachelor">{isEnglish ? "Bachelor" : "本科"}</option>
+                  <option value="master">{isEnglish ? "Master" : "硕士"}</option>
                 </select>
               </div>
-              <div><label className={labelClass}>UK 学位等级</label>
-                <select className={inputClass} value={academicReq.min_uk_classification} onChange={(e) => setAcademicReq((p) => ({ ...p, min_uk_classification: e.target.value }))}>
-                  <option value="">未明确</option><option value="first">一等</option><option value="2:1">二等一</option><option value="2:2">二等二</option>
+              <div>
+                <label className={labelClass}>
+                  {isEnglish ? "UK classification" : "英国学位等级"}
+                </label>
+                <select
+                  className={inputClass}
+                  value={academicReq.min_uk_classification}
+                  onChange={(event) =>
+                    setAcademicReq((previous) => ({
+                      ...previous,
+                      min_uk_classification: event.target.value,
+                    }))
+                  }
+                >
+                  <option value="">{isEnglish ? "Not specified" : "未说明"}</option>
+                  <option value="first">{isEnglish ? "First" : "一等学位"}</option>
+                  <option value="2:1">{isEnglish ? "Upper second (2:1)" : "二等一"}</option>
+                  <option value="2:2">{isEnglish ? "Lower second (2:2)" : "二等二"}</option>
                 </select>
               </div>
             </div>
-            <div>
-              <label className={labelClass}>可接受本科专业</label>
-              <div className="flex flex-wrap gap-2 mt-1">
+
+            <div className="mt-4">
+              <label className={labelClass}>
+                {isEnglish ? "Accepted academic backgrounds" : "可接受本科背景"}
+              </label>
+              <div className="flex flex-wrap gap-2">
                 {CANONICAL_MAJORS.map((major) => (
-                  <button key={major} onClick={() => toggleMajor(major)}
-                    className={`px-2 py-1 rounded-full text-xs font-medium border ${academicReq.accepted_backgrounds.includes(major) ? "bg-indigo-600 text-white border-indigo-600" : "bg-white text-slate-600 border-slate-300"}`}>
+                  <button
+                    key={major}
+                    type="button"
+                    onClick={() => toggleMajor(major)}
+                    className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                      academicReq.accepted_backgrounds.includes(major)
+                        ? "border-cyan-600 bg-cyan-600 text-white"
+                        : "border-slate-300 bg-white text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
                     {major.replace(/_/g, " ")}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              {[{ field: "work_experience_considered", label: "考虑工作经验" }, { field: "interview_possible", label: "可能有面试" }, { field: "cv_required", label: "需要 CV" }, { field: "portfolio_required", label: "需要作品集" }].map(({ field, label }) => (
-                <label key={field} className="flex items-center gap-2 text-sm cursor-pointer">
-                  <input type="checkbox" checked={academicReq[field as keyof typeof academicReq] as boolean} onChange={(e) => setAcademicReq((p) => ({ ...p, [field]: e.target.checked }))} className="w-4 h-4" />
-                  {label}
-                </label>
-              ))}
+
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <CheckboxRow
+                checked={academicReq.work_experience_considered}
+                label={isEnglish ? "Work experience considered" : "考虑工作经验"}
+                onChange={(checked) =>
+                  setAcademicReq((previous) => ({
+                    ...previous,
+                    work_experience_considered: checked,
+                  }))
+                }
+              />
+              <CheckboxRow
+                checked={academicReq.interview_possible}
+                label={isEnglish ? "Interview possible" : "可能安排面试"}
+                onChange={(checked) =>
+                  setAcademicReq((previous) => ({
+                    ...previous,
+                    interview_possible: checked,
+                  }))
+                }
+              />
+              <CheckboxRow
+                checked={academicReq.cv_required}
+                label={isEnglish ? "CV required" : "需要 CV"}
+                onChange={(checked) =>
+                  setAcademicReq((previous) => ({
+                    ...previous,
+                    cv_required: checked,
+                  }))
+                }
+              />
+              <CheckboxRow
+                checked={academicReq.portfolio_required}
+                label={isEnglish ? "Portfolio required" : "需要作品集"}
+                onChange={(checked) =>
+                  setAcademicReq((previous) => ({
+                    ...previous,
+                    portfolio_required: checked,
+                  }))
+                }
+              />
             </div>
           </div>
         )}
 
         {activeTab === "language" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-4">英语要求</h2>
-            <div className="grid grid-cols-3 gap-4">
-              <div><label className={labelClass}>英语等级</label>
-                <select className={inputClass} value={langReq.english_requirement_level} onChange={(e) => setLangReq((p) => ({ ...p, english_requirement_level: e.target.value }))}>
-                  <option value="">未明确</option><option value="standard">Standard</option><option value="good">Good</option><option value="advanced">Advanced</option>
-                </select>
-              </div>
-              <div><label className={labelClass}>雅思总分</label><input className={inputClass} type="number" step="0.5" value={langReq.ielts_overall} onChange={(e) => setLangReq((p) => ({ ...p, ielts_overall: e.target.value }))} /></div>
-              <div><label className={labelClass}>雅思最低单项</label><input className={inputClass} type="number" step="0.5" value={langReq.ielts_lrw_min} onChange={(e) => setLangReq((p) => ({ ...p, ielts_lrw_min: e.target.value }))} /></div>
-              <div><label className={labelClass}>托福总分</label><input className={inputClass} type="number" value={langReq.toefl_total} onChange={(e) => setLangReq((p) => ({ ...p, toefl_total: e.target.value }))} /></div>
-              <div><label className={labelClass}>PTE</label><input className={inputClass} type="number" value={langReq.pte_total} onChange={(e) => setLangReq((p) => ({ ...p, pte_total: e.target.value }))} /></div>
-              <div><label className={labelClass}>Duolingo</label><input className={inputClass} type="number" value={langReq.duolingo_total} onChange={(e) => setLangReq((p) => ({ ...p, duolingo_total: e.target.value }))} /></div>
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              {isEnglish ? "English language requirements" : "语言要求"}
+            </h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              <Field
+                label={isEnglish ? "Requirement level" : "语言等级"}
+                value={langReq.english_requirement_level}
+                onChange={(event) =>
+                  setLangReq((previous) => ({
+                    ...previous,
+                    english_requirement_level: event.target.value,
+                  }))
+                }
+              />
+              <Field
+                label={isEnglish ? "IELTS overall" : "雅思总分"}
+                type="number"
+                step="0.5"
+                value={langReq.ielts_overall}
+                onChange={(event) =>
+                  setLangReq((previous) => ({
+                    ...previous,
+                    ielts_overall: event.target.value,
+                  }))
+                }
+              />
+              <Field
+                label={isEnglish ? "IELTS sub-score min" : "雅思小分"}
+                type="number"
+                step="0.5"
+                value={langReq.ielts_lrw_min}
+                onChange={(event) =>
+                  setLangReq((previous) => ({
+                    ...previous,
+                    ielts_lrw_min: event.target.value,
+                  }))
+                }
+              />
+              <Field
+                label="TOEFL"
+                type="number"
+                value={langReq.toefl_total}
+                onChange={(event) =>
+                  setLangReq((previous) => ({
+                    ...previous,
+                    toefl_total: event.target.value,
+                  }))
+                }
+              />
+              <Field
+                label="PTE"
+                type="number"
+                value={langReq.pte_total}
+                onChange={(event) =>
+                  setLangReq((previous) => ({
+                    ...previous,
+                    pte_total: event.target.value,
+                  }))
+                }
+              />
+              <Field
+                label="Duolingo"
+                type="number"
+                value={langReq.duolingo_total}
+                onChange={(event) =>
+                  setLangReq((previous) => ({
+                    ...previous,
+                    duolingo_total: event.target.value,
+                  }))
+                }
+              />
             </div>
           </div>
         )}
 
         {activeTab === "documents" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-4">申请材料</h2>
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              {isEnglish ? "Application documents" : "申请材料"}
+            </h2>
             <div className="space-y-3">
-              {[{ field: "transcript_required", label: "成绩单" }, { field: "personal_statement_required", label: "个人陈述" }, { field: "cv_resume_required", label: "简历" }].map(({ field, label }) => (
-                <label key={field} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50">
-                  <span className="text-sm font-medium">{label}</span>
-                  <input type="checkbox" checked={docs[field as keyof typeof docs] as boolean} onChange={(e) => setDocs((p) => ({ ...p, [field]: e.target.checked }))} className="w-4 h-4" />
-                </label>
-              ))}
-              <div className="grid grid-cols-2 gap-4">
-                <div><label className={labelClass}>推荐信数量</label><input className={inputClass} type="number" value={docs.references_required_count} onChange={(e) => setDocs((p) => ({ ...p, references_required_count: e.target.value }))} /></div>
-                <div><label className={labelClass}>学术推荐信最低</label><input className={inputClass} type="number" value={docs.reference_type_academic_min} onChange={(e) => setDocs((p) => ({ ...p, reference_type_academic_min: e.target.value }))} /></div>
+              <CheckboxRow
+                checked={docs.transcript_required}
+                label={isEnglish ? "Transcript required" : "需要成绩单"}
+                onChange={(checked) =>
+                  setDocs((previous) => ({ ...previous, transcript_required: checked }))
+                }
+              />
+              <CheckboxRow
+                checked={docs.personal_statement_required}
+                label={isEnglish ? "Personal statement required" : "需要个人陈述"}
+                onChange={(checked) =>
+                  setDocs((previous) => ({
+                    ...previous,
+                    personal_statement_required: checked,
+                  }))
+                }
+              />
+              <CheckboxRow
+                checked={docs.cv_resume_required}
+                label={isEnglish ? "CV required" : "需要简历"}
+                onChange={(checked) =>
+                  setDocs((previous) => ({ ...previous, cv_resume_required: checked }))
+                }
+              />
+              <div className="grid gap-4 md:grid-cols-2">
+                <Field
+                  label={isEnglish ? "Reference count" : "推荐信数量"}
+                  type="number"
+                  value={docs.references_required_count}
+                  onChange={(event) =>
+                    setDocs((previous) => ({
+                      ...previous,
+                      references_required_count: event.target.value,
+                    }))
+                  }
+                />
+                <Field
+                  label={isEnglish ? "Academic references min" : "学术推荐信最少数量"}
+                  type="number"
+                  value={docs.reference_type_academic_min}
+                  onChange={(event) =>
+                    setDocs((previous) => ({
+                      ...previous,
+                      reference_type_academic_min: event.target.value,
+                    }))
+                  }
+                />
               </div>
             </div>
           </div>
@@ -364,54 +750,243 @@ export default function EditProgrammePage({ params }: { params: Promise<{ id: st
 
         {activeTab === "compliance" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-4">合规与签证</h2>
-            <label className="flex items-center gap-3 mb-3 cursor-pointer">
-              <input type="checkbox" checked={compliance.atas_possible} onChange={(e) => setCompliance((p) => ({ ...p, atas_possible: e.target.checked }))} className="w-4 h-4" />
-              <span className="text-sm">可能涉及 ATAS 认证</span>
-            </label>
-            {compliance.atas_possible && <textarea className="mb-2 w-full px-3 py-2 border border-slate-300 rounded-lg text-sm" rows={2} value={compliance.atas_rule_text} onChange={(e) => setCompliance((p) => ({ ...p, atas_rule_text: e.target.value }))} />}
-            <div className="mb-2"><label className={labelClass}>Graduate Route 说明</label><textarea className={inputClass} rows={2} value={compliance.graduate_route_note} onChange={(e) => setCompliance((p) => ({ ...p, graduate_route_note: e.target.value }))} /></div>
-            <div><label className={labelClass}>签证截止说明</label><textarea className={inputClass} rows={2} value={compliance.visa_deadline_note} onChange={(e) => setCompliance((p) => ({ ...p, visa_deadline_note: e.target.value }))} /></div>
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">
+              {isEnglish ? "Compliance and visa notes" : "合规与签证信息"}
+            </h2>
+            <CheckboxRow
+              checked={compliance.atas_possible}
+              label={isEnglish ? "ATAS may be required" : "可能需要 ATAS"}
+              onChange={(checked) =>
+                setCompliance((previous) => ({ ...previous, atas_possible: checked }))
+              }
+            />
+            <div className="mt-4 space-y-4">
+              {compliance.atas_possible && (
+                <TextAreaField
+                  label={isEnglish ? "ATAS rule note" : "ATAS 说明"}
+                  value={compliance.atas_rule_text}
+                  onChange={(event) =>
+                    setCompliance((previous) => ({
+                      ...previous,
+                      atas_rule_text: event.target.value,
+                    }))
+                  }
+                />
+              )}
+              <TextAreaField
+                label={isEnglish ? "Graduate Route note" : "Graduate Route 说明"}
+                value={compliance.graduate_route_note}
+                onChange={(event) =>
+                  setCompliance((previous) => ({
+                    ...previous,
+                    graduate_route_note: event.target.value,
+                  }))
+                }
+              />
+              <TextAreaField
+                label={isEnglish ? "Visa deadline note" : "签证截止说明"}
+                value={compliance.visa_deadline_note}
+                onChange={(event) =>
+                  setCompliance((previous) => ({
+                    ...previous,
+                    visa_deadline_note: event.target.value,
+                  }))
+                }
+              />
+            </div>
           </div>
         )}
 
         {activeTab === "prereqs" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-1">先修课程</h2>
-            <p className="text-xs text-slate-500 mb-4">选择标准模块并填写显示文本</p>
-            {prereqModules.map((m, i) => (
-              <div key={i} className="border border-slate-200 rounded-lg p-3 mb-3 bg-slate-50">
-                <div className="flex gap-2 mb-2">
-                  <select className={`${inputClass} w-40`} value={m.canonical_module_name} onChange={updatePrereq(i, "canonical_module_name")}>
-                    <option value="">选择标准模块...</option>
-                    {CANONICAL_MODULES.map((mod) => <option key={mod} value={mod}>{mod.replace(/_/g, " ")}</option>)}
+            <h2 className="mb-1 text-lg font-semibold text-slate-900">
+              {isEnglish ? "Prerequisite modules" : "先修课程"}
+            </h2>
+            <p className="mb-4 text-xs text-slate-500">
+              {isEnglish
+                ? "Choose the canonical module and fill in the source wording."
+                : "选择标准模块，并填写官网中的原始表述。"}
+            </p>
+            {prereqModules.map((module, index) => (
+              <div key={index} className="mb-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div className="mb-2 flex flex-col gap-2 lg:flex-row">
+                  <select
+                    className={`${inputClass} lg:w-64`}
+                    value={module.canonical_module_name}
+                    onChange={updatePrereq(index, "canonical_module_name")}
+                  >
+                    <option value="">
+                      {isEnglish ? "Select canonical module" : "选择标准模块"}
+                    </option>
+                    {CANONICAL_MODULES.map((canonicalModule) => (
+                      <option key={canonicalModule} value={canonicalModule}>
+                        {canonicalModule.replace(/_/g, " ")}
+                      </option>
+                    ))}
                   </select>
-                  <input className={`${inputClass} flex-1`} placeholder="显示文本" value={m.display_text} onChange={updatePrereq(i, "display_text")} />
-                  <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={m.required} onChange={(e) => setPrereqModules((p) => p.map((mod, idx) => idx === i ? { ...mod, required: e.target.checked } : mod))} />必修</label>
-                  <button onClick={() => removePrereq(i)} className="text-red-400 hover:text-red-600 px-2 text-lg">×</button>
+                  <input
+                    className={`${inputClass} flex-1`}
+                    placeholder={
+                      isEnglish ? "Display text from official source" : "官网原始显示文本"
+                    }
+                    value={module.display_text}
+                    onChange={updatePrereq(index, "display_text")}
+                  />
+                  <label className="flex items-center gap-2 text-sm text-slate-700">
+                    <input
+                      type="checkbox"
+                      checked={module.required}
+                      onChange={(event) =>
+                        setPrereqModules((previous) =>
+                          previous.map((item, itemIndex) =>
+                            itemIndex === index
+                              ? { ...item, required: event.target.checked }
+                              : item
+                          )
+                        )
+                      }
+                    />
+                    {isEnglish ? "Required" : "必修"}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => removePrereq(index)}
+                    className="rounded-xl border border-rose-200 px-3 py-2 text-sm text-rose-700 transition hover:bg-rose-50"
+                  >
+                    {isEnglish ? "Remove" : "删除"}
+                  </button>
                 </div>
-                <input className={inputClass} placeholder="最低成绩要求（选填）" value={m.min_grade_rule} onChange={updatePrereq(i, "min_grade_rule")} />
+                <input
+                  className={inputClass}
+                  placeholder={isEnglish ? "Minimum grade rule (optional)" : "最低成绩要求（选填）"}
+                  value={module.min_grade_rule}
+                  onChange={updatePrereq(index, "min_grade_rule")}
+                />
               </div>
             ))}
-            <button onClick={addPrereq} className="w-full py-2 border-2 border-dashed border-slate-300 rounded-lg text-sm text-slate-500 hover:border-indigo-400 hover:text-indigo-600">+ 添加先修课程</button>
+            <button
+              type="button"
+              onClick={addPrereq}
+              className="w-full rounded-xl border-2 border-dashed border-slate-300 py-3 text-sm text-slate-600 transition hover:border-cyan-400 hover:text-cyan-700"
+            >
+              {isEnglish ? "+ Add prerequisite module" : "+ 新增先修课程"}
+            </button>
           </div>
         )}
 
         {activeTab === "source" && (
           <div className={sectionClass}>
-            <h2 className="font-semibold text-slate-900 mb-1">原始爬取文本</h2>
-            <p className="text-xs text-slate-500 mb-4">粘贴官网原始文本，用于验证</p>
-            <textarea className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono" rows={18} value={rawRequirementText} onChange={(e) => setRawRequirementText(e.target.value)} />
+            <h2 className="mb-1 text-lg font-semibold text-slate-900">
+              {isEnglish ? "Raw source text" : "原始来源文本"}
+            </h2>
+            <p className="mb-4 text-xs text-slate-500">
+              {isEnglish
+                ? "Paste or preserve the official source text here for verification."
+                : "可在这里保存官网原文，便于后续核对。"}
+            </p>
+            <textarea
+              className="w-full rounded-xl border border-slate-300 px-3 py-2 font-mono text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+              rows={18}
+              value={rawRequirementText}
+              onChange={(event) => setRawRequirementText(event.target.value)}
+            />
           </div>
         )}
 
-        <div className="flex gap-3 mt-4">
-          <button onClick={() => router.push("/admin/programmes")} className="flex-1 py-3 border border-slate-300 text-slate-700 rounded-xl font-semibold hover:bg-slate-100">取消</button>
-          <button onClick={handleSave} disabled={saving} className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-60">
-            {saving ? "保存中..." : "保存修改"}
+        <div className="mt-4 flex gap-3">
+          <button
+            type="button"
+            onClick={() => router.push("/admin/programmes")}
+            className="flex-1 rounded-xl border border-slate-300 py-3 font-semibold text-slate-700 transition hover:bg-slate-100"
+          >
+            {isEnglish ? "Cancel" : "取消"}
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 rounded-xl bg-cyan-600 py-3 font-semibold text-white transition hover:bg-cyan-700 disabled:opacity-60"
+          >
+            {saving
+              ? isEnglish
+                ? "Saving..."
+                : "保存中..."
+              : isEnglish
+                ? "Save changes"
+                : "保存修改"}
           </button>
         </div>
       </div>
     </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+  step,
+}: {
+  label: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+  step?: string;
+}) {
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+      <input
+        type={type}
+        step={step}
+        value={value}
+        onChange={onChange}
+        className={inputClass}
+      />
+    </div>
+  );
+}
+
+function TextAreaField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}) {
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+      <textarea
+        rows={3}
+        value={value}
+        onChange={onChange}
+        className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+      />
+    </div>
+  );
+}
+
+function CheckboxRow({
+  checked,
+  label,
+  onChange,
+}: {
+  checked: boolean;
+  label: string;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-700 hover:bg-slate-50">
+      <span>{label}</span>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+    </label>
   );
 }

@@ -4,6 +4,11 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
+import {
+  AI_RESUME_MAJOR_OPTIONS,
+  getAiResumeMajorLabel,
+  normalizeAiResumeMajor,
+} from "@/lib/ai-resume-majors";
 
 // ─── Auto-fill parser ──────────────────────────────────────────────────────────
 
@@ -129,7 +134,20 @@ function applyFields(fields: Partial<FieldMap>, form: FormData, modules: Module[
   }
   if (fields.year) setForm((p) => ({ ...p, graduation_year: fields.year!.replace(/\D/g, "") }));
   if (fields.tracks && modules.length === 0) {
-    const matched = TRACK_OPTIONS.filter((t) => fields.tracks!.toLowerCase().includes(t.split("/")[0].toLowerCase()));
+    const rawTracks = fields.tracks
+      .split(/[,，、;；]+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+    const matched = AI_RESUME_MAJOR_OPTIONS.filter((option) =>
+      rawTracks.some((rawTrack) => {
+        const normalized = normalizeAiResumeMajor(rawTrack);
+        return (
+          normalized === option.value ||
+          rawTrack.toLowerCase() === option.en.toLowerCase() ||
+          rawTrack === option.zh
+        );
+      })
+    ).map((option) => option.value);
     if (matched.length > 0) setForm((p) => ({ ...p, target_tracks: matched }));
   }
   if (fields.modules && fields.modules.length > 0) {
@@ -167,16 +185,6 @@ interface FormData {
   toefl_total: string;
   target_tracks: string[];
 }
-
-const TRACK_OPTIONS = [
-  "机械 / Mechanical",
-  "航空航天 / Aerospace",
-  "能源 / Energy",
-  "电气 / Electrical",
-  "电力 / Power",
-  "控制 / Control",
-  "机器人 / Robotics",
-];
 
 const inputClass = "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent";
 const labelClass = "block text-sm font-medium text-slate-700 mb-1";
@@ -428,6 +436,12 @@ function ApplicantForm() {
   const [showExample3, setShowExample3] = useState(false);
   const [pasteError, setPasteError] = useState("");
 
+  const formatTrackLabel = (track: string) => {
+    const primary = getAiResumeMajorLabel(track, locale);
+    const secondary = locale === "en" ? getAiResumeMajorLabel(track, "zh") : getAiResumeMajorLabel(track, "en");
+    return `${primary} / ${secondary}`;
+  };
+
   const handlePaste = (text: string, section: "personal" | "academic" | "modules") => {
     setPasteError("");
     try {
@@ -568,17 +582,17 @@ Target Direction: Mechanical, Aerospace`
               <h2 className="font-semibold text-slate-900 mb-3">{t("applicant.target_direction")}</h2>
               <p className="text-xs text-slate-500 mb-3">{t("applicant.target_hint")}</p>
               <div className="flex flex-wrap gap-2">
-                {TRACK_OPTIONS.map((track) => (
+                {AI_RESUME_MAJOR_OPTIONS.map((track) => (
                   <button
-                    key={track}
-                    onClick={() => toggleTrack(track)}
+                    key={track.value}
+                    onClick={() => toggleTrack(track.value)}
                     className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                      form.target_tracks.includes(track)
+                      form.target_tracks.includes(track.value)
                         ? "bg-indigo-600 text-white border-indigo-600"
                         : "bg-white text-slate-600 border-slate-300 hover:border-indigo-400"
                     }`}
                   >
-                    {track}
+                    {formatTrackLabel(track.value)}
                   </button>
                 ))}
               </div>

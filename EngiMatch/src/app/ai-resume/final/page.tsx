@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
+import { getAiResumeMajorLabel, normalizeAiResumeMajor } from "@/lib/ai-resume-majors";
 
 const STEPS = [
   { id: "usecase", labelKey: "ai.step.usecase" },
@@ -14,24 +15,16 @@ const STEPS = [
   { id: "final", labelKey: "ai.step.final" },
 ];
 
-const MAJOR_LABELS: Record<string, { zh: string; en: string }> = {
-  mechanical: { zh: "机械工程", en: "Mechanical" },
-  electrical: { zh: "电气工程", en: "Electrical" },
-  electronic: { zh: "电子信息", en: "Electronic" },
-  control: { zh: "控制科学与工程", en: "Control" },
-  energy: { zh: "能源与动力", en: "Energy" },
-  materials: { zh: "材料工程", en: "Materials" },
-  civil: { zh: "土木工程", en: "Civil" },
-  computer: { zh: "计算机 / AI", en: "Computer / AI" },
-  automotive: { zh: "车辆工程", en: "Automotive" },
-  aerospace: { zh: "航空航天", en: "Aerospace" },
-  chemical: { zh: "化学工程", en: "Chemical" },
-  other: { zh: "其他工科方向", en: "Other" },
-};
-
 const SECTION_ICONS: Record<string, string> = {
-  education: "🎓", project: "💻", internship: "🏢", research: "🔬",
-  competition: "🏆", skill: "🛠️", award: "🎖️", summary: "📝", other: "📄",
+  education: "🎓",
+  project: "💡",
+  internship: "🏢",
+  research: "🔬",
+  competition: "🏆",
+  skill: "🛠️",
+  award: "🎖️",
+  summary: "📝",
+  other: "📄",
 };
 
 const SECTION_TYPE_LABELS: Record<string, { zh: string; en: string }> = {
@@ -67,9 +60,9 @@ function AIRResumeFinalPageContent() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
-  const major = params.get("major") || "";
-  const majorInfo = MAJOR_LABELS[major] || { zh: major, en: major };
-  const majorLabel = locale === "en" ? majorInfo.en : majorInfo.zh;
+  const major = normalizeAiResumeMajor(params.get("major") || "");
+  const stage = params.get("stage") || "";
+  const majorLabel = getAiResumeMajorLabel(major, locale);
 
   const [sections, setSections] = useState<FinalSection[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +79,9 @@ function AIRResumeFinalPageContent() {
         const parsed: FinalSection[] = JSON.parse(stored);
         setSections(parsed);
         const edits: Record<string, string> = {};
-        for (const s of parsed) edits[s.id] = s.content;
+        for (const section of parsed) {
+          edits[section.id] = section.content;
+        }
         setEditingContent(edits);
       }
     } finally {
@@ -95,37 +90,37 @@ function AIRResumeFinalPageContent() {
   }, []);
 
   const handleEdit = (id: string, content: string) => {
-    setEditingContent(p => ({ ...p, [id]: content }));
+    setEditingContent((previous) => ({ ...previous, [id]: content }));
   };
 
-  const buildFinalText = () => {
-    return sections
+  const buildFinalText = () =>
+    [...sections]
       .sort((a, b) => a.order - b.order)
-      .map(s => {
-        const content = editingContent[s.id] ?? s.content;
-        return `${s.title}\n${content}`;
-      })
+      .map((section) => `${section.title}\n${editingContent[section.id] ?? section.content}`)
       .join("\n\n");
-  };
 
   const handleSave = async () => {
     setSaving(true);
     setSaveError("");
+
     try {
       const profile: ResumeProfile = {
         major,
-        stage: params.get("stage") || "",
+        stage,
         rawText: buildFinalText(),
-        sections: sections.map(s => ({ ...s, content: editingContent[s.id] ?? s.content })),
+        sections: sections.map((section) => ({
+          ...section,
+          content: editingContent[section.id] ?? section.content,
+        })),
         optimizedAt: new Date().toISOString(),
       };
 
-      const localName = locale === "en"
-        ? `Resume Draft ${new Date().toLocaleDateString("en-US")}`
-        : `简历草稿 ${new Date().toLocaleDateString("zh-CN")}`;
+      const localName =
+        locale === "en"
+          ? `Resume Draft ${new Date().toLocaleDateString("en-US")}`
+          : `简历草稿 ${new Date().toLocaleDateString("zh-CN")}`;
 
-      // Persist to database via API
-      const res = await fetch("/api/ai-resume/save", {
+      const response = await fetch("/api/ai-resume/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -137,31 +132,33 @@ function AIRResumeFinalPageContent() {
         }),
       });
 
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || "Save failed");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Save failed");
       }
 
-      const { id: savedId } = await res.json();
+      const { id: savedId } = await response.json();
 
-      // Also persist to localStorage for offline/quick access
-      if (typeof window !== "undefined") {
-        const savedProfiles = JSON.parse(localStorage.getItem("ai_resume_profiles") || "[]");
-        const newProfile = {
-          ...profile,
-          id: savedId || `resume_${Date.now()}`,
-          name: localName,
-        };
-        savedProfiles.push(newProfile);
-        localStorage.setItem("ai_resume_profiles", JSON.stringify(savedProfiles));
-        localStorage.setItem("ai_resume_last", JSON.stringify(newProfile));
-      }
+      const savedProfiles = JSON.parse(localStorage.getItem("ai_resume_profiles") || "[]");
+      const newProfile = {
+        ...profile,
+        id: savedId || `resume_${Date.now()}`,
+        name: localName,
+      };
+      savedProfiles.push(newProfile);
+      localStorage.setItem("ai_resume_profiles", JSON.stringify(savedProfiles));
+      localStorage.setItem("ai_resume_last", JSON.stringify(newProfile));
 
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : (locale === "en" ? "Save failed, please try again" : "保存失败，请重试");
-      setSaveError(msg);
+    } catch (error) {
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : locale === "en"
+            ? "Save failed, please try again."
+            : "保存失败，请重试。"
+      );
     } finally {
       setSaving(false);
     }
@@ -171,25 +168,22 @@ function AIRResumeFinalPageContent() {
     const text = buildFinalText();
     const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `EngiMatch_Resume_${new Date().toISOString().slice(0, 10)}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `EngiMatch_Resume_${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
   };
 
   const handleSyncToProfile = () => {
-    const finalText = buildFinalText();
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem("resume_sync_data", finalText);
-    }
-    router.push(`/applicant?from_resume=1`);
+    sessionStorage.setItem("resume_sync_data", buildFinalText());
+    router.push("/applicant?from_resume=1");
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">{t("common.loading")}</div>;
+    return <div className="min-h-screen flex items-center justify-center text-sm text-slate-400">{t("common.loading")}</div>;
   }
 
   const currentSection = sections[activeSection];
@@ -197,132 +191,145 @@ function AIRResumeFinalPageContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/ai-resume/optimize" className="text-sm text-slate-500 hover:text-slate-800">← {locale === "en" ? "Back to Optimization" : "返回优化"}</Link>
+        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
+          <Link href="/ai-resume/optimize" className="text-sm text-slate-500 hover:text-slate-800">
+            ← {locale === "en" ? "Back to Optimization" : "返回优化页"}
+          </Link>
           <div className="text-sm font-medium text-slate-700">{locale === "en" ? "Final Version" : "最终版本"}</div>
           <div className="w-20" />
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
+      <div className="mx-auto max-w-4xl px-4 py-8">
+        <div className="mb-8 flex items-center gap-1 overflow-x-auto pb-2">
           {STEPS.map((step, i) => {
-            const done = i < STEPS.length - 1;
             const active = step.id === "final";
+            const done = i < STEPS.length - 1;
             return (
-              <div key={step.id} className="flex items-center gap-1 flex-shrink-0">
-                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+              <div key={step.id} className="flex flex-shrink-0 items-center gap-1">
+                <div
+                  className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-xs ${
+                    done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"
+                  }`}
+                >
                   {done ? "✓" : <span className="font-bold">{i + 1}</span>}
                   <span>{t(step.labelKey)}</span>
                 </div>
-                {i < STEPS.length - 1 && <div className="w-4 h-px bg-slate-200" />}
+                {i < STEPS.length - 1 && <div className="h-px w-4 bg-slate-200" />}
               </div>
             );
           })}
         </div>
 
-        {/* Success banner */}
-        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white mb-8 text-center">
-          <div className="text-4xl mb-3">✨</div>
-          <h1 className="text-2xl font-bold mb-2">{locale === "en" ? "Optimization Complete!" : "优化完成！"}</h1>
-          <p className="text-indigo-200 text-sm">
+        <div className="mb-8 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-center text-white">
+          <div className="mb-3 text-4xl">✓</div>
+          <h1 className="mb-2 text-2xl font-bold">{locale === "en" ? "Optimization Complete" : "优化完成"}</h1>
+          <p className="text-sm text-indigo-100">
             {locale === "en"
-              ? `Your resume has been optimized for "UK Taught Master's · ${majorLabel}"`
-              : `你的简历已针对「英国授课型硕士 · ${majorLabel}」方向优化`}
+              ? `Your resume has been optimized for "UK Taught Master's · ${majorLabel}".`
+              : `你的简历已针对“英国授课型硕士 · ${majorLabel}”完成优化。`}
           </p>
         </div>
 
-        {/* Editable preview */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm mb-6">
-          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
-            <div className="font-semibold text-slate-800">{locale === "en" ? "Resume Preview (Editable)" : "简历预览（可继续编辑）"}</div>
+        <div className="mb-6 rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+            <div className="font-semibold text-slate-800">
+              {locale === "en" ? "Resume Preview (Editable)" : "简历预览（可继续编辑）"}
+            </div>
             <div className="flex gap-2">
-              {sections.map((s, i) => (
-                <button key={s.id} onClick={() => setActiveSection(i)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium border transition-all ${
-                    activeSection === i
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "text-slate-500 border-slate-200 hover:bg-slate-50"
-                  }`}>
-                  {SECTION_ICONS[s.type]} {(locale === "en" ? SECTION_TYPE_LABELS[s.type]?.en : SECTION_TYPE_LABELS[s.type]?.zh) || (locale === "en" ? "Other" : "其他")}
+              {sections.map((section, index) => (
+                <button
+                  key={section.id}
+                  onClick={() => setActiveSection(index)}
+                  className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-all ${
+                    activeSection === index
+                      ? "border-indigo-600 bg-indigo-600 text-white"
+                      : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  {SECTION_ICONS[section.type] || "📄"}{" "}
+                  {(locale === "en" ? SECTION_TYPE_LABELS[section.type]?.en : SECTION_TYPE_LABELS[section.type]?.zh) ||
+                    (locale === "en" ? "Other" : "其他")}
                 </button>
               ))}
             </div>
           </div>
+
           {currentSection && (
             <div className="p-4">
-              <div className="text-xs text-slate-400 mb-2 font-medium">
-                {SECTION_ICONS[currentSection.type]} {currentSection.title}
-                {currentSection.optimized && <span className="ml-2 text-indigo-400">({locale === "en" ? "Optimized" : "已优化"})</span>}
+              <div className="mb-2 text-xs font-medium text-slate-400">
+                {SECTION_ICONS[currentSection.type] || "📄"} {currentSection.title}
+                {currentSection.optimized && (
+                  <span className="ml-2 text-indigo-400">({locale === "en" ? "Optimized" : "已优化"})</span>
+                )}
               </div>
               <textarea
                 value={editingContent[currentSection.id] ?? currentSection.content}
-                onChange={(e) => handleEdit(currentSection.id, e.target.value)}
-                className="w-full h-48 text-sm font-mono text-slate-700 bg-slate-50 rounded-xl p-3 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+                onChange={(event) => handleEdit(currentSection.id, event.target.value)}
+                className="h-48 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 font-mono text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
                 placeholder={locale === "en" ? "Resume content..." : "简历内容..."}
               />
             </div>
           )}
         </div>
 
-        {/* Full preview */}
-        <details className="bg-white rounded-2xl border border-slate-200 mb-6">
-          <summary className="px-4 py-3 text-sm font-medium text-slate-600 cursor-pointer hover:bg-slate-50">
+        <details className="mb-6 rounded-2xl border border-slate-200 bg-white">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50">
             📄 {locale === "en" ? "View Full Resume Text" : "查看完整简历文本"}
           </summary>
           <div className="px-4 pb-4">
-            <pre className="text-sm font-mono text-slate-700 whitespace-pre-wrap bg-slate-50 rounded-xl p-4 border border-slate-100">
+            <pre className="whitespace-pre-wrap rounded-xl border border-slate-100 bg-slate-50 p-4 font-mono text-sm text-slate-700">
               {buildFinalText()}
             </pre>
           </div>
         </details>
 
-        {/* Reminder */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-          <div className="text-sm font-medium text-amber-700 mb-1">📌 {locale === "en" ? "Important Reminder" : "重要提醒"}</div>
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="mb-1 text-sm font-medium text-amber-700">⚠️ {locale === "en" ? "Important Reminder" : "重要提醒"}</div>
           <div className="text-sm text-amber-600">
             {locale === "en"
-              ? "This is an AI-optimized resume draft. Please carefully review each section to ensure it accurately reflects your real experiences before submitting. AI suggestions are for reference only, and the final content is your decision."
-              : "这是一份经过 AI 优化的简历草稿，请在提交前仔细检查每段内容是否准确反映了你的真实经历。AI 建议仅供参考，最终内容由你决定。"}
+              ? "This is an AI-optimized draft. Please review each section carefully and make sure everything accurately reflects your real experience before submission."
+              : "这是一份 AI 优化后的草稿。提交前请逐段检查，确认内容真实准确地反映了你的经历。"}
           </div>
         </div>
 
-        {/* Action buttons */}
         <div className="space-y-3">
-          {saveError && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-600 text-center">
-              {saveError}
-            </div>
-          )}
+          {saveError && <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-center text-sm text-red-600">{saveError}</div>}
 
           <button
             onClick={handleSave}
             disabled={saving || saved}
-            className="w-full py-4 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-60 transition-all flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-60"
           >
-            {saved ? "✓ " + (locale === "en" ? "Saved" : "已保存") : saving ? (locale === "en" ? "Saving..." : "保存中...") : "💾 " + (locale === "en" ? "Save Resume Draft" : "保存简历草稿")}
+            {saved
+              ? `✓ ${locale === "en" ? "Saved" : "已保存"}`
+              : saving
+                ? locale === "en"
+                  ? "Saving..."
+                  : "保存中..."
+                : `💾 ${locale === "en" ? "Save Resume Draft" : "保存简历草稿"}`}
           </button>
 
           <button
             onClick={handleExport}
-            className="w-full py-4 bg-white border-2 border-indigo-200 text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-all"
+            className="w-full rounded-xl border-2 border-indigo-200 bg-white py-4 font-semibold text-indigo-600 transition-all hover:bg-indigo-50"
           >
             📥 {locale === "en" ? "Export as Text File" : "导出为文本文件"}
           </button>
 
           <button
             onClick={handleSyncToProfile}
-            className="w-full py-4 bg-white border border-slate-300 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-all"
+            className="w-full rounded-xl border border-slate-300 bg-white py-4 font-semibold text-slate-600 transition-all hover:bg-slate-50"
           >
-            🔄 {locale === "en" ? "Sync to Application Profile" : "同步到申请档案"}
-            <span className="block text-xs font-normal text-slate-400 mt-0.5">
+            📤 {locale === "en" ? "Sync to Application Profile" : "同步到申请档案"}
+            <span className="mt-0.5 block text-xs font-normal text-slate-400">
               {locale === "en"
-                ? "Sync project experiences, skill tags, etc. to the EngiMatch application system"
-                : "将简历中的项目经历、技能标签等同步到 EngiMatch 申请系统"}
+                ? "Sync project experience, skill tags, and related content into EngiMatch."
+                : "把项目经历、技能标签等内容同步到 EngiMatch 申请系统。"}
             </span>
           </button>
 
-          <div className="text-center pt-2">
+          <div className="pt-2 text-center">
             <Link href="/home" className="text-sm text-slate-400 hover:text-slate-600">
               {t("nav.home")}
             </Link>
@@ -335,7 +342,7 @@ function AIRResumeFinalPageContent() {
 
 export default function AIRResumeFinalPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm text-slate-400" />}>
       <AIRResumeFinalPageContent />
     </Suspense>
   );

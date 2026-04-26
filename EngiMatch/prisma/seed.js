@@ -23,35 +23,35 @@ async function seedUsers() {
   const users = [
     {
       email: "admin@engimatch.com",
-      password: "admin123",
+      password: "123456",
       name: "超级管理员",
       role: "SUPER_ADMIN",
       status: "APPROVED",
     },
     {
       email: "staff@engimatch.com",
-      password: "staff123",
+      password: "123456",
       name: "张老师",
       role: "STAFF",
       status: "APPROVED", // Approved for testing
     },
     {
       email: "staff2@engimatch.com",
-      password: "staff456",
+      password: "123456",
       name: "李老师",
       role: "STAFF",
       status: "PENDING", // Pending approval for testing
     },
     {
       email: "student@engimatch.com",
-      password: "student123",
+      password: "123456",
       name: "王小明",
       role: "STUDENT",
       status: "APPROVED",
     },
     {
       email: "student2@engimatch.com",
-      password: "student456",
+      password: "123456",
       name: "李小红",
       role: "STUDENT",
       status: "APPROVED",

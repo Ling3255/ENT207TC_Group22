@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 import {
   apiHandler,
   successResponse,
@@ -15,6 +16,8 @@ export const GET = apiHandler(async (request: NextRequest) => {
   const degreeType = searchParams.get("degreeType");
   const search = searchParams.get("search");
   const isActive = searchParams.get("isActive");
+  const pageParam = searchParams.get("page");
+  const pageSizeParam = searchParams.get("pageSize");
 
   const where: Record<string, unknown> = {};
   if (universityId) where.university_id = universityId;
@@ -29,21 +32,56 @@ export const GET = apiHandler(async (request: NextRequest) => {
     ];
   }
 
+  const include = {
+    university: true,
+    academic_requirements: true,
+    language_requirements: true,
+    documents: true,
+    compliance: true,
+    prerequisite_modules: true,
+    _count: { select: { evaluations: true } },
+  };
+  const orderBy: Prisma.ProgrammeOrderByWithRelationInput[] = [
+    { university: { rank: "asc" } },
+    { programme_name: "asc" },
+  ];
+
+  const requestedPage = pageParam ? parseInt(pageParam, 10) : NaN;
+  const requestedPageSize = pageSizeParam ? parseInt(pageSizeParam, 10) : NaN;
+  const usePagination = Number.isFinite(requestedPage) || Number.isFinite(requestedPageSize);
+
+  if (usePagination) {
+    const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+    const pageSize =
+      Number.isFinite(requestedPageSize) && requestedPageSize > 0
+        ? Math.min(requestedPageSize, 100)
+        : 25;
+    const skip = (page - 1) * pageSize;
+
+    const [programmes, total] = await Promise.all([
+      prisma.programme.findMany({
+        where,
+        include,
+        orderBy,
+        skip,
+        take: pageSize,
+      }),
+      prisma.programme.count({ where }),
+    ]);
+
+    return successResponse({
+      programmes,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    });
+  }
+
   const programmes = await prisma.programme.findMany({
     where,
-    include: {
-      university: true,
-      academic_requirements: true,
-      language_requirements: true,
-      documents: true,
-      compliance: true,
-      prerequisite_modules: true,
-      _count: { select: { evaluations: true } },
-    },
-    orderBy: [
-      { university: { rank: "asc" } },
-      { programme_name: "asc" },
-    ],
+    include,
+    orderBy,
   });
 
   return successResponse(programmes);

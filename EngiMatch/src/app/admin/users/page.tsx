@@ -50,9 +50,9 @@ const ROLE_CONFIG: Record<
   User["role"],
   { label: string; labelEn: string; icon: string }
 > = {
-  STUDENT: { label: "学生", labelEn: "Student", icon: "🎓" },
-  STAFF: { label: "工作人员", labelEn: "Staff", icon: "🧑‍🏫" },
-  SUPER_ADMIN: { label: "超级管理员", labelEn: "Super Admin", icon: "🛡" },
+  STUDENT: { label: "学生", labelEn: "Student", icon: "S" },
+  STAFF: { label: "工作人员", labelEn: "Staff", icon: "T" },
+  SUPER_ADMIN: { label: "超级管理员", labelEn: "Super Admin", icon: "A" },
 };
 
 export default function AdminUsersPage() {
@@ -64,9 +64,7 @@ export default function AdminUsersPage() {
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [filter, setFilter] = useState<"all" | "pending" | "student" | "staff">(
-    "all"
-  );
+  const [filter, setFilter] = useState<"all" | "pending" | "student" | "staff">("all");
   const [searchInput, setSearchInput] = useState("");
   const deferredSearchInput = useDeferredValue(searchInput);
   const [search, setSearch] = useState("");
@@ -132,8 +130,7 @@ export default function AdminUsersPage() {
 
       if (!response.ok || payload?.success === false) {
         throw new Error(
-          payload?.error ||
-            (isEnglish ? "Failed to load users." : "加载用户列表失败。")
+          payload?.error || (isEnglish ? "Failed to load users." : "加载用户列表失败。")
         );
       }
 
@@ -227,15 +224,13 @@ export default function AdminUsersPage() {
                 href="/home"
                 className="mb-2 inline-block text-sm text-slate-400 hover:text-white"
               >
-                ← {isEnglish ? "Back to Home" : "返回首页"}
+                {isEnglish ? "Back to Home" : "返回首页"}
               </Link>
               <h1 className="text-2xl font-bold">
                 {isEnglish ? "User Management" : "用户管理"}
               </h1>
               <p className="mt-1 text-sm text-slate-400">
-                {isEnglish
-                  ? "Manage student and staff accounts"
-                  : "管理学生和工作人员账号"}
+                {isEnglish ? "Manage student and staff accounts" : "管理学生和工作人员账号"}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -246,6 +241,7 @@ export default function AdminUsersPage() {
                 {isEnglish ? "Profile" : "个人信息"}
               </Link>
               <button
+                type="button"
                 onClick={handleLogout}
                 className="rounded-lg bg-slate-600 px-4 py-2 text-sm transition-colors hover:bg-slate-500"
               >
@@ -258,23 +254,14 @@ export default function AdminUsersPage() {
 
       <div className="mx-auto max-w-6xl px-4 py-6">
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard
-            label={isEnglish ? "Students" : "学生"}
-            value={stats?.byRole?.STUDENT || 0}
-          />
-          <StatCard
-            label={isEnglish ? "Staff" : "工作人员"}
-            value={stats?.byRole?.STAFF || 0}
-          />
+          <StatCard label={isEnglish ? "Students" : "学生"} value={stats?.byRole?.STUDENT || 0} />
+          <StatCard label={isEnglish ? "Staff" : "工作人员"} value={stats?.byRole?.STAFF || 0} />
           <StatCard
             label={isEnglish ? "Pending Approval" : "待审批"}
             value={pendingCount}
             valueClassName="text-amber-600"
           />
-          <StatCard
-            label={isEnglish ? "Total Users" : "总用户数"}
-            value={totalCount}
-          />
+          <StatCard label={isEnglish ? "Total Users" : "总用户数"} value={totalCount} />
         </div>
 
         <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4">
@@ -285,7 +272,7 @@ export default function AdminUsersPage() {
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder={
-                  isEnglish ? "Search by email or name..." : "搜索邮箱或姓名..."
+                  isEnglish ? "Search by email or name..." : "按邮箱或姓名搜索..."
                 }
                 className="flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
@@ -324,7 +311,7 @@ export default function AdminUsersPage() {
                 activeClassName="bg-blue-600 text-white"
                 idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
               >
-                🎓 {isEnglish ? "Students" : "学生审批"}
+                {isEnglish ? "Students" : "学生"}
               </FilterButton>
               <FilterButton
                 active={filter === "staff"}
@@ -332,7 +319,7 @@ export default function AdminUsersPage() {
                 activeClassName="bg-purple-600 text-white"
                 idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
               >
-                🧑‍🏫 {isEnglish ? "Staff" : "老师审批"}
+                {isEnglish ? "Staff" : "工作人员"}
               </FilterButton>
               <FilterButton
                 active={filter === "pending"}
@@ -344,9 +331,7 @@ export default function AdminUsersPage() {
                 {pendingCount > 0 && (
                   <span
                     className={`rounded-full px-1.5 py-0.5 text-xs ${
-                      filter === "pending"
-                        ? "bg-amber-400"
-                        : "bg-amber-500 text-white"
+                      filter === "pending" ? "bg-amber-400" : "bg-amber-500 text-white"
                     }`}
                   >
                     {pendingCount}
@@ -359,8 +344,8 @@ export default function AdminUsersPage() {
           <div className="mt-3 text-xs text-slate-500">
             {search
               ? isEnglish
-                ? `Showing approval results for "${search}".`
-                : `正在显示“${search}”的审批结果。`
+                ? `Showing results for "${search}".`
+                : `正在显示 “${search}” 的搜索结果。`
               : isEnglish
                 ? "Search updates automatically while you type."
                 : "输入时会自动搜索，无需反复点击按钮。"}
@@ -375,9 +360,8 @@ export default function AdminUsersPage() {
           <div className="rounded-xl border border-red-200 bg-white p-8 text-center text-red-600">
             {error}
             <button
-              onClick={() =>
-                fetchUsers({ searchTerm: search, includeStats: stats === null })
-              }
+              type="button"
+              onClick={() => fetchUsers({ searchTerm: search, includeStats: stats === null })}
               className="ml-4 underline hover:no-underline"
             >
               {isEnglish ? "Retry" : "重试"}
@@ -396,7 +380,7 @@ export default function AdminUsersPage() {
                 : filter === "staff"
                   ? isEnglish
                     ? "No staff found"
-                    : "没有找到老师"
+                    : "没有找到工作人员"
                   : isEnglish
                     ? "No users found"
                     : "没有找到用户"}
@@ -437,11 +421,11 @@ export default function AdminUsersPage() {
                         <div className="text-sm text-slate-500">{user.email}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1 text-sm">
-                          <span>{roleConfig.icon}</span>
-                          <span>
-                            {isEnglish ? roleConfig.labelEn : roleConfig.label}
+                        <span className="inline-flex items-center gap-2 text-sm">
+                          <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-100 text-xs text-slate-700">
+                            {roleConfig.icon}
                           </span>
+                          <span>{isEnglish ? roleConfig.labelEn : roleConfig.label}</span>
                         </span>
                       </td>
                       <td className="px-4 py-3">
@@ -452,12 +436,11 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-500">
-                        {new Date(user.created_at).toLocaleDateString(
-                          isEnglish ? "en-US" : "zh-CN"
-                        )}
+                        {new Date(user.created_at).toLocaleDateString(isEnglish ? "en-US" : "zh-CN")}
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button
+                          type="button"
                           onClick={() => setSelectedUser(user)}
                           className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm transition-colors hover:bg-slate-200"
                         >
@@ -481,37 +464,29 @@ export default function AdminUsersPage() {
                 {isEnglish ? "User Details" : "用户详情"}
               </h2>
               <button
+                type="button"
                 onClick={() => {
                   setSelectedUser(null);
                   setTempPassword(null);
                 }}
                 className="text-slate-400 hover:text-slate-600"
               >
-                ×
+                x
               </button>
             </div>
 
             <div className="mb-6 space-y-3">
-              <DetailRow
-                label={isEnglish ? "Email" : "邮箱"}
-                value={selectedUser.email}
-              />
+              <DetailRow label={isEnglish ? "Email" : "邮箱"} value={selectedUser.email} />
               <DetailRow
                 label={isEnglish ? "Name" : "姓名"}
                 value={selectedUser.name || (isEnglish ? "Not provided" : "未填写")}
               />
               <DetailRow
                 label={isEnglish ? "Role" : "角色"}
-                value={`${ROLE_CONFIG[selectedUser.role].icon} ${
-                  isEnglish
-                    ? ROLE_CONFIG[selectedUser.role].labelEn
-                    : ROLE_CONFIG[selectedUser.role].label
-                }`}
+                value={isEnglish ? ROLE_CONFIG[selectedUser.role].labelEn : ROLE_CONFIG[selectedUser.role].label}
               />
               <div className="flex justify-between gap-4">
-                <span className="text-slate-500">
-                  {isEnglish ? "Status" : "状态"}
-                </span>
+                <span className="text-slate-500">{isEnglish ? "Status" : "状态"}</span>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CONFIG[selectedUser.status].color}`}
                 >
@@ -522,16 +497,12 @@ export default function AdminUsersPage() {
               </div>
               <DetailRow
                 label={isEnglish ? "Registered" : "注册时间"}
-                value={new Date(selectedUser.created_at).toLocaleString(
-                  isEnglish ? "en-US" : "zh-CN"
-                )}
+                value={new Date(selectedUser.created_at).toLocaleString(isEnglish ? "en-US" : "zh-CN")}
               />
               {selectedUser.last_login_at && (
                 <DetailRow
                   label={isEnglish ? "Last Login" : "最后登录"}
-                  value={new Date(selectedUser.last_login_at).toLocaleString(
-                    isEnglish ? "en-US" : "zh-CN"
-                  )}
+                  value={new Date(selectedUser.last_login_at).toLocaleString(isEnglish ? "en-US" : "zh-CN")}
                 />
               )}
             </div>
@@ -547,7 +518,7 @@ export default function AdminUsersPage() {
                 <div className="mt-2 text-xs text-green-600">
                   {isEnglish
                     ? "Please share this password with the user securely."
-                    : "请通过安全方式将该密码告知用户。"}
+                    : "请通过安全方式把这个密码发给用户。"}
                 </div>
               </div>
             )}
@@ -561,6 +532,7 @@ export default function AdminUsersPage() {
                 {selectedUser.status === "PENDING" && (
                   <>
                     <button
+                      type="button"
                       onClick={() => handleAction(selectedUser.id, "approve")}
                       disabled={actionLoading === selectedUser.id}
                       className="w-full rounded-lg bg-green-600 py-2 text-white transition-colors hover:bg-green-700 disabled:opacity-50"
@@ -574,6 +546,7 @@ export default function AdminUsersPage() {
                           : "批准"}
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleAction(selectedUser.id, "reject")}
                       disabled={actionLoading === selectedUser.id}
                       className="w-full rounded-lg bg-red-100 py-2 text-red-700 transition-colors hover:bg-red-200 disabled:opacity-50"
@@ -586,6 +559,7 @@ export default function AdminUsersPage() {
                 {(selectedUser.status === "APPROVED" ||
                   selectedUser.status === "SUSPENDED") && (
                   <button
+                    type="button"
                     onClick={() =>
                       handleAction(
                         selectedUser.id,
@@ -614,6 +588,7 @@ export default function AdminUsersPage() {
                 )}
 
                 <button
+                  type="button"
                   onClick={() => handleAction(selectedUser.id, "reset_password")}
                   disabled={actionLoading === selectedUser.id}
                   className="w-full rounded-lg bg-slate-100 py-2 text-slate-700 transition-colors hover:bg-slate-200 disabled:opacity-50"
@@ -646,9 +621,7 @@ function StatCard({
 }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
-      <div className={`text-2xl font-bold text-slate-700 ${valueClassName || ""}`}>
-        {value}
-      </div>
+      <div className={`text-2xl font-bold text-slate-700 ${valueClassName || ""}`}>{value}</div>
       <div className="text-sm text-slate-500">{label}</div>
     </div>
   );
@@ -669,6 +642,7 @@ function FilterButton({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
         active ? activeClassName : idleClassName

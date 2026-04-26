@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 import { useToast } from "@/components/ToastProvider";
+import { getAiResumeMajorLabel } from "@/lib/ai-resume-majors";
 
 interface ApplicantCard {
   id: string;
@@ -30,6 +31,12 @@ export default function ApplicantDashboard() {
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const isZh = locale === "zh";
+
+  const formatTrackLabel = (track: string) => {
+    const primary = getAiResumeMajorLabel(track, locale);
+    const secondary = locale === "en" ? getAiResumeMajorLabel(track, "zh") : getAiResumeMajorLabel(track, "en");
+    return `${primary} / ${secondary}`;
+  };
 
   useEffect(() => {
     fetchMyApplicants();
@@ -176,7 +183,7 @@ export default function ApplicantDashboard() {
                         )}
                         {app.target_tracks.length > 0 && (
                           <span className="px-2 py-1 bg-amber-50 text-amber-600 rounded-lg">
-                            {app.target_tracks.join(", ")}
+                            {app.target_tracks.map((track) => formatTrackLabel(track)).join(", ")}
                           </span>
                         )}
                         <span className="px-2 py-1 bg-slate-50 text-slate-500 rounded-lg">

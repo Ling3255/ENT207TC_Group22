@@ -19,6 +19,14 @@ interface Programme {
   };
 }
 
+interface ProgrammePagePayload {
+  programmes: Programme[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 export default function AdminProgrammesPage() {
   const { locale } = useLocale();
   const isEnglish = locale === "en";
@@ -28,6 +36,10 @@ export default function AdminProgrammesPage() {
   const [search, setSearch] = useState("");
   const [filterActive, setFilterActive] = useState(true);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 25;
 
   useEffect(() => {
     let cancelled = false;
@@ -37,7 +49,7 @@ export default function AdminProgrammesPage() {
       setError("");
 
       try {
-        const url = `/api/programmes?isActive=${filterActive}${
+        const url = `/api/programmes?isActive=${filterActive}&page=${page}&pageSize=${pageSize}${
           search ? `&search=${encodeURIComponent(search)}` : ""
         }`;
         const response = await fetch(url);
@@ -53,11 +65,18 @@ export default function AdminProgrammesPage() {
         }
 
         if (!cancelled) {
-          setProgrammes(Array.isArray(payload?.data) ? payload.data : []);
+          const pageData = payload?.data as ProgrammePagePayload | undefined;
+          setProgrammes(Array.isArray(pageData?.programmes) ? pageData.programmes : []);
+          setTotal(typeof pageData?.total === "number" ? pageData.total : 0);
+          setTotalPages(
+            typeof pageData?.totalPages === "number" ? Math.max(1, pageData.totalPages) : 1
+          );
         }
       } catch (loadError) {
         if (!cancelled) {
           setProgrammes([]);
+          setTotal(0);
+          setTotalPages(1);
           setError(
             loadError instanceof Error
               ? loadError.message
@@ -78,20 +97,34 @@ export default function AdminProgrammesPage() {
     return () => {
       cancelled = true;
     };
-  }, [filterActive, isEnglish, search]);
+  }, [filterActive, isEnglish, page, search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [filterActive, search]);
 
   const totalText = useMemo(() => {
     if (isEnglish) {
-      return `${programmes.length} programme record(s)`;
+      return `${total} programme record(s)`;
     }
-    return `共 ${programmes.length} 条专业记录`;
-  }, [isEnglish, programmes.length]);
+    return `共 ${total} 条专业记录`;
+  }, [isEnglish, total]);
+
+  const pageSummary = useMemo(() => {
+    if (total === 0) {
+      return isEnglish ? "No records found" : "暂无记录";
+    }
+
+    const start = (page - 1) * pageSize + 1;
+    const end = Math.min(page * pageSize, total);
+    return isEnglish
+      ? `Showing ${start}-${end} of ${total}`
+      : `显示第 ${start}-${end} 条，共 ${total} 条`;
+  }, [isEnglish, page, pageSize, total]);
 
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm(
-      isEnglish
-        ? "Deactivate this programme record?"
-        : "确认将这个专业记录停用吗？"
+      isEnglish ? "Deactivate this programme record?" : "确认停用这个专业记录吗？"
     );
 
     if (!confirmed) return;
@@ -107,7 +140,14 @@ export default function AdminProgrammesPage() {
       return;
     }
 
+    const nextCount = programmes.length - 1;
+    if (nextCount === 0 && page > 1) {
+      setPage((previous) => previous - 1);
+      return;
+    }
+
     setProgrammes((previous) => previous.filter((programme) => programme.id !== id));
+    setTotal((previous) => Math.max(0, previous - 1));
   };
 
   return (
@@ -126,9 +166,7 @@ export default function AdminProgrammesPage() {
                 {isEnglish ? "Programme Library" : "专业库"}
               </p>
               <h1 className="mt-2 text-3xl font-semibold">
-                {isEnglish
-                  ? "View and maintain saved programmes"
-                  : "查看并维护已保存专业"}
+                {isEnglish ? "View and maintain saved programmes" : "查看并维护已保存专业"}
               </h1>
               <p className="mt-3 text-sm text-slate-300">{totalText}</p>
             </div>
@@ -143,7 +181,7 @@ export default function AdminProgrammesPage() {
                 href="/admin/verify"
                 className="rounded-xl border border-white/15 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/10"
               >
-                {isEnglish ? "Open verification queue" : "打开核验队列"}
+                {isEnglish ? "Open verification queue" : "打开审核队列"}
               </Link>
             </div>
           </div>
@@ -164,7 +202,7 @@ export default function AdminProgrammesPage() {
               placeholder={
                 isEnglish
                   ? "Search by programme name, university, degree type, or intake"
-                  : "按专业名称、学校、学位类型或入学季搜索"
+                  : "按专业名、学校、学位类型或入学季搜索"
               }
               value={search}
               onChange={(event) => setSearch(event.target.value)}
@@ -174,13 +212,34 @@ export default function AdminProgrammesPage() {
               value={filterActive ? "active" : "all"}
               onChange={(event) => setFilterActive(event.target.value === "active")}
             >
-              <option value="active">
-                {isEnglish ? "Active only" : "仅看有效专业"}
-              </option>
-              <option value="all">
-                {isEnglish ? "All records" : "查看全部记录"}
-              </option>
+              <option value="active">{isEnglish ? "Active only" : "仅看有效专业"}</option>
+              <option value="all">{isEnglish ? "All records" : "查看全部记录"}</option>
             </select>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <p className="text-sm text-slate-600">{pageSummary}</p>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setPage((previous) => Math.max(1, previous - 1))}
+                disabled={loading || page <= 1}
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isEnglish ? "Previous" : "上一页"}
+              </button>
+              <span className="min-w-24 text-center text-sm text-slate-600">
+                {isEnglish ? `Page ${page}/${totalPages}` : `第 ${page}/${totalPages} 页`}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage((previous) => Math.min(totalPages, previous + 1))}
+                disabled={loading || page >= totalPages}
+                className="rounded-xl border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isEnglish ? "Next" : "下一页"}
+              </button>
+            </div>
           </div>
 
           <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">

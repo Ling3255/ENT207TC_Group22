@@ -107,19 +107,13 @@ export default function StaffDashboard() {
 
         if (!cancelled) {
           setUser(session.user);
-          setProgrammes(
-            Array.isArray(programmesJson?.data) ? programmesJson.data : []
-          );
-          setUniversities(
-            Array.isArray(universitiesJson?.data) ? universitiesJson.data : []
-          );
+          setProgrammes(Array.isArray(programmesJson?.data) ? programmesJson.data : []);
+          setUniversities(Array.isArray(universitiesJson?.data) ? universitiesJson.data : []);
         }
       } catch {
         if (!cancelled) {
           setError(
-            isEnglish
-              ? "Failed to load the staff workspace."
-              : "工作人员工作台加载失败。"
+            isEnglish ? "Failed to load the staff workspace." : "加载工作人员工作台失败。"
           );
         }
       } finally {
@@ -209,9 +203,7 @@ export default function StaffDashboard() {
       }));
     };
 
-  const handleCreateUniversity = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleCreateUniversity = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setUniversityFormError("");
     setUniversityFormSuccess("");
@@ -231,9 +223,7 @@ export default function StaffDashboard() {
       if (!response.ok || !payload?.success) {
         throw new Error(
           payload?.error ||
-            (isEnglish
-              ? "Failed to create the university."
-              : "新增学校失败。")
+            (isEnglish ? "Failed to create the university." : "新增学校失败。")
         );
       }
 
@@ -300,8 +290,8 @@ export default function StaffDashboard() {
             </h1>
             <p className="mt-3 max-w-3xl text-sm text-slate-300">
               {isEnglish
-                ? "Your main responsibility is to update programme details from official university sources, review unverified records, and keep deadlines current for students."
-                : "你的核心职责是根据学校官方信息更新专业数据，复核未确认记录，并及时维护申请截止时间。"}
+                ? "Update programme details from official university sources, review unverified records, and keep deadlines current for students."
+                : "根据学校官网更新专业信息，复核待确认记录，并及时维护申请截止时间。"}
             </p>
           </div>
 
@@ -310,9 +300,7 @@ export default function StaffDashboard() {
               <div className="text-slate-300">
                 {isEnglish ? "Signed in as" : "当前登录"}
               </div>
-              <div className="font-medium text-white">
-                {user?.name || user?.email}
-              </div>
+              <div className="font-medium text-white">{user?.name || user?.email}</div>
             </div>
             <Link
               href="/profile"
@@ -353,11 +341,7 @@ export default function StaffDashboard() {
             title={isEnglish ? "Active Programmes" : "有效项目"}
             value={stats.programmeCount}
             tone="cyan"
-            note={
-              isEnglish
-                ? "Programmes visible to the platform"
-                : "平台当前可用的项目"
-            }
+            note={isEnglish ? "Programmes visible to the platform" : "平台当前可用的项目"}
           />
           <StatCard
             title={isEnglish ? "Needs Review" : "待复核"}
@@ -383,11 +367,7 @@ export default function StaffDashboard() {
             title={isEnglish ? "Verified" : "已确认"}
             value={stats.verifiedCount}
             tone="emerald"
-            note={
-              isEnglish
-                ? "Records ready for student use"
-                : "可供学生放心使用的记录"
-            }
+            note={isEnglish ? "Records ready for student use" : "可供学生使用的记录"}
           />
         </div>
 
@@ -399,14 +379,12 @@ export default function StaffDashboard() {
                   {isEnglish ? "Main workflow" : "主要工作流"}
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold text-slate-900">
-                  {isEnglish
-                    ? "University information maintenance"
-                    : "学校信息维护"}
+                  {isEnglish ? "University information maintenance" : "学校信息维护"}
                 </h2>
                 <p className="mt-2 text-sm text-slate-600">
                   {isEnglish
                     ? "Search programmes, identify stale records, and jump straight into editing."
-                    : "搜索项目、定位过期记录，并直接进入编辑维护。"}
+                    : "搜索项目、定位过期记录，并直接进入编辑。"}
                 </p>
               </div>
 
@@ -415,7 +393,7 @@ export default function StaffDashboard() {
                   href="/admin/programmes/new"
                   className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
                 >
-                  {isEnglish ? "Add programme" : "新增项目"}
+                  {isEnglish ? "Add programme" : "新增专业"}
                 </Link>
                 <Link
                   href="/admin/verify"
@@ -433,23 +411,19 @@ export default function StaffDashboard() {
                 placeholder={
                   isEnglish
                     ? "Search by programme, university, degree type, or intake"
-                    : "按项目、学校、学位类型或入学季搜索"
+                    : "按专业、学校、学位类型或入学季搜索"
                 }
                 className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
               />
               <select
                 value={filterMode}
-                onChange={(event) =>
-                  setFilterMode(event.target.value as FilterMode)
-                }
+                onChange={(event) => setFilterMode(event.target.value as FilterMode)}
                 className="rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
               >
                 <option value="needs-review">
                   {isEnglish ? "Needs review first" : "优先看待复核"}
                 </option>
-                <option value="stale">
-                  {isEnglish ? "Stale records" : "仅看待更新"}
-                </option>
+                <option value="stale">{isEnglish ? "Stale records" : "仅看待更新"}</option>
                 <option value="verified">
                   {isEnglish ? "Verified only" : "仅看已确认"}
                 </option>
@@ -484,10 +458,7 @@ export default function StaffDashboard() {
                   <tbody>
                     {filteredProgrammes.length === 0 ? (
                       <tr>
-                        <td
-                          colSpan={5}
-                          className="px-4 py-10 text-center text-slate-500"
-                        >
+                        <td colSpan={5} className="px-4 py-10 text-center text-slate-500">
                           {isEnglish
                             ? "No programmes match the current filter."
                             : "当前筛选条件下没有匹配的项目。"}
@@ -499,10 +470,7 @@ export default function StaffDashboard() {
                         const stale = staleDays > STALE_DAYS;
 
                         return (
-                          <tr
-                            key={programme.id}
-                            className="border-t border-slate-100 align-top"
-                          >
+                          <tr key={programme.id} className="border-t border-slate-100 align-top">
                             <td className="px-4 py-4">
                               <div className="font-medium text-slate-900">
                                 {programme.university.name}
@@ -556,9 +524,7 @@ export default function StaffDashboard() {
                               </div>
                             </td>
                             <td className="px-4 py-4 text-slate-600">
-                              <div>
-                                {formatDate(programme.source_last_checked_at, locale)}
-                              </div>
+                              <div>{formatDate(programme.source_last_checked_at, locale)}</div>
                               <div className="mt-1 text-xs text-slate-500">
                                 {Number.isFinite(staleDays)
                                   ? isEnglish
@@ -603,70 +569,43 @@ export default function StaffDashboard() {
                 {isEnglish ? "Add institution" : "新增学校"}
               </p>
               <h2 className="mt-1 text-xl font-semibold text-slate-900">
-                {isEnglish
-                  ? "Staff can register a new university"
-                  : "staff 可以新增学校"}
+                {isEnglish ? "Staff can register a new university" : "工作人员可以新增学校"}
               </h2>
               <p className="mt-2 text-sm text-slate-600">
                 {isEnglish
                   ? "Create the university first, then use the add programme flow to attach new degrees."
-                  : "先创建学校，再通过新增项目流程补充该校专业。"}
+                  : "先创建学校，再通过新增专业流程录入该校项目。"}
               </p>
 
               <form className="mt-4 space-y-3" onSubmit={handleCreateUniversity}>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">
-                    {isEnglish ? "University name" : "学校名称"}
-                  </label>
-                  <input
-                    value={universityForm.name}
-                    onChange={handleUniversityField("name")}
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
-                    placeholder={
-                      isEnglish
-                        ? "University of Example"
-                        : "例如：某某大学"
-                    }
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">
-                    {isEnglish ? "Official domain" : "官网域名"}
-                  </label>
-                  <input
-                    value={universityForm.official_domain}
-                    onChange={handleUniversityField("official_domain")}
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
-                    placeholder="example.ac.uk"
-                    required
-                  />
-                </div>
+                <FormField
+                  label={isEnglish ? "University name" : "学校名称"}
+                  value={universityForm.name}
+                  onChange={handleUniversityField("name")}
+                  placeholder={isEnglish ? "University of Example" : "例如：某某大学"}
+                  required
+                />
+                <FormField
+                  label={isEnglish ? "Official domain" : "官网域名"}
+                  value={universityForm.official_domain}
+                  onChange={handleUniversityField("official_domain")}
+                  placeholder="example.ac.uk"
+                  required
+                />
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">
-                      {isEnglish ? "Country" : "国家"}
-                    </label>
-                    <input
-                      value={universityForm.country}
-                      onChange={handleUniversityField("country")}
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
-                      placeholder="UK"
-                    />
-                  </div>
-                  <div>
-                    <label className="mb-1 block text-sm font-medium text-slate-700">
-                      {isEnglish ? "Rank" : "排名"}
-                    </label>
-                    <input
-                      value={universityForm.rank}
-                      onChange={handleUniversityField("rank")}
-                      type="number"
-                      min="1"
-                      className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
-                      placeholder={isEnglish ? "Optional" : "可选"}
-                    />
-                  </div>
+                  <FormField
+                    label={isEnglish ? "Country" : "国家"}
+                    value={universityForm.country}
+                    onChange={handleUniversityField("country")}
+                    placeholder="UK"
+                  />
+                  <FormField
+                    label={isEnglish ? "Rank" : "排名"}
+                    value={universityForm.rank}
+                    onChange={handleUniversityField("rank")}
+                    placeholder={isEnglish ? "Optional" : "可选"}
+                    type="number"
+                  />
                 </div>
 
                 {universityFormError && (
@@ -755,7 +694,7 @@ export default function StaffDashboard() {
                 {isEnglish ? "Working rules" : "工作准则"}
               </p>
               <h2 className="mt-1 text-xl font-semibold text-slate-900">
-                {isEnglish ? "What staff should focus on" : "staff 重点工作"}
+                {isEnglish ? "What staff should focus on" : "工作人员重点工作"}
               </h2>
               <ul className="mt-4 space-y-3 text-sm text-slate-600">
                 <li>
@@ -765,8 +704,8 @@ export default function StaffDashboard() {
                 </li>
                 <li>
                   {isEnglish
-                    ? "Staff may add new universities and new programmes, but staff approval remains restricted to super administrators."
-                    : "staff 可以新增学校和新增专业，但 staff 审批权限仍只属于超级管理员。"}
+                    ? "Staff may add new universities and new programmes, but approval of staff accounts remains restricted to super administrators."
+                    : "工作人员可以新增学校和专业，但 staff 账号审批仍只属于超级管理员。"}
                 </li>
                 <li>
                   {isEnglish
@@ -791,7 +730,7 @@ export default function StaffDashboard() {
                 {isEnglish ? "Institution coverage" : "学校覆盖"}
               </p>
               <h2 className="mt-1 text-xl font-semibold text-slate-900">
-                {isEnglish ? "Tracked universities" : "已跟踪学校"}
+                {isEnglish ? "Tracked universities" : "已追踪学校"}
               </h2>
               <div className="mt-4 space-y-3">
                 {universities.slice(0, 8).map((university) => (
@@ -800,9 +739,7 @@ export default function StaffDashboard() {
                     className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3"
                   >
                     <div>
-                      <div className="font-medium text-slate-900">
-                        {university.name}
-                      </div>
+                      <div className="font-medium text-slate-900">{university.name}</div>
                       <div className="text-xs text-slate-500">
                         {university.official_domain}
                       </div>
@@ -847,9 +784,7 @@ function StatCard({
   };
 
   return (
-    <div
-      className={`rounded-3xl bg-gradient-to-br ${toneMap[tone]} p-5 text-white shadow-sm`}
-    >
+    <div className={`rounded-3xl bg-gradient-to-br ${toneMap[tone]} p-5 text-white shadow-sm`}>
       <div className="text-sm text-white/80">{title}</div>
       <div className="mt-3 text-3xl font-semibold">{value}</div>
       <div className="mt-2 text-xs text-white/80">{note}</div>
@@ -875,5 +810,35 @@ function StatusBadge({
     <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${styles[tone]}`}>
       {label}
     </span>
+  );
+}
+
+function FormField({
+  label,
+  value,
+  onChange,
+  placeholder,
+  type = "text",
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string;
+  type?: string;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
+      <input
+        value={value}
+        onChange={onChange}
+        type={type}
+        placeholder={placeholder}
+        required={required}
+        className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
+      />
+    </div>
   );
 }
