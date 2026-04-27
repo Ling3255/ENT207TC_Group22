@@ -13,7 +13,13 @@ export const POST = apiHandler(async (request: NextRequest) => {
 
   // Verify applicant belongs to current user
   const applicant = await prisma.applicant.findFirst({
-    where: { id: applicantId, user_id: user.id },
+    where: {
+      id: applicantId,
+      OR: [
+        { email: user.email },
+        ...(user.applicant_id ? [{ id: user.applicant_id }] : []),
+      ],
+    },
     include: { modules: true },
   });
   if (!applicant) {

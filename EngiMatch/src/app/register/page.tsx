@@ -238,7 +238,7 @@ export default function RegisterPage() {
 
         {/* Back Link */}
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">
+          <Link href="/login" className="text-sm text-slate-500 hover:text-slate-700">
             ← {locale === "en" ? "Back to Login" : "返回登录页"}
           </Link>
         </div>

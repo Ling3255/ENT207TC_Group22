@@ -34,7 +34,7 @@ export const GET = apiHandler(async (request: NextRequest, { params }: RoutePara
     },
   });
   if (!applicant) return errorResponse("Not found", 404);
-  if (applicant.user_id !== user.id && applicant.email !== user.email) {
+  if (applicant.id !== user.applicant_id && applicant.email !== user.email) {
     return errorResponse("Forbidden", 403);
   }
   return successResponse(applicant);
@@ -47,11 +47,11 @@ export const PATCH = apiHandler(async (request: NextRequest, { params }: RoutePa
   const { id } = await params;
   const existingApplicant = await prisma.applicant.findUnique({
     where: { id },
-    select: { id: true, user_id: true, email: true },
+    select: { id: true, email: true },
   });
   if (!existingApplicant) return errorResponse("Not found", 404);
   if (
-    existingApplicant.user_id !== user.id &&
+    existingApplicant.id !== user.applicant_id &&
     existingApplicant.email !== user.email
   ) {
     return errorResponse("Forbidden", 403);
@@ -125,11 +125,11 @@ export const DELETE = apiHandler(async (request: NextRequest, { params }: RouteP
   const { id } = await params;
   const existingApplicant = await prisma.applicant.findUnique({
     where: { id },
-    select: { id: true, user_id: true, email: true },
+    select: { id: true, email: true },
   });
   if (!existingApplicant) return errorResponse("Not found", 404);
   if (
-    existingApplicant.user_id !== user.id &&
+    existingApplicant.id !== user.applicant_id &&
     existingApplicant.email !== user.email
   ) {
     return errorResponse("Forbidden", 403);
@@ -139,7 +139,7 @@ export const DELETE = apiHandler(async (request: NextRequest, { params }: RouteP
 
   const latestApplicant = await prisma.applicant.findFirst({
     where: {
-      OR: [{ user_id: user.id }, { email: user.email }],
+      email: user.email,
     },
     orderBy: { updated_at: "desc" },
     select: { id: true },

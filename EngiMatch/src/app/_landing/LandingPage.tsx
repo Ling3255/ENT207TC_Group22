@@ -289,8 +289,8 @@ export default function LandingPage({ stats }: { stats: LandingStats }) {
                 </div>
               </div>
 
-              <div className="relative">
-                <TiltCard className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
+              <div className="relative mx-auto w-full max-w-[38rem] xl:px-6 2xl:max-w-none 2xl:px-10">
+                <TiltCard className="relative z-10 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.45)] backdrop-blur-2xl">
                   <div className="flex items-center justify-between border-b border-white/10 pb-4">
                     <div>
                       <div className="text-[10px] uppercase tracking-[0.3em] text-white/35">
@@ -346,22 +346,22 @@ export default function LandingPage({ stats }: { stats: LandingStats }) {
                       </div>
                     </div>
 
-                    <div className="grid gap-3 md:grid-cols-2">
-                      <div className="rounded-[1.2rem] border border-white/10 bg-white/[0.03] p-4">
+                    <div className="grid gap-3 xl:grid-cols-2">
+                      <div className="min-h-[7.5rem] rounded-[1.2rem] border border-white/10 bg-white/[0.03] p-4">
                         <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
                           {isEn ? "Academic Logic" : "学术判断"}
                         </div>
-                        <div className="mt-2 text-xs leading-5 text-white/60">
+                        <div className="mt-2 text-sm leading-6 text-white/60">
                           {isEn
                             ? "GPA, modules, degree background, and language readiness evaluated together."
                             : "GPA、课程、专业背景和语言准备度统一判断。"}
                         </div>
                       </div>
-                      <div className="rounded-[1.2rem] border border-white/10 bg-white/[0.03] p-4">
+                      <div className="min-h-[7.5rem] rounded-[1.2rem] border border-white/10 bg-white/[0.03] p-4">
                         <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
                           {isEn ? "Human Verification" : "人工复核"}
                         </div>
-                        <div className="mt-2 text-xs leading-5 text-white/60">
+                        <div className="mt-2 text-sm leading-6 text-white/60">
                           {isEn
                             ? "Staff review helps keep programme requirements auditable instead of opaque."
                             : "工作人员审核让项目要求保持透明、可核验，而不是黑箱。"}
@@ -375,7 +375,7 @@ export default function LandingPage({ stats }: { stats: LandingStats }) {
                   data-parallax
                   data-px="-10"
                   data-py="8"
-                  className="absolute -right-2 top-6 hidden w-48 rounded-[1.2rem] border border-white/10 bg-white/[0.06] p-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl will-change-transform lg:block"
+                  className="hidden"
                 >
                   <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
                     {isEn ? "Resume AI" : "简历 AI"}
@@ -389,7 +389,7 @@ export default function LandingPage({ stats }: { stats: LandingStats }) {
                   data-parallax
                   data-px="8"
                   data-py="-10"
-                  className="absolute -left-5 bottom-8 hidden w-52 rounded-[1.2rem] border border-white/10 bg-slate-950/60 p-3.5 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl will-change-transform lg:block"
+                  className="hidden"
                 >
                   <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
                     {isEn ? "Coverage" : "系统覆盖"}

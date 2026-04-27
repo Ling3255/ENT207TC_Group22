@@ -9,7 +9,6 @@ export const GET = apiHandler(async (request: NextRequest) => {
   const applicants = await prisma.applicant.findMany({
     where: {
       OR: [
-        { user_id: user.id },
         { email: user.email },
         ...(user.applicant_id ? [{ id: user.applicant_id }] : []),
       ],

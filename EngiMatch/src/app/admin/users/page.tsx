@@ -2,6 +2,7 @@
 
 import { useDeferredValue, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 
 interface User {
@@ -57,6 +58,7 @@ const ROLE_CONFIG: Record<
 
 export default function AdminUsersPage() {
   const { locale } = useLocale();
+  const router = useRouter();
   const isEnglish = locale === "en";
 
   const [users, setUsers] = useState<User[]>([]);
@@ -69,8 +71,10 @@ export default function AdminUsersPage() {
   const deferredSearchInput = useDeferredValue(searchInput);
   const [search, setSearch] = useState("");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const [tempPassword, setTempPassword] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const sessionCheckedRef = useRef(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -81,15 +85,45 @@ export default function AdminUsersPage() {
   }, [deferredSearchInput]);
 
   useEffect(() => {
-    fetchUsers({
-      searchTerm: search,
-      includeStats: stats === null,
-    });
+    let active = true;
+
+    async function verifySessionAndLoadUsers() {
+      try {
+        if (!sessionCheckedRef.current) {
+          const response = await fetch("/api/auth/session", { cache: "no-store" });
+          const payload = await response.json();
+          const session = payload?.data;
+
+          if (!active) {
+            return;
+          }
+
+          if (!session?.authenticated || session.user?.role !== "SUPER_ADMIN") {
+            router.replace("/login");
+            return;
+          }
+
+          sessionCheckedRef.current = true;
+        }
+
+        await fetchUsers({
+          searchTerm: search,
+          includeStats: stats === null,
+        });
+      } catch {
+        if (active) {
+          router.replace("/login");
+        }
+      }
+    }
+
+    verifySessionAndLoadUsers();
 
     return () => {
+      active = false;
       abortRef.current?.abort();
     };
-  }, [filter, search]);
+  }, [filter, router, search, stats]);
 
   async function fetchUsers({
     searchTerm = search,
@@ -204,8 +238,17 @@ export default function AdminUsersPage() {
   }
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    window.location.href = "/login";
+    setLogoutLoading(true);
+
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        cache: "no-store",
+      });
+    } finally {
+      router.replace("/login");
+      router.refresh();
+    }
   }
 
   const pendingCount = stats?.byStatus?.PENDING || 0;
@@ -243,9 +286,16 @@ export default function AdminUsersPage() {
               <button
                 type="button"
                 onClick={handleLogout}
+                disabled={logoutLoading}
                 className="rounded-lg bg-slate-600 px-4 py-2 text-sm transition-colors hover:bg-slate-500"
               >
-                {isEnglish ? "Logout" : "退出登录"}
+                {logoutLoading
+                  ? isEnglish
+                    ? "Logging out..."
+                    : "退出中..."
+                  : isEnglish
+                    ? "Logout"
+                    : "退出登录"}
               </button>
             </div>
           </div>
