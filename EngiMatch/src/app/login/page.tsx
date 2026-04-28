@@ -6,9 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 
 function getDefaultRoute(role?: string) {
-  if (role === "SUPER_ADMIN") return "/admin/users";
-  if (role === "STAFF") return "/staff";
-  return "/applicant/dashboard";
+  return "/home";
 }
 
 export default function LoginPage() {
@@ -47,11 +45,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-bold text-indigo-600">EngiMatch</h1>
+            <h1 className="text-4xl font-bold text-[#8a6638]">EngiMatch</h1>
           </Link>
           <p className="text-slate-500 mt-2">
             {locale === "en"
@@ -80,7 +78,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#d8cec2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d9bf94] focus:border-transparent"
                 placeholder="example@example.com"
                 required
               />
@@ -94,7 +92,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-[#d8cec2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d9bf94] focus:border-transparent"
                 placeholder="123456"
                 required
               />
@@ -103,7 +101,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="w-full py-3 bg-[#b28a52] text-white rounded-xl font-semibold hover:bg-[#9d7844] disabled:opacity-50 transition-colors"
             >
               {loading
                 ? locale === "en"
@@ -117,13 +115,13 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center text-sm text-slate-500">
             {locale === "en" ? "Don't have an account?" : "还没有账号？"}
-            <Link href="/register" className="text-indigo-600 hover:underline ml-1">
+            <Link href="/register" className="text-[#8a6638] hover:underline ml-1">
               {locale === "en" ? "Register" : "立即注册"}
             </Link>
           </div>
         </div>
 
-        <div className="mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 text-sm text-amber-700 text-center">
+        <div className="mt-4 p-4 bg-[#f6eddc] rounded-xl border border-[#e5d2ae] text-sm text-[#7a5a2f] text-center">
           {locale === "en"
             ? "Forgot password? Please contact your administrator."
             : "忘记密码？请联系管理员重置。"}

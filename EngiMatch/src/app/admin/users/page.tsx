@@ -324,7 +324,7 @@ export default function AdminUsersPage() {
                 placeholder={
                   isEnglish ? "Search by email or name..." : "按邮箱或姓名搜索..."
                 }
-                className="flex-1 rounded-lg border border-slate-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 rounded-lg border border-stone-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
               {searchInput && (
                 <button
@@ -340,7 +340,7 @@ export default function AdminUsersPage() {
               )}
               <button
                 type="submit"
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-white transition-colors hover:bg-indigo-700"
+                className="rounded-lg bg-amber-600 px-4 py-2 text-white transition-colors hover:bg-amber-700"
               >
                 {isEnglish ? "Search" : "搜索"}
               </button>
@@ -350,7 +350,7 @@ export default function AdminUsersPage() {
               <FilterButton
                 active={filter === "all"}
                 onClick={() => setFilter("all")}
-                activeClassName="bg-indigo-600 text-white"
+                activeClassName="bg-amber-600 text-white"
                 idleClassName="bg-slate-100 text-slate-600 hover:bg-slate-200"
               >
                 {isEnglish ? "All Users" : "全部用户"}

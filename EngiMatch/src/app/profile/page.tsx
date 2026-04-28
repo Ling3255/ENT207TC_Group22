@@ -188,8 +188,8 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
-        <div className="flex min-h-screen items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2]">
+        <div className="flex min-h-screen items-center justify-center text-stone-400">
           {t("common.loading")}
         </div>
       </div>
@@ -210,13 +210,13 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
-      <div className="border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2]">
+      <div className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-4">
-          <Link href="/home" className="text-sm text-slate-500 hover:text-slate-800">
+          <Link href="/home" className="text-sm text-stone-500 hover:text-stone-800">
             ← {t("nav.home")}
           </Link>
-          <div className="text-sm font-medium text-slate-700">{t("profile.title")}</div>
+          <div className="text-sm font-medium text-stone-700">{t("profile.title")}</div>
           <div className="w-16" />
         </div>
       </div>
@@ -224,48 +224,48 @@ export default function ProfilePage() {
       <div className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-8 text-center">
           <div className="mb-3 text-5xl">{roleConfig.icon}</div>
-          <h1 className="text-2xl font-bold text-slate-900">{t("profile.title")}</h1>
-          <p className="mt-1 text-sm text-slate-500">{user.email}</p>
+          <h1 className="text-2xl font-bold text-stone-900">{t("profile.title")}</h1>
+          <p className="mt-1 text-sm text-stone-500">{user.email}</p>
         </div>
 
-        <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-100 bg-slate-50 px-6 py-4">
-            <h2 className="font-semibold text-slate-800">{t("profile.basic_info")}</h2>
+        <div className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+          <div className="border-b border-stone-100 bg-stone-50 px-6 py-4">
+            <h2 className="font-semibold text-stone-800">{t("profile.basic_info")}</h2>
           </div>
 
           <div className="space-y-5 p-6">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-sm font-medium text-stone-700">
                 {t("auth.email")}
               </label>
               <input
                 type="email"
                 value={user.email}
                 disabled
-                className="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 px-4 py-2.5 text-slate-500"
+                className="w-full cursor-not-allowed rounded-xl border border-stone-200 bg-stone-100 px-4 py-2.5 text-stone-500"
               />
-              <p className="mt-1 text-xs text-slate-400">{t("profile.email_readonly")}</p>
+              <p className="mt-1 text-xs text-stone-400">{t("profile.email_readonly")}</p>
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-sm font-medium text-stone-700">
                 {t("auth.name")}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
                 placeholder={isZh ? "你的姓名" : "Your name"}
               />
             </div>
 
-            <div className="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
+            <div className="rounded-2xl border border-[#e5d4bd] bg-[#f8f1e6] p-4">
               <div className="mb-3">
-                <h3 className="font-medium text-slate-900">
+                <h3 className="font-medium text-stone-900">
                   {isZh ? "年级与时间线设置" : "Year & Timeline Settings"}
                 </h3>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-stone-500">
                   {isZh
                     ? "当前大学年级会记录在个人信息中，申请时间线会先读取这里的年级再展示。"
                     : "Your current university year is stored in your profile and used before the timeline is shown."}
@@ -274,13 +274,13 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                  <label className="mb-1 block text-sm font-medium text-stone-700">
                     {isZh ? "当前大学年级" : "Current University Year"}
                   </label>
                   <select
                     value={timelineStudyYear}
                     onChange={(event) => setTimelineStudyYear(event.target.value)}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full rounded-xl border border-[#d8cec2] bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
                   >
                     <option value="">{isZh ? "未选择" : "Not selected"}</option>
                     {TIMELINE_STUDY_YEAR_OPTIONS.map((year) => (
@@ -292,13 +292,13 @@ export default function ProfilePage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                  <label className="mb-1 block text-sm font-medium text-stone-700">
                     {isZh ? "预计毕业年份" : "Expected Graduation Year"}
                   </label>
                   <select
                     value={timelineGraduationYear}
                     onChange={(event) => setTimelineGraduationYear(event.target.value)}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full rounded-xl border border-[#d8cec2] bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
                   >
                     <option value="">{isZh ? "选填" : "Optional"}</option>
                     {graduationYearOptions.map((year) => (
@@ -310,42 +310,42 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="mt-4 rounded-xl bg-white/80 p-3 text-sm text-slate-600">
-                <div className="font-medium text-slate-800">{recommendation.title}</div>
+              <div className="mt-4 rounded-xl bg-white/80 p-3 text-sm text-stone-600">
+                <div className="font-medium text-stone-800">{recommendation.title}</div>
                 <div className="mt-1">{recommendation.description}</div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("profile.role")}
                 </label>
-                <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700">
+                <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm text-stone-700">
                   {roleConfig.icon} {isZh ? roleConfig.zh : roleConfig.en}
                 </div>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("profile.status")}
                 </label>
                 <div
-                  className={`rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium ${statusConfig.color}`}
+                  className={`rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium ${statusConfig.color}`}
                 >
                   {isZh ? statusConfig.zh : statusConfig.en}
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-slate-100 pt-2">
-              <div className="flex justify-between text-sm text-slate-500">
+            <div className="border-t border-stone-100 pt-2">
+              <div className="flex justify-between text-sm text-stone-500">
                 <span>{t("profile.registered")}</span>
                 <span>
                   {new Date(user.created_at).toLocaleString(isZh ? "zh-CN" : "en-US")}
                 </span>
               </div>
               {user.last_login_at && (
-                <div className="mt-1 flex justify-between text-sm text-slate-500">
+                <div className="mt-1 flex justify-between text-sm text-stone-500">
                   <span>{t("profile.last_login")}</span>
                   <span>
                     {new Date(user.last_login_at).toLocaleString(
@@ -359,19 +359,19 @@ export default function ProfilePage() {
             <button
               onClick={handleSaveProfile}
               disabled={saving}
-              className="w-full rounded-xl bg-indigo-600 py-2.5 font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
+              className="w-full rounded-xl bg-[#b28a52] py-2.5 font-medium text-white transition-colors hover:bg-[#9d7844] disabled:opacity-50"
             >
               {saving ? t("profile.saving") : t("profile.save_changes")}
             </button>
           </div>
         </div>
 
-        <div className="mb-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 px-6 py-4">
-            <h2 className="font-semibold text-slate-800">{t("profile.change_password")}</h2>
+        <div className="mb-6 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between border-b border-stone-100 bg-stone-50 px-6 py-4">
+            <h2 className="font-semibold text-stone-800">{t("profile.change_password")}</h2>
             <button
               onClick={() => setShowPasswordForm((previous) => !previous)}
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              className="text-sm font-medium text-[#7a5a2f] hover:text-[#684a25]"
             >
               {showPasswordForm ? t("profile.collapse") : t("profile.change")}
             </button>
@@ -380,46 +380,46 @@ export default function ProfilePage() {
           {showPasswordForm && (
             <div className="space-y-4 p-6">
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("profile.current_password")}
                 </label>
                 <input
                   type="password"
                   value={currentPassword}
                   onChange={(event) => setCurrentPassword(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
                   placeholder="••••••••"
                 />
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("profile.new_password")}
                 </label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
                   placeholder="••••••••"
                 />
-                <p className="mt-1 text-xs text-slate-400">{t("auth.at_least_6_chars")}</p>
+                <p className="mt-1 text-xs text-stone-400">{t("auth.at_least_6_chars")}</p>
               </div>
               <div>
-                <label className="mb-1 block text-sm font-medium text-slate-700">
+                <label className="mb-1 block text-sm font-medium text-stone-700">
                   {t("profile.confirm_password")}
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
                   placeholder="••••••••"
                 />
               </div>
               <button
                 onClick={handleChangePassword}
                 disabled={changingPassword}
-                className="w-full rounded-xl bg-slate-800 py-2.5 font-medium text-white transition-colors hover:bg-slate-700 disabled:opacity-50"
+                className="w-full rounded-xl bg-stone-800 py-2.5 font-medium text-white transition-colors hover:bg-stone-700 disabled:opacity-50"
               >
                 {changingPassword ? t("profile.changing") : t("profile.confirm_change")}
               </button>

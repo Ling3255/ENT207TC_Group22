@@ -43,7 +43,7 @@ export default function AIRResumePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2]">
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <Link href="/home" className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-800">
@@ -60,7 +60,7 @@ export default function AIRResumePage() {
             <div key={step.id} className="flex items-center gap-1">
               <div
                 className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-xs whitespace-nowrap ${
-                  i === 0 ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"
+                  i === 0 ? "bg-[#b28a52] text-white" : "bg-[#eee5da] text-stone-400"
                 }`}
               >
                 <span className="font-bold">{i + 1}</span>
@@ -74,7 +74,7 @@ export default function AIRResumePage() {
 
       <div className="mx-auto max-w-3xl px-4 py-8">
         <div className="mb-10 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-xs font-medium text-indigo-600">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#e5d2ae] bg-[#f6eddc] px-3 py-1.5 text-xs font-medium text-[#7a5a2f]">
             AI Resume
           </div>
           <h1 className="mb-3 text-3xl font-bold text-slate-900">{t("ai.title")}</h1>
@@ -87,9 +87,9 @@ export default function AIRResumePage() {
           <div className="mb-8">
             <label className="mb-3 block text-sm font-medium text-slate-700">{t("ai.application_type")}</label>
             <div className="flex gap-3">
-              <div className="flex-1 rounded-xl border-2 border-indigo-600 bg-indigo-50 p-4">
-                <div className="text-sm font-semibold text-indigo-700">{t("ai.uk_master")}</div>
-                <div className="mt-0.5 text-xs text-indigo-500">{t("ai.uk_master_desc")}</div>
+              <div className="flex-1 rounded-xl border-2 border-[#b28a52] bg-[#f6eddc] p-4">
+                <div className="text-sm font-semibold text-[#7a5a2f]">{t("ai.uk_master")}</div>
+                <div className="mt-0.5 text-xs text-[#8a6638]">{t("ai.uk_master_desc")}</div>
               </div>
               <div className="flex-1 cursor-not-allowed rounded-xl border border-slate-200 bg-slate-50 p-4 opacity-60">
                 <div className="text-sm font-medium text-slate-400">{t("ai.research_master")}</div>
@@ -107,15 +107,15 @@ export default function AIRResumePage() {
                   onClick={() => setMajor(option.value)}
                   className={`rounded-xl border p-3 text-left transition-all ${
                     major === option.value
-                      ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600"
-                      : "border-slate-200 hover:border-indigo-300 hover:bg-slate-50"
+                      ? "border-[#b28a52] bg-[#f6eddc] ring-1 ring-[#b28a52]"
+                      : "border-[#e8ddd0] hover:border-[#d8c2a0] hover:bg-[#faf7f1]"
                   }`}
                 >
                   <div className="text-base">{option.icon}</div>
-                  <div className={`mt-1 text-sm font-medium ${major === option.value ? "text-indigo-700" : "text-slate-700"}`}>
+                  <div className={`mt-1 text-sm font-medium ${major === option.value ? "text-[#7a5a2f]" : "text-stone-700"}`}>
                     {getAiResumeMajorLabel(option.value, locale)}
                   </div>
-                  <div className={`mt-0.5 text-xs ${major === option.value ? "text-indigo-500" : "text-slate-400"}`}>
+                  <div className={`mt-0.5 text-xs ${major === option.value ? "text-[#8a6638]" : "text-stone-400"}`}>
                     {locale === "en" ? option.zh : option.en}
                   </div>
                 </button>
@@ -132,11 +132,11 @@ export default function AIRResumePage() {
                   onClick={() => setStage(option.value)}
                   className={`w-full rounded-xl border p-3 text-left transition-all ${
                     stage === option.value
-                      ? "border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600"
-                      : "border-slate-200 hover:border-indigo-300 hover:bg-slate-50"
+                      ? "border-[#b28a52] bg-[#f6eddc] ring-1 ring-[#b28a52]"
+                      : "border-[#e8ddd0] hover:border-[#d8c2a0] hover:bg-[#faf7f1]"
                   }`}
                 >
-                  <div className={`text-sm font-medium ${stage === option.value ? "text-indigo-700" : "text-slate-700"}`}>
+                  <div className={`text-sm font-medium ${stage === option.value ? "text-[#7a5a2f]" : "text-stone-700"}`}>
                     {t(option.labelKey)}
                   </div>
                 </button>
@@ -148,7 +148,7 @@ export default function AIRResumePage() {
         <button
           onClick={handleContinue}
           disabled={!canContinue}
-          className="w-full rounded-xl bg-indigo-600 py-4 text-base font-semibold text-white transition-all hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-xl bg-[#b28a52] py-4 text-base font-semibold text-white transition-all hover:bg-[#9d7844] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {t("ai.start")}
         </button>

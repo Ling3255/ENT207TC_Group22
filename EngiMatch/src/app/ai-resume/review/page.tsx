@@ -177,7 +177,7 @@ function AIRResumeReviewPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50">
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/ai-resume/upload" className="text-sm text-slate-500 hover:text-slate-800 flex items-center gap-1">← {t("nav.backTo")}</Link>
@@ -193,7 +193,7 @@ function AIRResumeReviewPageContent() {
             const active = step.id === "review";
             return (
               <div key={step.id} className="flex items-center gap-1 flex-shrink-0">
-                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-amber-100 text-amber-700" : active ? "bg-amber-600 text-white" : "bg-stone-100 text-stone-400"}`}>
                   {done ? "✓" : <span className="font-bold">{i + 1}</span>}
                   <span>{t(step.labelKey)}</span>
                 </div>
@@ -205,7 +205,7 @@ function AIRResumeReviewPageContent() {
 
         <div className="mb-2 flex items-center justify-between">
           <h1 className="text-xl font-bold text-slate-900">{t("review.title")}</h1>
-          <button onClick={addSection} className="text-xs text-indigo-500 hover:underline">{t("review.add_section")}</button>
+          <button onClick={addSection} className="text-xs text-amber-700 hover:underline">{t("review.add_section")}</button>
         </div>
         <p className="text-sm text-slate-500 mb-4">
           {locale === "en"
@@ -234,8 +234,8 @@ function AIRResumeReviewPageContent() {
                 disabled={!rawText}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                   !useAiSplit
-                    ? "bg-indigo-100 text-indigo-700 border-indigo-200"
-                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100"
+                    ? "bg-amber-100 text-amber-800 border-amber-200"
+                    : "bg-white text-stone-600 border-stone-200 hover:bg-stone-100"
                 }`}
               >
                 {locale === "en" ? "Rule-based" : "规则分割"}
@@ -245,8 +245,8 @@ function AIRResumeReviewPageContent() {
                 disabled={aiSplitting || !rawText}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors flex items-center gap-1 ${
                   useAiSplit
-                    ? "bg-indigo-600 text-white border-indigo-600"
-                    : "bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50"
+                    ? "bg-amber-600 text-white border-amber-600"
+                    : "bg-white text-amber-700 border-amber-200 hover:bg-amber-50"
                 }`}
               >
                 {aiSplitting ? (
@@ -285,7 +285,7 @@ function AIRResumeReviewPageContent() {
                 <select
                   value={section.type}
                   onChange={(e) => updateSection(i, "type", e.target.value as ResumeSectionType)}
-                  className="text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                  className="text-sm font-medium text-stone-700 bg-white border border-stone-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-amber-400"
                 >
                   {SECTION_TYPE_OPTIONS.map(opt => (
                     <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>
@@ -321,7 +321,7 @@ function AIRResumeReviewPageContent() {
           <button
             onClick={handleConfirm}
             disabled={sections.length === 0}
-            className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-all"
+            className="flex-[2] py-4 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700 disabled:opacity-50 transition-all"
           >
             {t("review.confirm")}
           </button>

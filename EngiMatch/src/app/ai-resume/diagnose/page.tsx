@@ -151,7 +151,7 @@ function AIRResumeDiagnosePageContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50">
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/ai-resume/review" className="text-sm text-slate-500 hover:text-slate-800">← {t("nav.backTo")}</Link>
@@ -167,7 +167,7 @@ function AIRResumeDiagnosePageContent() {
             const active = step.id === "diagnose";
             return (
               <div key={step.id} className="flex items-center gap-1 flex-shrink-0">
-                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-amber-100 text-amber-700" : active ? "bg-amber-600 text-white" : "bg-stone-100 text-stone-400"}`}>
                   {done ? "✓" : <span className="font-bold">{i + 1}</span>}
                   <span>{t(step.labelKey)}</span>
                 </div>
@@ -246,7 +246,7 @@ function AIRResumeDiagnosePageContent() {
                           <div className="text-sm text-slate-700">{issue.description}</div>
                         </div>
                         <div>
-                          <div className="text-xs font-medium text-indigo-500 mb-1">💡 {locale === "en" ? "Optimization Suggestion" : "优化建议"}</div>
+                          <div className="text-xs font-medium text-amber-700 mb-1">💡 {locale === "en" ? "Optimization Suggestion" : "优化建议"}</div>
                           <div className="text-sm text-slate-700 bg-white/60 rounded-lg p-3">{issue.suggestion}</div>
                         </div>
                       </div>
@@ -260,29 +260,29 @@ function AIRResumeDiagnosePageContent() {
 
         {/* AI deeper analysis */}
         {aiLoading ? (
-          <div className="mt-6 p-4 bg-indigo-50 border border-indigo-200 rounded-2xl text-center">
+          <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-center">
             <div className="text-2xl mb-2 animate-pulse">✦</div>
-            <div className="text-sm text-indigo-600">{locale === "en" ? "AI Deep Analysis in Progress..." : "AI 深度分析中..."}</div>
-            <div className="text-xs text-indigo-400 mt-1">{locale === "en" ? "Providing targeted evaluation based on your resume content" : "基于你的简历内容给出针对性评价"}</div>
+            <div className="text-sm text-amber-700">{locale === "en" ? "AI Deep Analysis in Progress..." : "AI 深度分析中..."}</div>
+            <div className="text-xs text-amber-600 mt-1">{locale === "en" ? "Providing targeted evaluation based on your resume content" : "基于你的简历内容给出针对性评价"}</div>
           </div>
         ) : aiError ? (
           <div className="mt-6 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
             <div className="text-xs text-slate-400">{aiError}</div>
           </div>
         ) : aiAnalysis ? (
-          <div className="mt-6 bg-white rounded-2xl border border-indigo-200 overflow-hidden">
-            <div className="px-4 py-3 bg-indigo-50 border-b border-indigo-100 flex items-center justify-between">
+          <div className="mt-6 bg-white rounded-2xl border border-amber-200 overflow-hidden">
+            <div className="px-4 py-3 bg-amber-50 border-b border-amber-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-indigo-600">✦</span>
-                <span className="text-sm font-semibold text-indigo-700">{locale === "en" ? "AI Deep Analysis Report" : "AI 深度分析报告"}</span>
+                <span className="text-amber-700">✦</span>
+                <span className="text-sm font-semibold text-amber-800">{locale === "en" ? "AI Deep Analysis Report" : "AI 深度分析报告"}</span>
               </div>
               <ScoreBadge score={aiAnalysis.overall_score} />
             </div>
 
             <div className="p-4 space-y-4">
               {/* Summary */}
-              <div className="bg-indigo-50/50 rounded-xl p-3">
-                <div className="text-xs font-medium text-indigo-500 mb-1">📝 {locale === "en" ? "Overall Review" : "总评"}</div>
+              <div className="bg-amber-50/60 rounded-xl p-3">
+                <div className="text-xs font-medium text-amber-700 mb-1">📝 {locale === "en" ? "Overall Review" : "总评"}</div>
                 <p className="text-sm text-slate-700">{aiAnalysis.summary}</p>
               </div>
 
@@ -313,7 +313,7 @@ function AIRResumeDiagnosePageContent() {
                         <div className="text-sm text-slate-700">{issue.description}</div>
                       </div>
                       <div className="bg-white/60 rounded-lg p-2">
-                        <div className="text-xs font-medium text-indigo-500 mb-1">💡 {locale === "en" ? "Optimization Suggestion" : "优化建议"}</div>
+                        <div className="text-xs font-medium text-amber-700 mb-1">💡 {locale === "en" ? "Optimization Suggestion" : "优化建议"}</div>
                         <div className="text-sm text-slate-700">{issue.suggestion}</div>
                       </div>
                     </div>
@@ -342,7 +342,7 @@ function AIRResumeDiagnosePageContent() {
           <Link href="/ai-resume/review" className="flex-1 py-4 text-center border border-slate-300 text-slate-600 rounded-xl font-semibold hover:bg-slate-50">← {locale === "en" ? "Modify Parsing" : "修改解析"}</Link>
           <button
             onClick={() => router.push(`/ai-resume/optimize?major=${major}&stage=${stage}`)}
-            className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-all"
+            className="flex-[2] py-4 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700 transition-all"
           >
             {locale === "en" ? "Start Optimization →" : "开始优化 →"}
           </button>

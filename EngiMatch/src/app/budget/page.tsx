@@ -676,17 +676,17 @@ export default function BudgetPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
-              <div className="text-sm font-semibold text-emerald-950">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
+              <div className="text-sm font-semibold text-amber-950">
                 {isEnglish ? "Monthly living cost" : "每月生活费"}
               </div>
-              <div className="mt-2 text-2xl font-bold text-emerald-950">
+              <div className="mt-2 text-2xl font-bold text-amber-950">
                 {currency(result.monthlyLiving)}
               </div>
-              <div className="mt-1 text-sm text-emerald-800">
+              <div className="mt-1 text-sm text-amber-800">
                 ≈ {currency(result.monthlyLiving * result.rate, "¥")}
               </div>
-              <p className="mt-3 text-xs leading-5 text-emerald-900">
+              <p className="mt-3 text-xs leading-5 text-amber-900">
                 {isEnglish
                   ? "This is your estimated monthly spending in the UK, based on rent, bills, groceries, transport and daily lifestyle costs."
                   : "这是你在英国每个月的大致开销，按住宿、账单、饮食、交通和日常生活费用估算。"}
@@ -699,26 +699,26 @@ export default function BudgetPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-indigo-200 bg-indigo-50 p-5">
-              <div className="text-sm font-semibold text-indigo-900">
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
+              <div className="text-sm font-semibold text-amber-900">
                 {isEnglish ? "Visa financial proof estimate" : "签证资金证明估算"}
               </div>
-              <div className="mt-2 text-2xl font-bold text-indigo-950">
+              <div className="mt-2 text-2xl font-bold text-amber-950">
                 {currency(result.visaProof)}
               </div>
-              <div className="mt-1 text-sm text-indigo-700">
+              <div className="mt-1 text-sm text-amber-700">
                 ≈ ¥{Math.round(result.cnyVisaProof).toLocaleString()}
               </div>
-              <div className="mt-4 space-y-2 text-sm text-indigo-900">
+              <div className="mt-4 space-y-2 text-sm text-amber-900">
                 <BreakdownRow label={isEnglish ? "Outstanding tuition" : "未支付学费"} value={result.outstandingTuition} rate={result.rate} />
                 <BreakdownRow label={`${isEnglish ? "Maintenance" : "生活费证明"} (${result.visaMonths} ${isEnglish ? "months" : "个月"})`} value={result.visaMaintenance} rate={result.rate} />
               </div>
-              <p className="mt-4 text-xs leading-5 text-indigo-700">
+              <p className="mt-4 text-xs leading-5 text-amber-700">
                 {isEnglish
                   ? "Visa proof rules use outstanding tuition plus official maintenance for up to 9 months. Keep funds for 28 consecutive days before applying."
                   : "签证资金证明通常按未支付学费 + 官方生活费标准计算，最多按 9 个月生活费。递签前需连续存满 28 天。"}
               </p>
-              <div className="mt-4 rounded-lg bg-white/70 p-3 text-xs leading-5 text-indigo-950">
+              <div className="mt-4 rounded-lg bg-white/70 p-3 text-xs leading-5 text-amber-950">
                 {isEnglish
                   ? "What it means: this is the minimum amount of money the UK government usually wants you to show in your bank account when applying for a student visa. It is for visa review, not the same thing as your full real-life budget."
                   : "这是什么意思：它通常是英国政府要求你在申请学生签证时，银行账户里需要证明拥有的最低资金。它是递签审核用的金额，不等于你真实留学全过程会花掉的总预算。"}
@@ -729,7 +729,7 @@ export default function BudgetPage() {
               <div className="text-sm font-semibold text-slate-900">
                 {isEnglish ? "Funding gap" : "资金缺口"}
               </div>
-              <div className={`mt-2 text-2xl font-bold ${result.fundsGap > 0 ? "text-red-600" : "text-emerald-600"}`}>
+              <div className={`mt-2 text-2xl font-bold ${result.fundsGap > 0 ? "text-stone-700" : "text-amber-700"}`}>
                 {result.fundsGap > 0
                   ? currency(result.fundsGap)
                   : isEnglish
@@ -758,8 +758,8 @@ export default function BudgetPage() {
               </p>
             </div>
 
-            <div className="rounded-lg border border-rose-200 bg-rose-50 p-5">
-              <div className="text-sm font-semibold text-rose-950">
+            <div className="rounded-lg border border-stone-300 bg-stone-100 p-5">
+              <div className="text-sm font-semibold text-stone-900">
                 {isEnglish ? "Saving advice" : "资金准备建议"}
               </div>
               <div className="mt-3 space-y-2 text-sm">
@@ -767,7 +767,7 @@ export default function BudgetPage() {
                 <BreakdownRow label={isEnglish ? "Save per month for 12 months" : "12个月准备，每月需存"} value={savingsPlan.twelveMonths} rate={result.rate} />
                 <BreakdownRow label={isEnglish ? "Save per month for 18 months" : "18个月准备，每月需存"} value={savingsPlan.eighteenMonths} rate={result.rate} />
               </div>
-              <div className="mt-4 rounded-lg bg-white/70 p-3 text-xs leading-6 text-rose-950">
+              <div className="mt-4 rounded-lg bg-white/70 p-3 text-xs leading-6 text-stone-900">
                 {result.fundsGap > 0
                   ? isEnglish
                     ? `Current funding gap: ${currency(result.fundsGap)}. If family will support you, it is usually easier to split preparation into tuition, visa-proof funds, and landing buffer separately. If you are saving by yourself, target about ${currency(savingsPlan.gapTwelveMonths)} per month for the missing part over 12 months.`
@@ -782,10 +782,10 @@ export default function BudgetPage() {
               <div className="mb-2 font-semibold text-slate-800">
                 {isEnglish ? "Default data sources" : "默认数据来源"}
               </div>
-              <a className="block text-indigo-600 hover:underline" href="https://www.gov.uk/student-visa/money" target="_blank" rel="noreferrer">
+              <a className="block text-amber-700 hover:underline" href="https://www.gov.uk/student-visa/money" target="_blank" rel="noreferrer">
                 GOV.UK Student visa money requirement
               </a>
-              <a className="mt-1 block text-indigo-600 hover:underline" href="https://study-uk.britishcouncil.org/moving-uk/cost-studying" target="_blank" rel="noreferrer">
+              <a className="mt-1 block text-amber-700 hover:underline" href="https://study-uk.britishcouncil.org/moving-uk/cost-studying" target="_blank" rel="noreferrer">
                 British Council Study UK cost guide
               </a>
             </div>
@@ -821,7 +821,7 @@ function MoneyInput({
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-slate-700">{label}</span>
-      <div className="flex rounded-lg border border-slate-300 bg-white focus-within:ring-2 focus-within:ring-indigo-500">
+      <div className="flex rounded-lg border border-stone-300 bg-white focus-within:ring-2 focus-within:ring-amber-500">
         {prefix && (
           <span className="flex items-center border-r border-slate-200 px-3 text-sm text-slate-400">
             {prefix}
@@ -857,7 +857,7 @@ function SelectInput({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+        className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
