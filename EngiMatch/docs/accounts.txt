@@ -8,3 +8,12 @@ student2@engimatch.com
 123456
 admin@engimatch.com 
 123456
+
+cd g:\ENT207\ENT207TC_Group22\EngiMatch
+
+npm install
+docker compose up -d
+npx prisma generate
+npx prisma db push
+npm run db:seed
+npm run dev

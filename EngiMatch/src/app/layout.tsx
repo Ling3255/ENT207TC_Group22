@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LocaleProvider } from "@/context/LocaleContext";
 import { ToastProvider } from "@/components/ToastProvider";
 import GlobalLanguageSwitcher from "@/components/GlobalLanguageSwitcher";
+import AppShell from "@/components/AppShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,7 +21,7 @@ export default function RootLayout({
         <LocaleProvider>
           <ToastProvider>
             <GlobalLanguageSwitcher />
-            {children}
+            <AppShell>{children}</AppShell>
           </ToastProvider>
         </LocaleProvider>
       </body>
