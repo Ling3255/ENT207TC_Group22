@@ -3,29 +3,30 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLocale } from "@/context/LocaleContext";
 
-type SubNavItem = { label: string; href: string };
+type SubNavItem = { labelZh: string; labelEn: string; href: string };
 
 const SUB_NAV_CONFIG: Record<string, SubNavItem[]> = {
   "/ai-resume": [
-    { label: "选择方向", href: "/ai-resume" },
-    { label: "上传简历", href: "/ai-resume/upload" },
-    { label: "查看分块", href: "/ai-resume/review" },
-    { label: "AI 诊断", href: "/ai-resume/diagnose" },
-    { label: "AI 优化", href: "/ai-resume/optimize" },
-    { label: "最终版本", href: "/ai-resume/final" },
+    { labelZh: "选择方向", labelEn: "Select Direction", href: "/ai-resume" },
+    { labelZh: "上传简历", labelEn: "Upload Resume", href: "/ai-resume/upload" },
+    { labelZh: "查看分块", labelEn: "Review Sections", href: "/ai-resume/review" },
+    { labelZh: "AI 诊断", labelEn: "AI Diagnose", href: "/ai-resume/diagnose" },
+    { labelZh: "AI 优化", labelEn: "AI Optimize", href: "/ai-resume/optimize" },
+    { labelZh: "最终版本", labelEn: "Final Version", href: "/ai-resume/final" },
   ],
   "/applicant": [
-    { label: "仪表盘", href: "/applicant/dashboard" },
-    { label: "编辑档案", href: "/applicant" },
-    { label: "评估结果", href: "/applicant/results" },
+    { labelZh: "仪表盘", labelEn: "Dashboard", href: "/applicant/dashboard" },
+    { labelZh: "编辑档案", labelEn: "Edit Profile", href: "/applicant" },
+    { labelZh: "评估结果", labelEn: "Results", href: "/applicant/results" },
   ],
   "/admin": [
-    { label: "工作台", href: "/staff" },
-    { label: "总览", href: "/admin" },
-    { label: "项目管理", href: "/admin/programmes" },
-    { label: "用户管理", href: "/admin/users" },
-    { label: "数据验证", href: "/admin/verify" },
+    { labelZh: "工作台", labelEn: "Workspace", href: "/staff" },
+    { labelZh: "总览", labelEn: "Overview", href: "/admin" },
+    { labelZh: "项目管理", labelEn: "Programmes", href: "/admin/programmes" },
+    { labelZh: "用户管理", labelEn: "Users", href: "/admin/users" },
+    { labelZh: "数据验证", labelEn: "Verification", href: "/admin/verify" },
   ],
 };
 
@@ -42,6 +43,8 @@ function isActive(href: string, pathname: string | null): boolean {
 
 export default function SubNavTabs() {
   const pathname = usePathname();
+  const { locale } = useLocale();
+  const isEnglish = locale === "en";
   const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
@@ -67,7 +70,6 @@ export default function SubNavTabs() {
   if (!topLevel) return null;
 
   const items = SUB_NAV_CONFIG[topLevel].filter((item) => {
-    // 用户管理仅对 SUPER_ADMIN 显示
     if (item.href === "/admin/users") return userRole === "SUPER_ADMIN";
     return true;
   });
@@ -77,7 +79,7 @@ export default function SubNavTabs() {
       <div className="mx-auto max-w-7xl px-4">
         <nav
           className="flex gap-1 overflow-x-auto py-2"
-          aria-label="Sub navigation"
+          aria-label={isEnglish ? "Sub navigation" : "子导航"}
         >
           {items.map((item) => {
             const active = isActive(item.href, pathname);
@@ -91,7 +93,7 @@ export default function SubNavTabs() {
                     : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
               >
-                {item.label}
+                {isEnglish ? item.labelEn : item.labelZh}
               </Link>
             );
           })}
