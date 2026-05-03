@@ -113,8 +113,8 @@ function AIRResumeReviewPageContent() {
         return;
       }
 
-      if (data.sections && Array.isArray(data.sections) && data.sections.length > 0) {
-        const newSections: ResumeSection[] = data.sections.map((s: any, i: number) => ({
+      if (data.data?.sections && Array.isArray(data.data.sections) && data.data.sections.length > 0) {
+        const newSections: ResumeSection[] = data.data.sections.map((s: any, i: number) => ({
           id: `section_ai_${i}`,
           type: typeMapper(s.type || s.category || "other"),
           title: s.title || s.name || (locale === "en" ? `Section ${i + 1}` : `段落 ${i + 1}`),

@@ -96,27 +96,34 @@ function AIRResumeOptimizePageContent() {
       });
       if (res.ok) {
         const data = await res.json();
-        if (data.optimized) {
-          // 解析AI返回的多个版本
-          const parts = data.optimized.split(/^---+$/m);
+        if (data.data?.optimized) {
+          // 解析AI返回的多个版本（支持 --- / ---- / --- 等分隔符，允许前后有空格）
+          const parts = data.data.optimized.split(/^---+\s*$/m);
           const variants: Array<{ label: string; text: string }> = [];
 
           for (let i = 0; i < parts.length; i++) {
             const part = parts[i].trim();
             if (!part) continue;
 
-            // 尝试匹配版本标题
-            const titleMatch = part.match(/^(?:【|\[)([^\]】]+)(?::|】|\])/);
+            // 尝试匹配多种标题格式：
+            // 【xxx】 / 【xxx: / [xxx] / [xxx: / **xxx** / 1. xxx: / 版本一：xxx
+            const titleMatch = part.match(
+              /^(?:【|\[)([^\]】]+)(?::|】|\])|^\*\*\s*([^*]+?)\s*\*\*|^(?:\d+\.\s*)?(?:版本[一二三四五]|Version\s*\d+)\s*[:：]\s*(.+)$|^([^\n]+?)[:：]\s*$/m
+            );
             if (titleMatch) {
-              const label = titleMatch[1].trim();
+              const label = (titleMatch[1] || titleMatch[2] || titleMatch[3] || titleMatch[4] || "").trim();
+              // 去掉标题行（第一行），取剩余内容
               const text = part.replace(/^[^\n]*\n/, "").trim();
-              variants.push({ label, text });
+              variants.push({ label: label || (locale === "en" ? `Version ${i + 1}` : `版本 ${i + 1}`), text });
             } else {
-              // 如果没有标题，使用序号
+              // 如果没有可识别的标题，使用序号，但尝试去掉第一行如果它看起来像标题
               const labels = locale === "en"
                 ? ["Version 1", "Version 2", "Version 3"]
                 : ["版本 1", "版本 2", "版本 3"];
-              variants.push({ label: labels[i] || `Version ${i + 1}`, text: part });
+              const firstLine = part.split("\n")[0].trim();
+              const looksLikeTitle = /^(?:版本|Version|选项|Option|保守|专业|成果|Conservative|Major|Results)/i.test(firstLine);
+              const text = looksLikeTitle ? part.replace(/^[^\n]*\n/, "").trim() : part;
+              variants.push({ label: labels[i] || (locale === "en" ? `Version ${i + 1}` : `版本 ${i + 1}`), text });
             }
           }
 
@@ -126,7 +133,7 @@ function AIRResumeOptimizePageContent() {
             setSelectedAiVariant(p => ({ ...p, [section.id]: variants[0].text }));
           } else {
             // 只有一个版本的情况
-            setAiOptimizations(p => ({ ...p, [section.id]: data.optimized }));
+            setAiOptimizations(p => ({ ...p, [section.id]: data.data.optimized }));
           }
         } else {
           setAiOptimizeErrors(p => ({ ...p, [section.id]: locale === "en" ? "AI returned empty, please retry" : "AI 返回为空，请重试" }));
@@ -312,47 +319,57 @@ function AIRResumeOptimizePageContent() {
                   disabled={optimizingSection === currentSection.id}
                   className="text-xs px-3 py-1 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  {optimizingSection === currentSection.id ? (locale === "en" ? "Generating..." : "生成中...") : "✦ AI Rewrite"}
+                  {optimizingSection === currentSection.id ? (locale === "en" ? "Generating..." : "生成中...") : aiVariants[currentSection.id] ? (locale === "en" ? "✦ Regenerate" : "✦ 重新生成") : "✦ AI Rewrite"}
                 </button>
               </div>
 
-              {/* Variant selector */}
-              {currentResult.variants.length > 0 && (
-                <div className="px-4 pt-3 flex gap-2 flex-wrap border-b border-slate-100 pb-3">
-                  {currentResult.variants.map(v => (
-                    <button key={v.id} onClick={() => setSelectedVariant(p => ({ ...p, [currentSection.id]: v.id }))}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                        selectedVariant[currentSection.id] === v.id
-                          ? "bg-indigo-600 text-white border-indigo-600"
-                          : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
-                      }`}>
-                      {v.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-
               <div className="flex-1 p-4 overflow-auto">
+                {/* AI 已返回多版本 → 卡片展示 */}
                 {aiVariants[currentSection.id] && aiVariants[currentSection.id].length > 0 ? (
+                  <div className="space-y-3">
+                    {aiVariants[currentSection.id].map((variant, idx) => {
+                      const isAdopted = customEdits[currentSection.id] === variant.text;
+                      return (
+                        <div key={idx} className={`border rounded-xl p-3 transition-all ${
+                          isAdopted
+                            ? "border-green-400 bg-green-50/40 ring-1 ring-green-200"
+                            : "border-slate-200 bg-white hover:border-indigo-200"
+                        }`}>
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{idx + 1}</span>
+                              <span className="text-xs font-semibold text-slate-700">{variant.label}</span>
+                            </div>
+                            <button
+                              onClick={() => {
+                                if (isAdopted) {
+                                  setCustomEdits(p => { const n = { ...p }; delete n[currentSection.id]; return n; });
+                                } else {
+                                  setCustomEdits(p => ({ ...p, [currentSection.id]: variant.text }));
+                                }
+                              }}
+                              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+                                isAdopted
+                                  ? "bg-green-600 text-white hover:bg-green-700"
+                                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+                              }`}
+                            >
+                              {isAdopted
+                                ? (locale === "en" ? "✓ Adopted" : "✓ 已采纳")
+                                : (locale === "en" ? "Adopt" : "采纳")}
+                            </button>
+                          </div>
+                          <div className="text-xs text-slate-700 whitespace-pre-wrap font-mono bg-slate-50 rounded-lg p-2.5 border border-slate-100 max-h-40 overflow-auto">
+                            {variant.text}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : aiOptimizations[currentSection.id] ? (
+                  /* AI 只返回了一个版本 */
                   <div>
-                    <div className="text-xs text-indigo-500 mb-2 font-medium">✦ {locale === "en" ? "AI Rewritten Versions:" : "AI 改写版本："}</div>
-                    {/* 版本选择按钮 */}
-                    <div className="flex gap-2 flex-wrap mb-3">
-                      {aiVariants[currentSection.id].map((v, idx) => (
-                        <button key={idx} onClick={() => {
-                          setAiOptimizations(p => ({ ...p, [currentSection.id]: v.text }));
-                          setSelectedAiVariant(p => ({ ...p, [currentSection.id]: v.text }));
-                        }}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                            selectedAiVariant[currentSection.id] === v.text
-                              ? "bg-indigo-600 text-white border-indigo-600"
-                              : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
-                          }`}>
-                          {locale === "en" ? "Option" : "选项"} {idx + 1}
-                        </button>
-                      ))}
-                    </div>
-                    {/* 显示当前选中的版本 */}
+                    <div className="text-xs text-indigo-500 mb-2 font-medium">✦ {locale === "en" ? "AI Rewritten Version:" : "AI 重写版本："}</div>
                     <div className="text-sm font-mono text-slate-700 whitespace-pre-wrap h-48 overflow-auto bg-slate-50 rounded-xl p-3 border border-slate-200">
                       {aiOptimizations[currentSection.id]}
                     </div>
@@ -366,25 +383,25 @@ function AIRResumeOptimizePageContent() {
                       {locale === "en" ? "Adopt this AI rewrite" : "采纳这段 AI 改写"}
                     </button>
                   </div>
-                ) : aiOptimizations[currentSection.id] ? (
-                  <div>
-                    <div className="text-xs text-indigo-500 mb-2 font-medium">✦ {locale === "en" ? "AI Rewritten Version:" : "AI 重写版本："}</div>
-                    <div className="text-sm font-mono text-slate-700 whitespace-pre-wrap h-48 overflow-auto">
-                      {aiOptimizations[currentSection.id]}
-                    </div>
-                    <button
-                      onClick={() => {
-                        const text = aiOptimizations[currentSection.id];
-                        setCustomEdits(p => ({ ...p, [currentSection.id]: text }));
-                      }}
-                      className="mt-2 text-xs text-indigo-600 hover:underline"
-                    >
-                      {locale === "en" ? "Adopt this AI rewrite" : "采纳这段 AI 改写"}
-                    </button>
-                  </div>
                 ) : (
+                  /* AI 尚未调用 → 显示本地优化版本 */
                   <div>
-                    <div className="text-sm font-mono text-slate-700 whitespace-pre-wrap h-48 overflow-auto">
+                    {/* 本地版本选择按钮 */}
+                    {currentResult.variants.length > 0 && (
+                      <div className="flex gap-2 flex-wrap mb-3">
+                        {currentResult.variants.map(v => (
+                          <button key={v.id} onClick={() => setSelectedVariant(p => ({ ...p, [currentSection.id]: v.id }))}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                              selectedVariant[currentSection.id] === v.id
+                                ? "bg-indigo-600 text-white border-indigo-600"
+                                : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
+                            }`}>
+                            {v.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <div className="text-sm font-mono text-slate-700 whitespace-pre-wrap h-48 overflow-auto bg-slate-50 rounded-xl p-3 border border-slate-200">
                       {currentVariant?.text || (locale === "en" ? "(Click \"AI Rewrite\" above for more precise optimization)" : "（点击右上角「AI 重写」获取更精准的优化版本）")}
                     </div>
                     {currentVariant && (

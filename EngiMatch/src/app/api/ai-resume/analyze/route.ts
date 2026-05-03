@@ -195,12 +195,21 @@ ${original}
 
 ${instruction ? `Special Requirements: ${instruction}` : ""}
 
-Please provide 2-3 rewritten versions:
-1. Conservative Polish: keep the original meaning, improve English and professionalism
-2. Major-Focused Version: highlight technical methods, tools, and relevance to ${label}
-3. Results-Oriented Version: highlight outcomes, metrics, and concrete contributions
+Please provide 2-3 rewritten versions. For each version, start with a title in brackets on its own line, like this:
+【Conservative Polish】
+(rewritten content here)
+---
+【Major-Focused Version】
+(rewritten content here)
+---
+【Results-Oriented Version】
+(rewritten content here)
 
-Output each version directly without explanation, and separate versions with --- .`;
+Requirements:
+- Each version title must be on its own line, wrapped in 【】 brackets
+- Separate versions with --- on its own line
+- Do not add any explanation or commentary outside the versions
+- Only output the rewritten text`;
   }
 
   return `请重写下面这段简历内容，用于申请英国授课型硕士，专业方向为${label}。
@@ -211,10 +220,19 @@ ${original}
 
 ${instruction ? `额外要求：${instruction}` : ""}
 
-请提供 2-3 个不同版本：
-1. 保守润色版：保持原意，优化表达与专业度
-2. 专业强化版：突出与${label}相关的技术方法、工具和专业匹配度
-3. 成果导向版：突出结果、量化指标和具体贡献
+请提供 2-3 个不同版本。每个版本开头用【】标注版本名称，独占一行，格式如下：
+【保守润色版】
+（改写内容）
+---
+【专业强化版】
+（改写内容）
+---
+【成果导向版】
+（改写内容）
 
-请直接输出改写后的文本，不需要解释，不同版本之间用 --- 分隔。`;
+要求：
+- 每个版本名称必须独占一行，用【】包裹
+- 版本之间用 --- 分隔，独占一行
+- 不要输出任何解释或评论
+- 只输出改写后的文本`;
 }

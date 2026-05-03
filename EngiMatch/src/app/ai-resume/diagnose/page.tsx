@@ -109,7 +109,7 @@ function AIRResumeDiagnosePageContent() {
         });
         if (res.ok) {
           const data = await res.json();
-          const raw = data.analysis || "";
+          const raw = data.data?.analysis || "";
           setAiRaw(raw);
           setAiAnalysis(parseAIAnalysis(raw));
         } else {

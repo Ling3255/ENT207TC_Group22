@@ -41,3 +41,17 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# local data
+.tmp-pgdata/
+tmp_pdf_pages/
+
+# logs
+*.log
+clean-test.log
+dev-server.log
+start-server.log
+
+# IDE
+.vscode/
+.idea/

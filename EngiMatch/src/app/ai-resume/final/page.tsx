@@ -137,7 +137,8 @@ function AIRResumeFinalPageContent() {
         throw new Error(errorData.error || "Save failed");
       }
 
-      const { id: savedId } = await response.json();
+      const resData = await response.json();
+      const savedId = resData.data?.id;
 
       const savedProfiles = JSON.parse(localStorage.getItem("ai_resume_profiles") || "[]");
       const newProfile = {
