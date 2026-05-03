@@ -230,3 +230,194 @@ src/
 - 评估结果仅供参考，最终录取决定权在各院校招生办
 - AI 功能依赖 DeepSeek API，需配置有效 API Key
 - 首次使用请先访问 `/setup` 创建管理员账号
+
+## Docker 快速启动
+
+项目自带 `docker-compose.yml`，可一键启动本地 PostgreSQL：
+
+```bash
+# 启动数据库（端口 5433，避免与本地 5432 冲突）
+docker-compose up -d
+
+# 然后执行初始化
+npx prisma generate
+npx prisma db push
+npm run db:seed
+npm run dev
+```
+
+默认连接：
+- 主机：`localhost:5433`
+- 用户名/密码：`postgres` / `postgres`
+- 数据库：`engimatch`
+
+---
+
+## 数据库模型概览
+
+```
+User (1) ──────→ (0..1) Applicant
+  │
+  ├── role: SUPER_ADMIN | STAFF | STUDENT
+  └── status: PENDING | APPROVED | REJECTED | SUSPENDED
+
+University (1) ──────→ (*) Programme
+Programme (1) ──────→ (1) AcademicRequirement
+Programme (1) ──────→ (1) LanguageRequirement
+Programme (1) ──────→ (1) Compliance
+Programme (1) ──────→ (*) PrerequisiteModule
+Programme (1) ──────→ (*) Evaluation
+
+Applicant (1) ──────→ (*) ApplicantModule
+Applicant (1) ──────→ (*) Evaluation
+Applicant (1) ──────→ (*) SavedResume
+```
+
+### 主要数据表
+
+| 表名 | 说明 |
+|------|------|
+| `users` | 用户账号（认证 + 角色 + 状态） |
+| `universities` | 英国大学 |
+| `programmes` | 硕士项目（含验证状态、置信度） |
+| `programme_academic_requirements` | 学术要求（学位等级、接受背景） |
+| `prerequisite_modules` | 先修课程 |
+| `programme_language_requirements` | 语言要求（雅思/托福/PTE/多邻国） |
+| `applicants` | 申请者档案 |
+| `applicant_modules` | 申请者课程列表 |
+| `evaluations` | 评估结果（含 JSON 解释） |
+| `saved_resumes` | AI 简历助手保存的简历 |
+| `timeline_events` | 留学时间线事件 |
+
+---
+
+## 页面路由速查
+
+### 公共页面
+
+| 路由 | 说明 | 权限 |
+|------|------|------|
+| `/` | 首页 | 公开 |
+| `/login` | 登录 | 公开 |
+| `/register` | 注册 | 公开 |
+| `/setup` | 系统初始化（首次部署） | 公开 |
+
+### 学生功能
+
+| 路由 | 说明 |
+|------|------|
+| `/home` | 功能导航首页 |
+| `/applicant` | 创建/编辑申请档案 |
+| `/applicant/dashboard` | 档案仪表盘 |
+| `/applicant/results` | 评估结果 + AI 院校推荐 |
+| `/ai-resume` | AI 简历助手入口 |
+| `/ai-resume/upload` | 上传简历 |
+| `/ai-resume/review` | 确认简历分段 |
+| `/ai-resume/diagnose` | AI 诊断报告 |
+| `/ai-resume/optimize` | 逐段优化 |
+| `/ai-resume/final` | 最终版本 |
+| `/timeline` | 留学时间线 |
+
+### 工作人员 / 管理员
+
+| 路由 | 说明 | 权限 |
+|------|------|------|
+| `/staff` | 工作台 | STAFF |
+| `/admin` | 管理后台首页 | SUPER_ADMIN / STAFF |
+| `/admin/users` | 用户管理 | SUPER_ADMIN |
+| `/admin/programmes` | 项目列表 | SUPER_ADMIN / STAFF |
+| `/admin/programmes/new` | 添加项目 | SUPER_ADMIN / STAFF |
+| `/admin/programmes/[id]` | 项目编辑 | SUPER_ADMIN / STAFF |
+
+---
+
+## 测试账号
+
+种子数据包含以下测试账号（密码均为 `123456`）：
+
+| 邮箱 | 角色 | 说明 |
+|------|------|------|
+| `admin@engimatch.com` | SUPER_ADMIN | 系统管理员 |
+| `staff@engimatch.com` | STAFF | 工作人员 |
+| `staff2@engimatch.com` | STAFF | 工作人员 |
+| `student@engimatch.com` | STUDENT | 学生 |
+| `student2@engimatch.com` | STUDENT | 学生 |
+
+> ⚠️ 首次部署后请访问 `/setup` 初始化超管账号，并立即修改默认密码。
+
+---
+
+## 国际化 (i18n)
+
+系统支持 **中英文双语**，通过 `LocaleContext` 统一管理：
+
+- 切换语言时，界面文本、AI Prompt、诊断结果同步切换
+- 翻译字典位于 `src/context/dict.zh.ts` 和 `dict.en.ts`
+- 组件中通过 `useLocale()` 获取当前语言和翻译函数
+
+---
+
+## 开发注意事项
+
+### Next.js 16 差异
+
+本项目使用 **Next.js 16.2.2**，与常见版本存在 API 差异。修改代码前请先阅读 `node_modules/next/dist/docs/` 中的相关指南。
+
+### API 响应格式
+
+所有 API 统一返回：
+
+```json
+// 成功
+{ "success": true, "data": { ... } }
+
+// 失败
+{ "success": false, "error": "错误信息" }
+```
+
+前端解构时注意取 `data.data` 而非直接取 `data.xxx`。
+
+### AI 功能开发
+
+- AI 客户端封装在 `src/lib/ai-client.ts`
+- 默认模型 `deepseek-chat`，默认 endpoint `https://api.deepseek.com`
+- 诊断 timeout 60s，优化 timeout 60s
+- 简历分段使用原生 `fetch` 而非 `ai-client.ts`（历史原因）
+
+---
+
+## 更新日志
+
+### 2026-05
+
+- **AI 简历优化页面重构**：三个 AI 改写版本改为卡片式并排展示，一键采纳
+- **修复 AI 诊断/优化不可用**：前端 API 响应解构错误（`data.xxx` → `data.data.xxx`）
+- **修复 AI 改写解析器**：支持 Markdown 粗体标题、数字列表等多种格式
+- **增强 AI Prompt**：明确指定 `【】` 格式标题，确保前后端解析一致
+- **侧边栏重构**：独立滚动 + 子模块标签导航 (`SubNavTabs`)
+- **权限处理优化**：未授权用户显示「权限不足」而非强制跳转
+
+### 2026-04
+
+- **中英文双语支持**：界面 + AI Prompt + 诊断结果全面双语化
+- **AI 版本选择**：支持 AI 返回的多版本切换查看
+- **本地优化变体**：保守润色、动词强化、专业强化（纯前端，无需 API）
+- **用户认证系统**：JWT + Cookie + PBKDF2 + 角色权限
+- **Staff 工作台**：项目审核、数据验证
+- **Super Admin**：用户管理（审批、停用、重置密码）
+
+---
+
+## 相关文档
+
+| 文档 | 说明 |
+|------|------|
+| `docs/DOCUMENTATION.md` | 完整系统文档（功能详解、API 清单、部署运维） |
+| `docs/ACCOUNTS.md` | 测试账号清单 |
+| `AI_RESUME_CHANGELOG.md` | AI 简历模块开发日志 |
+| `AGENTS.md` | 开发规范与 Agent 指导 |
+| `prisma/schema.prisma` | 数据库模型定义 |
+
+---
+
+*EngiMatch 开发团队 © 2026*
