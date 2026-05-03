@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 
 interface SessionUser {
@@ -60,6 +61,8 @@ function formatDate(value: string | null, locale: "en" | "zh") {
 
 export default function StaffDashboard() {
   const { locale } = useLocale();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const isEnglish = locale === "en";
 
   const [user, setUser] = useState<SessionUser | null>(null);
@@ -78,6 +81,19 @@ export default function StaffDashboard() {
     country: "UK",
     rank: "",
   });
+
+  const returnTo = useMemo(() => {
+    const value = searchParams.get("returnTo");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return null;
+    }
+    return value;
+  }, [searchParams]);
+
+  const programmeCreateHref =
+    returnTo && returnTo.startsWith("/admin/programmes/new")
+      ? returnTo
+      : `/admin/programmes/new?returnTo=${encodeURIComponent("/staff")}`;
 
   useEffect(() => {
     let cancelled = false;
@@ -102,6 +118,17 @@ export default function StaffDashboard() {
         const session = sessionJson?.data;
         if (!session?.authenticated) {
           window.location.href = "/login";
+          return;
+        }
+        if (session.user?.role !== "STAFF" && session.user?.role !== "SUPER_ADMIN") {
+          if (!cancelled) {
+            setError(
+              isEnglish
+                ? "Insufficient permissions. Staff or admin access required."
+                : "权限不足，此页面需要工作人员或管理员权限。"
+            );
+            setLoading(false);
+          }
           return;
         }
 
@@ -241,6 +268,12 @@ export default function StaffDashboard() {
         country: "UK",
         rank: "",
       });
+
+      if (returnTo) {
+        router.push(returnTo);
+        return;
+      }
+
       setUniversityFormSuccess(
         isEnglish
           ? "University created. You can now add programmes under it."
@@ -275,7 +308,7 @@ export default function StaffDashboard() {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <Link
-              href="/home"
+              href={returnTo ?? "/home"}
               className="mb-3 inline-block text-sm text-slate-300 transition hover:text-white"
             >
               {isEnglish ? "< Back to home" : "< 返回首页"}
@@ -390,7 +423,7 @@ export default function StaffDashboard() {
 
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href="/admin/programmes/new"
+                  href={programmeCreateHref}
                   className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
                 >
                   {isEnglish ? "Add programme" : "新增专业"}
@@ -634,7 +667,7 @@ export default function StaffDashboard() {
                         : "创建学校"}
                   </button>
                   <Link
-                    href="/admin/programmes/new"
+                    href={programmeCreateHref}
                     className="rounded-xl border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                   >
                     {isEnglish ? "Add programme next" : "下一步新增专业"}

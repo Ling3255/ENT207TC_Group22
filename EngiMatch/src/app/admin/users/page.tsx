@@ -98,8 +98,19 @@ export default function AdminUsersPage() {
             return;
           }
 
-          if (!session?.authenticated || session.user?.role !== "SUPER_ADMIN") {
+          if (!session?.authenticated) {
             router.replace("/login");
+            return;
+          }
+          if (session.user?.role !== "SUPER_ADMIN") {
+            if (active) {
+              setError(
+                isEnglish
+                  ? "Insufficient permissions. This page requires super administrator access."
+                  : "权限不足，此页面需要超级管理员权限。"
+              );
+              setLoading(false);
+            }
             return;
           }
 
@@ -112,7 +123,12 @@ export default function AdminUsersPage() {
         });
       } catch {
         if (active) {
-          router.replace("/login");
+          setError(
+            isEnglish
+              ? "Failed to load users. Please try again."
+              : "加载用户列表失败，请重试。"
+          );
+          setLoading(false);
         }
       }
     }

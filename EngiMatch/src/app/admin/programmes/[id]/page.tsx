@@ -139,6 +139,26 @@ export default function EditProgrammePage({
     setPrereqModules((previous) => previous.filter((_, moduleIndex) => moduleIndex !== index));
 
   useEffect(() => {
+    async function checkAuth() {
+      const res = await fetch("/api/auth/session");
+      const data = await res.json();
+      const session = data?.data;
+      if (!session?.authenticated) {
+        window.location.href = "/login";
+        return;
+      }
+      if (session.user?.role !== "SUPER_ADMIN" && session.user?.role !== "STAFF") {
+        setError(
+          isEnglish
+            ? "Insufficient permissions. Staff or admin access required."
+            : "权限不足，此页面需要工作人员或管理员权限。"
+        );
+      }
+    }
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
     Promise.all([
       fetch("/api/universities").then((response) => response.json()),
       fetch(`/api/programmes/${id}`).then((response) => response.json()),

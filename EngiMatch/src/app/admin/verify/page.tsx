@@ -130,6 +130,26 @@ export default function AdminVerifyPage() {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
+    async function checkAuth() {
+      const res = await fetch("/api/auth/session");
+      const data = await res.json();
+      const session = data?.data;
+      if (!session?.authenticated) {
+        window.location.href = "/login";
+        return;
+      }
+      if (session.user?.role !== "SUPER_ADMIN" && session.user?.role !== "STAFF") {
+        setError(
+          isEnglish
+            ? "Insufficient permissions. Staff or admin access required."
+            : "权限不足，此页面需要工作人员或管理员权限。"
+        );
+      }
+    }
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     async function loadProgrammes() {

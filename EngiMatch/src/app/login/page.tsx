@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 
 function getDefaultRoute(role?: string) {
-  if (role === "SUPER_ADMIN") return "/admin/users";
+  if (role === "SUPER_ADMIN") return "/admin";
   if (role === "STAFF") return "/staff";
   return "/applicant/dashboard";
 }
@@ -36,6 +36,14 @@ export default function LoginPage() {
       if (!res.ok) {
         setError(data.error || "Login failed");
         return;
+      }
+
+      if (typeof window !== "undefined" && data.data?.user) {
+        window.sessionStorage.setItem(
+          "engimatch_session_user",
+          JSON.stringify(data.data.user)
+        );
+        window.dispatchEvent(new Event("engimatch-session-changed"));
       }
 
       router.push(getDefaultRoute(data.data?.user?.role));

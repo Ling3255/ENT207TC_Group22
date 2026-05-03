@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 import { CANONICAL_MAJORS, CANONICAL_MODULES } from "@/lib/taxonomy";
 
@@ -93,6 +93,8 @@ function formatDateInput(value: string | null) {
 
 export default function NewProgrammePage() {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { locale } = useLocale();
   const isEnglish = locale === "en";
 
@@ -166,6 +168,43 @@ export default function NewProgrammePage() {
     confidenceScore: 0,
     lastAction: "",
   });
+
+  const returnTo = useMemo(() => {
+    const value = searchParams.get("returnTo");
+    if (!value || !value.startsWith("/") || value.startsWith("//")) {
+      return null;
+    }
+    return value;
+  }, [searchParams]);
+
+  const currentPageHref = useMemo(() => {
+    const query = searchParams.toString();
+    return query ? `${pathname}?${query}` : pathname;
+  }, [pathname, searchParams]);
+
+  const backTarget = returnTo ?? "/admin";
+  const saveTarget = returnTo ?? "/admin/programmes";
+  const staffWorkspaceHref = `/staff?returnTo=${encodeURIComponent(currentPageHref)}`;
+
+  useEffect(() => {
+    async function checkAuth() {
+      const res = await fetch("/api/auth/session");
+      const data = await res.json();
+      const session = data?.data;
+      if (!session?.authenticated) {
+        window.location.href = "/login";
+        return;
+      }
+      if (session.user?.role !== "SUPER_ADMIN" && session.user?.role !== "STAFF") {
+        setError(
+          isEnglish
+            ? "Insufficient permissions. Staff or admin access required."
+            : "权限不足，此页面需要工作人员或管理员权限。"
+        );
+      }
+    }
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -557,7 +596,7 @@ export default function NewProgrammePage() {
         );
       }
 
-      router.push("/admin/programmes");
+      router.push(saveTarget);
     } catch (saveError) {
       setError(
         saveError instanceof Error
@@ -586,7 +625,7 @@ export default function NewProgrammePage() {
       <div className="bg-slate-950 text-white">
         <div className="mx-auto max-w-7xl px-4 py-8">
           <Link
-            href="/admin"
+            href={backTarget}
             className="mb-3 inline-block text-sm text-slate-300 transition hover:text-white"
           >
             {isEnglish ? "< Back to workspace" : "< 返回后台工作台"}
@@ -712,7 +751,7 @@ export default function NewProgrammePage() {
                     ? "If the university is missing, create it first in the staff workspace."
                     : "如果学校还不存在，请先到 staff 工作台新增学校。"}
                   <Link
-                    href="/staff"
+                    href={staffWorkspaceHref}
                     className="ml-2 font-medium text-cyan-700 hover:text-cyan-900"
                   >
                     {isEnglish ? "Open staff workspace" : "前往 staff 工作台"}
@@ -1077,7 +1116,7 @@ export default function NewProgrammePage() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => router.push("/admin/programmes")}
+                  onClick={() => router.push(saveTarget)}
                   className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
                 >
                   {isEnglish ? "Cancel" : "取消"}

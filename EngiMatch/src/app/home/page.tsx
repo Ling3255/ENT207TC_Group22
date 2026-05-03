@@ -64,7 +64,7 @@ export default function HomePage() {
             <Link
               href={
                 user.role === "SUPER_ADMIN"
-                  ? "/admin/users"
+                  ? "/admin"
                   : user.role === "STAFF"
                   ? "/staff"
                   : "/applicant/dashboard"

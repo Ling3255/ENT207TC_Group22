@@ -59,6 +59,17 @@ export default function AdminDashboard() {
           window.location.href = "/login";
           return;
         }
+        if (session.user?.role !== "SUPER_ADMIN" && session.user?.role !== "STAFF") {
+          if (!cancelled) {
+            setError(
+              isEnglish
+                ? "Insufficient permissions. Staff or admin access required."
+                : "权限不足，此页面需要工作人员或管理员权限。"
+            );
+            setLoading(false);
+          }
+          return;
+        }
 
         if (!cancelled) {
           setUser(session.user);

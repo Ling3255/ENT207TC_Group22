@@ -5,7 +5,7 @@ import { verifyToken } from "@/lib/auth";
 import LandingPage from "./_landing/LandingPage";
 
 function getDefaultRoute(role?: string) {
-  if (role === "SUPER_ADMIN") return "/admin/users";
+  if (role === "SUPER_ADMIN") return "/admin";
   if (role === "STAFF") return "/staff";
   return "/applicant/dashboard";
 }
