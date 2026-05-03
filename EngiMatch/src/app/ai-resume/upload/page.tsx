@@ -184,7 +184,7 @@ Python, MATLAB, AutoCAD, C++`
 Python, MATLAB, AutoCAD, C++`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50">
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <Link href="/ai-resume" className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-800">
@@ -204,7 +204,7 @@ Python, MATLAB, AutoCAD, C++`;
               <div key={step.id} className="flex flex-shrink-0 items-center gap-1">
                 <div
                   className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-xs ${
-                    done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"
+                    done ? "bg-amber-100 text-amber-700" : active ? "bg-amber-600 text-white" : "bg-stone-100 text-stone-400"
                   }`}
                 >
                   {done ? <span>✓</span> : <span className="font-bold">{i + 1}</span>}
@@ -216,20 +216,20 @@ Python, MATLAB, AutoCAD, C++`;
           })}
         </div>
 
-        <div className="mb-6 flex items-center gap-3 rounded-xl border border-indigo-100 bg-indigo-50 p-3">
+        <div className="mb-6 flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-3">
           <div className="text-lg">🎓</div>
           <div>
-            <div className="text-sm font-medium text-indigo-800">
+            <div className="text-sm font-medium text-amber-800">
               {locale === "en" ? "Direction: UK Taught Master's · " : "申请方向：英国授课型硕士 · "}
               {majorLabel}
             </div>
-            <div className="mt-0.5 text-xs text-indigo-500">
+            <div className="mt-0.5 text-xs text-amber-700">
               {locale === "en"
                 ? "Your resume will be analyzed and optimized for this direction."
                 : "系统会围绕这个专业方向分析并优化你的简历。"}
             </div>
           </div>
-          <Link href="/ai-resume" className="ml-auto text-xs text-indigo-500 hover:underline">
+          <Link href="/ai-resume" className="ml-auto text-xs text-amber-700 hover:underline">
             {locale === "en" ? "Edit →" : "修改 →"}
           </Link>
         </div>
@@ -239,8 +239,8 @@ Python, MATLAB, AutoCAD, C++`;
             onClick={() => setMode("paste")}
             className={`flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all ${
               mode === "paste"
-                ? "border-indigo-600 bg-indigo-600 text-white"
-                : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300"
+                ? "border-amber-600 bg-amber-600 text-white"
+                : "border-stone-200 bg-white text-stone-600 hover:border-amber-300"
             }`}
           >
             {t("upload.paste_mode")}
@@ -249,8 +249,8 @@ Python, MATLAB, AutoCAD, C++`;
             onClick={() => setMode("upload")}
             className={`flex-1 rounded-xl border py-2.5 text-sm font-medium transition-all ${
               mode === "upload"
-                ? "border-indigo-600 bg-indigo-600 text-white"
-                : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300"
+                ? "border-amber-600 bg-amber-600 text-white"
+                : "border-stone-200 bg-white text-stone-600 hover:border-amber-300"
             }`}
           >
             {t("upload.upload_mode")}
@@ -264,7 +264,7 @@ Python, MATLAB, AutoCAD, C++`;
                 <div className="font-semibold text-slate-800">{t("upload.paste_content")}</div>
                 <div className="mt-0.5 text-xs text-slate-400">{t("upload.paste_hint")}</div>
               </div>
-              <button onClick={handlePaste} className="text-xs text-indigo-500 hover:underline">
+              <button onClick={handlePaste} className="text-xs text-amber-700 hover:underline">
                 {t("upload.paste_clipboard")}
               </button>
             </div>
@@ -303,7 +303,7 @@ Python, MATLAB, AutoCAD, C++`;
                 <div className="mb-6 text-sm text-slate-400">{t("upload.supported")}</div>
                 <button
                   onClick={() => fileRef.current?.click()}
-                  className="rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                  className="rounded-xl bg-amber-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-amber-700"
                 >
                   {t("upload.select_file")}
                 </button>
@@ -325,7 +325,7 @@ Python, MATLAB, AutoCAD, C++`;
           <button
             onClick={handleContinue}
             disabled={!canContinue}
-            className="flex-[2] rounded-xl bg-indigo-600 py-4 font-semibold text-white transition-all hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-[2] rounded-xl bg-amber-600 py-4 font-semibold text-white transition-all hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {canContinue
               ? t("upload.continue")

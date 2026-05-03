@@ -213,7 +213,7 @@ function AIRResumeOptimizePageContent() {
     : `已完成 ${completedSections.size}/${sections.length} 个段落`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50">
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/ai-resume/diagnose" className="text-sm text-slate-500 hover:text-slate-800">← {locale === "en" ? "Back to Diagnostic Report" : "返回诊断报告"}</Link>
@@ -229,7 +229,7 @@ function AIRResumeOptimizePageContent() {
             const active = step.id === "optimize";
             return (
               <div key={step.id} className="flex items-center gap-1 flex-shrink-0">
-                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"}`}>
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-xs ${done ? "bg-amber-100 text-amber-700" : active ? "bg-amber-600 text-white" : "bg-stone-100 text-stone-400"}`}>
                   {done ? "✓" : <span className="font-bold">{i + 1}</span>}
                   <span>{t(step.labelKey)}</span>
                 </div>
@@ -248,10 +248,10 @@ function AIRResumeOptimizePageContent() {
               <button key={s.id} onClick={() => setActiveSection(i)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap border transition-all ${
                   isActive
-                    ? "bg-indigo-600 text-white border-indigo-600"
+                    ? "bg-amber-600 text-white border-amber-600"
                     : done
-                    ? "bg-green-50 text-green-700 border-green-200"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
+                    ? "bg-amber-50 text-amber-800 border-amber-200"
+                    : "bg-white text-stone-600 border-stone-200 hover:border-amber-300"
                 }`}
               >
                 <span>{SECTION_ICONS[s.type] || "📄"}</span>
@@ -269,7 +269,7 @@ function AIRResumeOptimizePageContent() {
             <span>{Math.round(progress)}%</span>
           </div>
           <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full bg-indigo-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-amber-500 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -311,18 +311,33 @@ function AIRResumeOptimizePageContent() {
             </div>
 
             {/* Right: optimized */}
-            <div className="bg-white rounded-2xl border border-indigo-200 shadow-sm flex flex-col">
-              <div className="px-4 py-3 border-b border-indigo-100 flex items-center justify-between bg-indigo-50">
-                <div className="text-sm font-semibold text-indigo-700">{locale === "en" ? "AI Optimization Suggestions" : "AI 优化建议"}</div>
+            <div className="bg-white rounded-2xl border border-amber-200 shadow-sm flex flex-col">
+              <div className="px-4 py-3 border-b border-amber-100 flex items-center justify-between bg-amber-50">
+                <div className="text-sm font-semibold text-amber-800">{locale === "en" ? "AI Optimization Suggestions" : "AI 优化建议"}</div>
                 <button
                   onClick={() => requestAiOptimize(currentSection)}
                   disabled={optimizingSection === currentSection.id}
-                  className="text-xs px-3 py-1 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="text-xs px-3 py-1 rounded-lg bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {optimizingSection === currentSection.id ? (locale === "en" ? "Generating..." : "生成中...") : aiVariants[currentSection.id] ? (locale === "en" ? "✦ Regenerate" : "✦ 重新生成") : "✦ AI Rewrite"}
                 </button>
               </div>
 
+              {/* Variant selector */}
+              {currentResult.variants.length > 0 && (
+                <div className="px-4 pt-3 flex gap-2 flex-wrap border-b border-slate-100 pb-3">
+                  {currentResult.variants.map(v => (
+                    <button key={v.id} onClick={() => setSelectedVariant(p => ({ ...p, [currentSection.id]: v.id }))}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                        selectedVariant[currentSection.id] === v.id
+                          ? "bg-amber-600 text-white border-amber-600"
+                          : "bg-white text-stone-600 border-stone-200 hover:border-amber-300"
+                      }`}>
+                      {v.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="flex-1 p-4 overflow-auto">
                 {/* AI 已返回多版本 → 卡片展示 */}
                 {aiVariants[currentSection.id] && aiVariants[currentSection.id].length > 0 ? (
@@ -333,11 +348,11 @@ function AIRResumeOptimizePageContent() {
                         <div key={idx} className={`border rounded-xl p-3 transition-all ${
                           isAdopted
                             ? "border-green-400 bg-green-50/40 ring-1 ring-green-200"
-                            : "border-slate-200 bg-white hover:border-indigo-200"
+                            : "border-slate-200 bg-white hover:border-amber-200"
                         }`}>
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{idx + 1}</span>
+                              <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md">{idx + 1}</span>
                               <span className="text-xs font-semibold text-slate-700">{variant.label}</span>
                             </div>
                             <button
@@ -351,7 +366,7 @@ function AIRResumeOptimizePageContent() {
                               className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
                                 isAdopted
                                   ? "bg-green-600 text-white hover:bg-green-700"
-                                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                  : "bg-amber-600 text-white hover:bg-amber-700"
                               }`}
                             >
                               {isAdopted
@@ -369,7 +384,7 @@ function AIRResumeOptimizePageContent() {
                 ) : aiOptimizations[currentSection.id] ? (
                   /* AI 只返回了一个版本 */
                   <div>
-                    <div className="text-xs text-indigo-500 mb-2 font-medium">✦ {locale === "en" ? "AI Rewritten Version:" : "AI 重写版本："}</div>
+                    <div className="text-xs text-amber-700 mb-2 font-medium">✦ {locale === "en" ? "AI Rewritten Version:" : "AI 重写版本："}</div>
                     <div className="text-sm font-mono text-slate-700 whitespace-pre-wrap h-48 overflow-auto bg-slate-50 rounded-xl p-3 border border-slate-200">
                       {aiOptimizations[currentSection.id]}
                     </div>
@@ -378,11 +393,12 @@ function AIRResumeOptimizePageContent() {
                         const text = aiOptimizations[currentSection.id];
                         setCustomEdits(p => ({ ...p, [currentSection.id]: text }));
                       }}
-                      className="mt-2 text-xs text-indigo-600 hover:underline"
+                      className="mt-2 text-xs text-amber-700 hover:underline"
                     >
                       {locale === "en" ? "Adopt this AI rewrite" : "采纳这段 AI 改写"}
                     </button>
                   </div>
+
                 ) : (
                   /* AI 尚未调用 → 显示本地优化版本 */
                   <div>
@@ -393,8 +409,8 @@ function AIRResumeOptimizePageContent() {
                           <button key={v.id} onClick={() => setSelectedVariant(p => ({ ...p, [currentSection.id]: v.id }))}
                             className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
                               selectedVariant[currentSection.id] === v.id
-                                ? "bg-indigo-600 text-white border-indigo-600"
-                                : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300"
+                                ? "bg-amber-600 text-white border-amber-600"
+                                : "bg-white text-stone-600 border-stone-200 hover:border-amber-300"
                             }`}>
                             {v.label}
                           </button>
@@ -405,7 +421,7 @@ function AIRResumeOptimizePageContent() {
                       {currentVariant?.text || (locale === "en" ? "(Click \"AI Rewrite\" above for more precise optimization)" : "（点击右上角「AI 重写」获取更精准的优化版本）")}
                     </div>
                     {currentVariant && (
-                      <div className="mt-2 text-xs text-indigo-400">{currentVariant.description}</div>
+                      <div className="mt-2 text-xs text-amber-600">{currentVariant.description}</div>
                     )}
                   </div>
                 )}
@@ -434,12 +450,12 @@ function AIRResumeOptimizePageContent() {
           <div className="flex-1" />
           {activeSection < sections.length - 1 ? (
             <button onClick={markDone}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+              className="px-6 py-3 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700">
               {locale === "en" ? "Done, Continue →" : "完成此段，继续 →"}
             </button>
           ) : (
             <button onClick={handleGenerateFinal}
-              className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700">
+              className="px-6 py-3 bg-amber-600 text-white rounded-xl font-semibold hover:bg-amber-700">
               {locale === "en" ? "Generate Final Version →" : "生成最终版本 →"}
             </button>
           )}
@@ -464,7 +480,7 @@ function AIRResumeOptimizePageContent() {
               value={supplementText}
               onChange={(e) => setSupplementText(e.target.value)}
               rows={6}
-              className="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+              className="w-full px-3 py-2 border border-stone-300 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
               placeholder={locale === "en"
                 ? "Enter additional information here, e.g.:\nTools used: MATLAB/Simulink\nProject results: Reduced response time by 20%\nCourses: Control Theory, Circuit Principles..."
                 : "在此输入你想补充的内容，如：\n使用的工具：MATLAB/Simulink\n项目成果：将响应时间缩短了 20%\n课程：控制理论、电路原理..."}
@@ -472,7 +488,7 @@ function AIRResumeOptimizePageContent() {
             <div className="flex gap-3 mt-4">
               <button onClick={() => setSupplementModal(null)} className="flex-1 py-2.5 border border-slate-300 text-slate-600 rounded-xl text-sm font-medium">{locale === "en" ? "Cancel" : "取消"}</button>
               <button onClick={handleSupplement} disabled={!supplementText.trim()}
-                className="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-medium hover:bg-indigo-700 disabled:opacity-50">
+                className="flex-1 py-2.5 bg-amber-600 text-white rounded-xl text-sm font-medium hover:bg-amber-700 disabled:opacity-50">
                 {locale === "en" ? "Add and Continue" : "补充并继续优化"}
               </button>
             </div>

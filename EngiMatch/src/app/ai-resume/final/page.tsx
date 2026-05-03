@@ -190,7 +190,7 @@ function AIRResumeFinalPageContent() {
   const currentSection = sections[activeSection];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50">
       <div className="bg-white border-b border-slate-200">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
           <Link href="/ai-resume/optimize" className="text-sm text-slate-500 hover:text-slate-800">
@@ -210,7 +210,7 @@ function AIRResumeFinalPageContent() {
               <div key={step.id} className="flex flex-shrink-0 items-center gap-1">
                 <div
                   className={`flex items-center gap-1.5 rounded-full px-2 py-1 text-xs ${
-                    done ? "bg-green-100 text-green-600" : active ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-400"
+                    done ? "bg-amber-100 text-amber-700" : active ? "bg-amber-600 text-white" : "bg-stone-100 text-stone-400"
                   }`}
                 >
                   {done ? "✓" : <span className="font-bold">{i + 1}</span>}
@@ -222,10 +222,10 @@ function AIRResumeFinalPageContent() {
           })}
         </div>
 
-        <div className="mb-8 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-6 text-center text-white">
+        <div className="mb-8 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 p-6 text-center text-white">
           <div className="mb-3 text-4xl">✓</div>
           <h1 className="mb-2 text-2xl font-bold">{locale === "en" ? "Optimization Complete" : "优化完成"}</h1>
-          <p className="text-sm text-indigo-100">
+          <p className="text-sm text-amber-100">
             {locale === "en"
               ? `Your resume has been optimized for "UK Taught Master's · ${majorLabel}".`
               : `你的简历已针对“英国授课型硕士 · ${majorLabel}”完成优化。`}
@@ -244,8 +244,8 @@ function AIRResumeFinalPageContent() {
                   onClick={() => setActiveSection(index)}
                   className={`rounded-lg border px-2.5 py-1 text-xs font-medium transition-all ${
                     activeSection === index
-                      ? "border-indigo-600 bg-indigo-600 text-white"
-                      : "border-slate-200 text-slate-500 hover:bg-slate-50"
+                      ? "border-amber-600 bg-amber-600 text-white"
+                      : "border-stone-200 text-stone-500 hover:bg-stone-50"
                   }`}
                 >
                   {SECTION_ICONS[section.type] || "📄"}{" "}
@@ -261,13 +261,13 @@ function AIRResumeFinalPageContent() {
               <div className="mb-2 text-xs font-medium text-slate-400">
                 {SECTION_ICONS[currentSection.type] || "📄"} {currentSection.title}
                 {currentSection.optimized && (
-                  <span className="ml-2 text-indigo-400">({locale === "en" ? "Optimized" : "已优化"})</span>
+                  <span className="ml-2 text-amber-600">({locale === "en" ? "Optimized" : "已优化"})</span>
                 )}
               </div>
               <textarea
                 value={editingContent[currentSection.id] ?? currentSection.content}
                 onChange={(event) => handleEdit(currentSection.id, event.target.value)}
-                className="h-48 w-full resize-none rounded-xl border border-slate-200 bg-slate-50 p-3 font-mono text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="h-48 w-full resize-none rounded-xl border border-stone-200 bg-stone-50 p-3 font-mono text-sm text-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-400"
                 placeholder={locale === "en" ? "Resume content..." : "简历内容..."}
               />
             </div>
@@ -300,7 +300,7 @@ function AIRResumeFinalPageContent() {
           <button
             onClick={handleSave}
             disabled={saving || saved}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 font-semibold text-white transition-all hover:bg-indigo-700 disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-600 py-4 font-semibold text-white transition-all hover:bg-amber-700 disabled:opacity-60"
           >
             {saved
               ? `✓ ${locale === "en" ? "Saved" : "已保存"}`
@@ -313,7 +313,7 @@ function AIRResumeFinalPageContent() {
 
           <button
             onClick={handleExport}
-            className="w-full rounded-xl border-2 border-indigo-200 bg-white py-4 font-semibold text-indigo-600 transition-all hover:bg-indigo-50"
+            className="w-full rounded-xl border-2 border-amber-200 bg-white py-4 font-semibold text-amber-700 transition-all hover:bg-amber-50"
           >
             📥 {locale === "en" ? "Export as Text File" : "导出为文本文件"}
           </button>

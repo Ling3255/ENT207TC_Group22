@@ -25,11 +25,11 @@ export function Button({
     "inline-flex items-center justify-center font-semibold rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+    primary: "bg-[#b28a52] text-white hover:bg-[#9d7844] focus:ring-[#d9bf94]",
     secondary:
-      "border border-indigo-300 text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-300",
-    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    ghost: "text-slate-600 hover:bg-slate-100 focus:ring-slate-300",
+      "border border-[#dbc7a6] text-[#7a5a2f] hover:bg-[#faf4e8] focus:ring-[#e6d7bd]",
+    danger: "bg-[#6d5a4a] text-white hover:bg-[#5c4a3d] focus:ring-[#bda58a]",
+    ghost: "text-[#6f655b] hover:bg-[#f3ede4] focus:ring-[#ddd1c1]",
   };
 
   const sizes = {

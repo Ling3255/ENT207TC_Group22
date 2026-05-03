@@ -192,12 +192,12 @@ function ResultsContent() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-indigo-600 text-white py-8 px-4">
+      <div className="bg-[#8c6a3d] text-white py-8 px-4">
         <div className="max-w-3xl mx-auto">
-          <Link href="/home" className="text-sm text-indigo-200 hover:text-white mb-4 inline-block">← {t("nav.back")}</Link>
+          <Link href="/home" className="text-sm text-[#f2e3c7] hover:text-white mb-4 inline-block">← {t("nav.back")}</Link>
           <h1 className="text-3xl font-bold">{t("results.title")}</h1>
           {applicant && (
-            <p className="text-indigo-200 mt-1">
+            <p className="text-[#f2e3c7] mt-1">
               {applicant.full_name} · {applicant.undergrad_university} · {applicant.undergrad_major} · GPA {Number(applicant.gpa_numeric).toFixed(2)}/{Number(applicant.gpa_scale)}
             </p>
           )}
@@ -212,17 +212,17 @@ function ResultsContent() {
                 <div className="text-2xl font-bold text-slate-700">{stats.total}</div>
                 <div className="text-xs text-slate-500">{t("results.total")}</div>
               </div>
-              <div className="bg-green-50 rounded-xl border border-green-200 p-4 text-center">
-                <div className="text-2xl font-bold text-green-700">{stats.eligible}</div>
-                <div className="text-xs text-green-600">{t("results.eligible")}</div>
+              <div className="bg-[#f8f1e6] rounded-xl border border-[#e5d4bd] p-4 text-center">
+                <div className="text-2xl font-bold text-[#7a5a2f]">{stats.eligible}</div>
+                <div className="text-xs text-[#7a5a2f]">{t("results.eligible")}</div>
               </div>
-              <div className="bg-amber-50 rounded-xl border border-amber-200 p-4 text-center">
-                <div className="text-2xl font-bold text-amber-700">{stats.borderline}</div>
-                <div className="text-xs text-amber-600">{t("results.borderline")}</div>
+              <div className="bg-[#f6eee3] rounded-xl border border-[#dcc6a8] p-4 text-center">
+                <div className="text-2xl font-bold text-[#8b6338]">{stats.borderline}</div>
+                <div className="text-xs text-[#8b6338]">{t("results.borderline")}</div>
               </div>
-              <div className="bg-red-50 rounded-xl border border-red-200 p-4 text-center">
-                <div className="text-2xl font-bold text-red-700">{stats.notEligible}</div>
-                <div className="text-xs text-red-600">{t("results.not_eligible")}</div>
+              <div className="bg-stone-100 rounded-xl border border-stone-300 p-4 text-center">
+                <div className="text-2xl font-bold text-stone-700">{stats.notEligible}</div>
+                <div className="text-xs text-stone-600">{t("results.not_eligible")}</div>
               </div>
             </div>
 
@@ -233,7 +233,7 @@ function ResultsContent() {
                     key={f}
                     onClick={() => setFilter(f)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      filter === f ? "bg-indigo-600 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                      filter === f ? "bg-[#b28a52] text-white" : "bg-white border border-[#e8ddd0] text-stone-600 hover:bg-[#f7f2ea]"
                     }`}
                   >
                     {f === "ALL" ? t("results.filter.all") : f === "eligible" ? t("results.filter.eligible") : f === "borderline" ? t("results.filter.borderline") : t("results.filter.not_eligible")}
@@ -243,12 +243,12 @@ function ResultsContent() {
               <div className="flex gap-3">
                 <button
                   onClick={() => { setAiSuggestOpen(true); fetchAiSuggestion(); }}
-                  className="text-sm bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-4 py-1.5 rounded-lg font-medium hover:from-violet-700 hover:to-indigo-700 transition-colors"
+                  className="text-sm bg-gradient-to-r from-[#c39a62] to-[#a97848] text-white px-4 py-1.5 rounded-lg font-medium hover:from-[#b28a52] hover:to-[#94693e] transition-colors"
                 >
                   ✨ {isZh ? "AI 申请建议" : "AI Suggestion"}
                 </button>
                 <button onClick={rerunEvaluation} disabled={rerunning}
-                  className="text-sm text-indigo-600 hover:text-indigo-800 font-medium disabled:opacity-50">
+                  className="text-sm text-[#7a5a2f] hover:text-[#684a25] font-medium disabled:opacity-50">
                   {rerunning ? t("results.rerun") : t("results.rerun_btn")}
                 </button>
               </div>
@@ -260,7 +260,7 @@ function ResultsContent() {
         {!loading && evaluations.length === 0 && (
           <div className="text-center py-16">
             <p className="text-slate-500 mb-4">{t("results.no_results")}</p>
-            <Link href="/applicant" className="text-indigo-600 hover:underline">{t("results.go_create")}</Link>
+            <Link href="/applicant" className="text-[#7a5a2f] hover:underline">{t("results.go_create")}</Link>
           </div>
         )}
 
@@ -349,16 +349,16 @@ function ResultsContent() {
                         )}
 
                         {/* Summary */}
-                        <div className="p-3 rounded-lg bg-indigo-50 border border-indigo-200">
-                          <div className="text-xs font-semibold text-indigo-500 mb-1">{t("results.summary_title")}</div>
-                          <div className="text-sm text-indigo-800 whitespace-pre-line leading-relaxed">{ev.explanation.summary_zh}</div>
+                        <div className="p-3 rounded-lg bg-[#f8f1e6] border border-[#e5d4bd]">
+                          <div className="text-xs font-semibold text-[#7a5a2f] mb-1">{t("results.summary_title")}</div>
+                          <div className="text-sm text-stone-800 whitespace-pre-line leading-relaxed">{ev.explanation.summary_zh}</div>
                         </div>
 
                         {/* Official link */}
                         {prog.official_url && (
                           <div className="text-center">
                             <a href={prog.official_url} target="_blank" rel="noopener noreferrer"
-                              className="text-xs text-indigo-600 hover:underline">
+                              className="text-xs text-[#7a5a2f] hover:underline">
                               {t("results.view_official")}
                             </a>
                           </div>
@@ -385,7 +385,7 @@ function ResultsContent() {
               <div className="p-6 overflow-y-auto">
                 {aiLoading ? (
                   <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                    <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 border-4 border-[#e5d4bd] border-t-[#b28a52] rounded-full animate-spin"></div>
                     <p className="text-slate-500 text-sm">{isZh ? "AI 正在分析您的申请档案和评估结果，请稍候..." : "AI is analyzing your profile and evaluation results..."}</p>
                   </div>
                 ) : (
