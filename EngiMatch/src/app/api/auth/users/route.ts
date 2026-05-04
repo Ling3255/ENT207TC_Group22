@@ -6,6 +6,16 @@ import {
   requireRole,
 } from "@/lib/api-utils";
 
+type StatusCount = Awaited<ReturnType<typeof prisma.user.groupBy>>[number] & {
+  status: string;
+  _count: number;
+};
+
+type RoleCount = Awaited<ReturnType<typeof prisma.user.groupBy>>[number] & {
+  role: string;
+  _count: number;
+};
+
 // GET /api/auth/users - List all users (Super Admin only)
 export const GET = apiHandler(async (request: NextRequest) => {
   await requireRole(request, ["SUPER_ADMIN"]);
@@ -78,11 +88,11 @@ export const GET = apiHandler(async (request: NextRequest) => {
     ...(includeStats
       ? {
           stats: {
-            byStatus: statusCounts.reduce(
+            byStatus: (statusCounts as StatusCount[]).reduce<Record<string, number>>(
               (acc, s) => ({ ...acc, [s.status]: s._count }),
               {}
             ),
-            byRole: roleCounts.reduce(
+            byRole: (roleCounts as RoleCount[]).reduce<Record<string, number>>(
               (acc, r) => ({ ...acc, [r.role]: r._count }),
               {}
             ),
