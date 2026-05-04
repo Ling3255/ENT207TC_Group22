@@ -56,7 +56,7 @@ interface ResumeProfile {
   optimizedAt: string;
 }
 
-function AIRResumeFinalPageContent() {
+function AIRResumeFinalPageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -343,8 +343,8 @@ function AIRResumeFinalPageContent() {
 
 export default function AIRResumeFinalPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm text-slate-400" />}>
-      <AIRResumeFinalPageContent />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AIRResumeFinalPageInner />
     </Suspense>
   );
 }

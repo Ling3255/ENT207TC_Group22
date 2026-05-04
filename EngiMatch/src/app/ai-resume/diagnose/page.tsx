@@ -17,7 +17,7 @@ const STEPS = [
   { id: "final", labelKey: "ai.step.final" },
 ];
 
-function AIRResumeDiagnosePageContent() {
+function AIRResumeDiagnosePageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -354,8 +354,8 @@ function AIRResumeDiagnosePageContent() {
 
 export default function AIRResumeDiagnosePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
-      <AIRResumeDiagnosePageContent />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AIRResumeDiagnosePageInner />
     </Suspense>
   );
 }

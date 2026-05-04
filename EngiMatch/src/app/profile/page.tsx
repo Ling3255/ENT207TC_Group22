@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -41,7 +41,7 @@ const STATUS_LABELS: Record<
   SUSPENDED: { zh: "已停用", en: "Suspended", color: "text-slate-600" },
 };
 
-export default function ProfilePage() {
+function ProfilePageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const { showToast } = useToast();
@@ -435,5 +435,13 @@ export default function ProfilePage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfilePageInner />
+    </Suspense>
   );
 }

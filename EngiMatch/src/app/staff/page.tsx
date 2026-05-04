@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -59,7 +59,7 @@ function formatDate(value: string | null, locale: "en" | "zh") {
   }).format(date);
 }
 
-export default function StaffDashboard() {
+function StaffDashboardInner() {
   const { locale } = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -794,6 +794,14 @@ export default function StaffDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function StaffDashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <StaffDashboardInner />
+    </Suspense>
   );
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -23,7 +23,7 @@ interface ApplicantCard {
   _count: { evaluations: number };
 }
 
-export default function ApplicantDashboard() {
+function ApplicantDashboardInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const { showToast } = useToast();
@@ -226,5 +226,13 @@ export default function ApplicantDashboard() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ApplicantDashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ApplicantDashboardInner />
+    </Suspense>
   );
 }

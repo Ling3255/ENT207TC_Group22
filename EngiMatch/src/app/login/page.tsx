@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -11,7 +11,7 @@ function getDefaultRoute(role?: string) {
   return "/applicant/dashboard";
 }
 
-export default function LoginPage() {
+function LoginPageInner() {
   const { locale } = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -144,5 +144,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginPageInner />
+    </Suspense>
   );
 }

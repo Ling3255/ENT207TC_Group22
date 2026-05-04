@@ -190,7 +190,7 @@ const inputClass = "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm 
 const labelClass = "block text-sm font-medium text-slate-700 mb-1";
 const sectionClass = "bg-white rounded-xl border border-slate-200 p-5 mb-4";
 
-function ApplicantForm() {
+function ApplicantPageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -797,8 +797,8 @@ Materials Mechanics | 90 | 3`
 
 export default function ApplicantPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">Loading...</div>}>
-      <ApplicantForm />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ApplicantPageInner />
     </Suspense>
   );
 }

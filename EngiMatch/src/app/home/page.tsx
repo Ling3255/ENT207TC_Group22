@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 
-export default function HomePage() {
+function HomePageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const [user, setUser] = useState<{ role: string; email: string } | null>(null);
@@ -83,5 +83,13 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePageInner />
+    </Suspense>
   );
 }

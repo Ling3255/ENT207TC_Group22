@@ -15,7 +15,7 @@ const STEPS = [
   { id: "final", labelKey: "ai.step.final" },
 ];
 
-function AIRResumeUploadPageContent() {
+function AIRResumeUploadPageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -341,8 +341,8 @@ Python, MATLAB, AutoCAD, C++`;
 
 export default function AIRResumeUploadPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-sm text-slate-400" />}>
-      <AIRResumeUploadPageContent />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AIRResumeUploadPageInner />
     </Suspense>
   );
 }

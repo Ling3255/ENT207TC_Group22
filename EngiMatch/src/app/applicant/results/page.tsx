@@ -82,7 +82,7 @@ function RiskTag({ flag, locale }: { flag: string; locale: string }) {
   );
 }
 
-function ResultsContent() {
+function ResultsPageInner() {
   const { t, locale } = useLocale();
   const isZh = locale === "zh";
   const params = useSearchParams();
@@ -414,8 +414,8 @@ function ResultsContent() {
 
 export default function ResultsPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400">{/* Loading */}</div>}>
-      <ResultsContent />
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResultsPageInner />
     </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useEffect, useRef, useState } from "react";
+import { Suspense, useDeferredValue, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -56,7 +56,7 @@ const ROLE_CONFIG: Record<
   SUPER_ADMIN: { label: "超级管理员", labelEn: "Super Admin", icon: "A" },
 };
 
-export default function AdminUsersPage() {
+function AdminUsersPageInner() {
   const { locale } = useLocale();
   const router = useRouter();
   const isEnglish = locale === "en";
@@ -673,6 +673,14 @@ export default function AdminUsersPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminUsersPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AdminUsersPageInner />
+    </Suspense>
   );
 }
 

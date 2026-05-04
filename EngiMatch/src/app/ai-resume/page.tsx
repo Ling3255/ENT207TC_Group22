@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -25,7 +25,7 @@ const STAGE_OPTIONS = [
   { value: "apply_ready", labelKey: "ai.stage.apply_ready" },
 ];
 
-export default function AIRResumePage() {
+function AIRResumePageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const [major, setMajor] = useState("");
@@ -168,5 +168,13 @@ export default function AIRResumePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AIRResumePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AIRResumePageInner />
+    </Suspense>
   );
 }

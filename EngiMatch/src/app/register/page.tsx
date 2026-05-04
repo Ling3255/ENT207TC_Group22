@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
 
-export default function RegisterPage() {
+function RegisterPageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -244,5 +244,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterPageInner />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -24,7 +24,7 @@ const inputClass =
 const labelClass = "mb-1 block text-sm font-medium text-slate-700";
 const sectionClass = "rounded-2xl border border-slate-200 bg-white p-5";
 
-export default function EditProgrammePage({
+function EditProgrammePageInner({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -938,6 +938,16 @@ export default function EditProgrammePage({
         </div>
       </div>
     </div>
+  );
+}
+
+export default function EditProgrammePage(props: {
+  params: Promise<{ id: string }>;
+}) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditProgrammePageInner {...props} />
+    </Suspense>
   );
 }
 

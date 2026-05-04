@@ -43,7 +43,7 @@ function typeMapper(aiType: string): ResumeSectionType {
   return "other";
 }
 
-function AIRResumeReviewPageContent() {
+function AIRResumeReviewPageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -333,8 +333,8 @@ function AIRResumeReviewPageContent() {
 
 export default function AIRResumeReviewPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
-      <AIRResumeReviewPageContent />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AIRResumeReviewPageInner />
     </Suspense>
   );
 }

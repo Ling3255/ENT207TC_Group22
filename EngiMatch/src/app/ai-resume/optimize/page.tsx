@@ -27,7 +27,7 @@ const SECTION_ICONS: Record<string, string> = {
   competition: "🏆", skill: "🛠️", award: "🎖️", summary: "📝", other: "📄",
 };
 
-function AIRResumeOptimizePageContent() {
+function AIRResumeOptimizePageInner() {
   const { t, locale } = useLocale();
   const router = useRouter();
   const params = useSearchParams();
@@ -485,8 +485,8 @@ function AIRResumeOptimizePageContent() {
 
 export default function AIRResumeOptimizePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm" />}>
-      <AIRResumeOptimizePageContent />
+    <Suspense fallback={<div>Loading...</div>}>
+      <AIRResumeOptimizePageInner />
     </Suspense>
   );
 }
