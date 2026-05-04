@@ -2,7 +2,15 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, apiHandler, successResponse, errorResponse, parseJsonBody, assertString } from "@/lib/api-utils";
 import { getOpenAIClient } from "@/lib/ai-client";
-import type { ApplicantModule, PrerequisiteModule } from "@prisma/client";
+interface ApplicantModule {
+  module_name_raw: string;
+  grade_text: string | null;
+  credits: number | null;
+}
+
+interface PrerequisiteModule {
+  display_text: string;
+}
 
 // POST /api/ai-suggest
 // Body: { applicantId }
