@@ -90,7 +90,7 @@ export default function SetupPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-slate-50 px-4">
       <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-8 max-w-md w-full">
         <div className="text-center mb-6">
           <div className="text-5xl mb-4">🚀</div>
@@ -106,9 +106,9 @@ export default function SetupPage() {
           </div>
         )}
 
-        <div className="bg-[#f8f1e6] border border-[#e5d4bd] rounded-xl p-4 mb-6">
-          <h3 className="font-medium text-[#7a5a2f] mb-2">⚠️ 重要提示</h3>
-          <ul className="text-sm text-[#7a5a2f] space-y-1">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+          <h3 className="font-medium text-amber-700 mb-2">⚠️ 重要提示</h3>
+          <ul className="text-sm text-amber-700 space-y-1">
             <li>• 将创建默认管理员账号</li>
             <li>• 默认密码为 <code className="bg-[#efe1c9] px-1 rounded">admin123</code></li>
             <li>• 首次登录后请立即修改密码</li>
@@ -118,7 +118,7 @@ export default function SetupPage() {
         <button
           onClick={handleSetup}
           disabled={loading}
-          className="w-full py-3 bg-[#b28a52] text-white rounded-xl font-semibold hover:bg-[#9d7844] disabled:opacity-50 transition-colors"
+          className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors"
         >
           {loading ? "初始化中..." : "开始初始化"}
         </button>

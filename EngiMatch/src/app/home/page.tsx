@@ -228,11 +228,11 @@ function getPortalCards(role: SessionUser["role"], locale: "en" | "zh"): PortalC
 function cardClasses(accent: PortalCard["accent"]) {
   switch (accent) {
     case "ink":
-      return "border-[#213746] bg-gradient-to-br from-[#13242f] via-[#1b3340] to-[#314b59] text-white";
+      return "border-indigo-900/30 bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-700 text-white";
     case "brass":
-      return "border-[#dbc49f] bg-gradient-to-br from-[#caa069] via-[#b68851] to-[#8c653c] text-white";
+      return "border-indigo-300 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 text-white";
     default:
-      return "border-[#e6dbcf] bg-[#fffdf8] text-[#1e252c]";
+      return "border-slate-200 bg-white text-slate-900";
   }
 }
 
@@ -275,8 +275,8 @@ export default function HomePage() {
 
   if (checkingAuth) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f6f1e8]">
-        <div className="text-sm tracking-[0.24em] text-[#7d776d]">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+        <div className="text-sm tracking-[0.24em] text-slate-400">
           {locale === "en" ? "LOADING" : "加载中"}
         </div>
       </div>
@@ -286,32 +286,32 @@ export default function HomePage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f6f1e8] text-[#172028]">
+    <div className="min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-slate-50 text-slate-900">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-[#d8b47b]/25 blur-3xl" />
-        <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-[#315261]/15 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-[#b78b59]/20 blur-3xl" />
+        <div className="absolute -left-20 top-10 h-72 w-72 rounded-full bg-indigo-300/25 blur-3xl" />
+        <div className="absolute right-0 top-0 h-80 w-80 rounded-full bg-violet-300/20 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-fuchsia-200/20 blur-3xl" />
       </div>
 
       <main className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-center justify-between rounded-full border border-white/70 bg-white/70 px-5 py-3 shadow-[0_20px_50px_rgba(28,36,44,0.06)] backdrop-blur">
           <div>
-            <div className="text-xs uppercase tracking-[0.32em] text-[#8d6a3d]">EngiMatch</div>
-            <div className="text-sm text-[#5f6870]">
+            <div className="text-xs uppercase tracking-[0.32em] text-indigo-600">EngiMatch</div>
+            <div className="text-sm text-slate-500">
               {locale === "en" ? "Unified post-login portal" : "登录后统一入口"}
             </div>
           </div>
           <div className="flex items-center gap-2">
             <Link
               href="/profile"
-              className="rounded-full border border-[#e2d7ca] px-4 py-2 text-sm text-[#5d646c] transition hover:bg-white"
+              className="rounded-full border border-indigo-200 px-4 py-2 text-sm text-indigo-600 transition hover:bg-indigo-50"
             >
               {t("home.profile")}
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-full bg-[#17242d] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#233543]"
+              className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
             >
               {t("home.logout")}
             </button>
@@ -319,26 +319,26 @@ export default function HomePage() {
         </div>
 
         <div className="grid flex-1 gap-6 lg:grid-cols-[1.5fr_0.9fr]">
-          <section className="relative overflow-hidden rounded-[2rem] border border-[#24414f] bg-gradient-to-br from-[#122631] via-[#193340] to-[#8d653b] p-6 text-white shadow-[0_30px_80px_rgba(16,29,38,0.18)] sm:p-8">
+          <section className="relative overflow-hidden rounded-[2rem] border border-indigo-900/30 bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-700 p-6 text-white shadow-[0_30px_80px_rgba(49,46,129,0.22)] sm:p-8">
             <div className="absolute right-[-8%] top-[-12%] h-56 w-56 rounded-full border border-white/10" />
             <div className="absolute bottom-[-10%] right-[12%] h-40 w-40 rounded-full bg-white/5 blur-2xl" />
 
             <div className="relative max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#efe5d3]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-indigo-100">
                 <span>{roleConfig.icon}</span>
                 <span>{locale === "en" ? roleConfig.badgeEn : roleConfig.badgeZh}</span>
               </div>
               <h1 className="mt-6 max-w-xl text-4xl font-semibold leading-tight sm:text-5xl">
                 {locale === "en" ? roleConfig.titleEn : roleConfig.titleZh}
               </h1>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-[#f0e7da] sm:text-base">
+              <p className="mt-4 max-w-xl text-sm leading-7 text-indigo-100 sm:text-base">
                 {locale === "en" ? roleConfig.introEn : roleConfig.introZh}
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link
                   href={roleConfig.primaryHref}
-                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-[#15242e] transition hover:bg-[#f1e7d5]"
+                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
                 >
                   {locale === "en" ? "Open my main tool" : "进入主要功能"}
                 </Link>
@@ -353,23 +353,23 @@ export default function HomePage() {
           </section>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1">
-            <section className="rounded-[2rem] border border-[#e6dbcf] bg-white/80 p-6 shadow-[0_20px_60px_rgba(30,37,44,0.07)] backdrop-blur">
-              <div className="text-xs uppercase tracking-[0.28em] text-[#8b6638]">
+            <section className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-[0_20px_60px_rgba(30,37,44,0.07)] backdrop-blur">
+              <div className="text-xs uppercase tracking-[0.28em] text-indigo-600">
                 {locale === "en" ? "Account" : "当前账号"}
               </div>
-              <div className="mt-4 text-2xl font-semibold text-[#192129]">{user.email}</div>
-              <div className="mt-2 text-sm leading-6 text-[#66707a]">
+              <div className="mt-4 text-2xl font-semibold text-slate-900">{user.email}</div>
+              <div className="mt-2 text-sm leading-6 text-slate-500">
                 {locale === "en"
                   ? "Every role now lands on the same portal first, then navigates to feature pages from here."
                   : "现在所有角色登录后都会先进入同一个入口页，再从这里跳转到各个功能页面。"}
               </div>
             </section>
 
-            <section className="rounded-[2rem] border border-[#e3d5c3] bg-[#fbf7f0] p-6 shadow-[0_20px_60px_rgba(30,37,44,0.05)]">
-              <div className="text-xs uppercase tracking-[0.28em] text-[#8b6638]">
+            <section className="rounded-[2rem] border border-indigo-100 bg-indigo-50/70 p-6 shadow-[0_20px_60px_rgba(30,37,44,0.05)]">
+              <div className="text-xs uppercase tracking-[0.28em] text-indigo-600">
                 {locale === "en" ? "Start here" : "建议使用方式"}
               </div>
-              <ul className="mt-4 space-y-3 text-sm text-[#4f5962]">
+              <ul className="mt-4 space-y-3 text-sm text-slate-600">
                 <li>
                   {locale === "en"
                     ? "Use the main button for the most important task in your role."
@@ -393,10 +393,10 @@ export default function HomePage() {
         <section className="relative mt-6">
           <div className="mb-4 flex items-end justify-between">
             <div>
-              <div className="text-xs uppercase tracking-[0.28em] text-[#8b6638]">
+              <div className="text-xs uppercase tracking-[0.28em] text-indigo-600">
                 {locale === "en" ? "Launch cards" : "功能入口"}
               </div>
-              <h2 className="mt-2 text-2xl font-semibold text-[#1a232b]">
+              <h2 className="mt-2 text-2xl font-semibold text-slate-900">
                 {locale === "en" ? "Move by workflow, not by dashboards" : "按工作流进入，而不是切换多个工作台"}
               </h2>
             </div>
@@ -419,7 +419,7 @@ export default function HomePage() {
                   <div className="mt-10 text-xl font-semibold">{card.title}</div>
                   <p
                     className={`mt-3 max-w-sm text-sm leading-6 ${
-                      card.accent === "mist" ? "text-[#65707a]" : "text-white/82"
+                      card.accent === "mist" ? "text-slate-500" : "text-white/82"
                     }`}
                   >
                     {card.description}

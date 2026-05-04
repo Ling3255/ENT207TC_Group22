@@ -74,12 +74,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2] flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-bold text-[#8a6638]">EngiMatch</h1>
+            <h1 className="text-4xl font-bold text-indigo-600">EngiMatch</h1>
           </Link>
           <p className="text-slate-500 mt-2">
             {locale === "en" ? "UK Engineering Master's Programme Matching" : "英国工程硕士项目智能匹配"}
@@ -110,12 +110,12 @@ export default function RegisterPage() {
                   onClick={() => setFormData({ ...formData, role: "STUDENT" })}
                   className={`p-4 rounded-xl border-2 transition-all text-center ${
                     formData.role === "STUDENT"
-                      ? "border-[#b28a52] bg-[#f6eddc]"
+                      ? "border-indigo-600 bg-indigo-50"
                       : "border-slate-200 hover:border-slate-300"
                   }`}
                 >
                   <div className="text-2xl mb-1">🎓</div>
-                  <div className={`text-sm font-medium ${formData.role === "STUDENT" ? "text-[#7a5a2f]" : "text-stone-700"}`}>
+                  <div className={`text-sm font-medium ${formData.role === "STUDENT" ? "text-indigo-700" : "text-slate-700"}`}>
                     {locale === "en" ? "Student" : "学生"}
                   </div>
                   <div className="text-xs text-slate-400 mt-1">
@@ -127,12 +127,12 @@ export default function RegisterPage() {
                   onClick={() => setFormData({ ...formData, role: "STAFF" })}
                   className={`p-4 rounded-xl border-2 transition-all text-center ${
                     formData.role === "STAFF"
-                      ? "border-[#b28a52] bg-[#f6eddc]"
+                      ? "border-indigo-600 bg-indigo-50"
                       : "border-slate-200 hover:border-slate-300"
                   }`}
                 >
                   <div className="text-2xl mb-1">👨‍💼</div>
-                  <div className={`text-sm font-medium ${formData.role === "STAFF" ? "text-[#7a5a2f]" : "text-stone-700"}`}>
+                  <div className={`text-sm font-medium ${formData.role === "STAFF" ? "text-indigo-700" : "text-slate-700"}`}>
                     {locale === "en" ? "Staff" : "工作人员"}
                   </div>
                   <div className="text-xs text-slate-400 mt-1">
@@ -152,7 +152,7 @@ export default function RegisterPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-[#d8cec2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d9bf94] focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder={locale === "en" ? "Your name" : "您的姓名"}
               />
             </div>
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-[#d8cec2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d9bf94] focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="example@example.com"
                 required
               />
@@ -183,7 +183,7 @@ export default function RegisterPage() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-[#d8cec2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d9bf94] focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="••••••••"
                 required
               />
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-[#d8cec2] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#d9bf94] focus:border-transparent"
+                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 placeholder="••••••••"
                 required
               />
@@ -210,7 +210,7 @@ export default function RegisterPage() {
 
             {/* Staff Notice */}
             {formData.role === "STAFF" && (
-              <div className="p-3 bg-[#f6eddc] border border-[#e5d2ae] rounded-xl text-sm text-[#7a5a2f]">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700">
                 {locale === "en"
                   ? "Staff accounts require approval from a Super Admin before you can login."
                   : "工作人员账号需要超级管理员审批后才能登录。"}
@@ -220,7 +220,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-[#b28a52] text-white rounded-xl font-semibold hover:bg-[#9d7844] disabled:opacity-50 transition-colors"
+              className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors"
             >
               {loading 
                 ? (locale === "en" ? "Creating account..." : "创建账号中...")
@@ -230,7 +230,7 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center text-sm text-slate-500">
             {locale === "en" ? "Already have an account?" : "已有账号？"}
-            <Link href="/login" className="text-[#8a6638] hover:underline ml-1">
+            <Link href="/login" className="text-indigo-600 hover:underline ml-1">
               {locale === "en" ? "Login" : "立即登录"}
             </Link>
           </div>

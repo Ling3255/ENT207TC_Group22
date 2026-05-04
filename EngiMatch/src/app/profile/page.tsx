@@ -188,7 +188,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2]">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
         <div className="flex min-h-screen items-center justify-center text-stone-400">
           {t("common.loading")}
         </div>
@@ -210,7 +210,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#faf6ef] via-[#fffdf9] to-[#f3ece2]">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-slate-50">
       <div className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-4">
           <Link href="/home" className="text-sm text-stone-500 hover:text-stone-800">
@@ -255,12 +255,12 @@ export default function ProfilePage() {
                 type="text"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
+                className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder={isZh ? "你的姓名" : "Your name"}
               />
             </div>
 
-            <div className="rounded-2xl border border-[#e5d4bd] bg-[#f8f1e6] p-4">
+            <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
               <div className="mb-3">
                 <h3 className="font-medium text-stone-900">
                   {isZh ? "年级与时间线设置" : "Year & Timeline Settings"}
@@ -280,7 +280,7 @@ export default function ProfilePage() {
                   <select
                     value={timelineStudyYear}
                     onChange={(event) => setTimelineStudyYear(event.target.value)}
-                    className="w-full rounded-xl border border-[#d8cec2] bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="">{isZh ? "未选择" : "Not selected"}</option>
                     {TIMELINE_STUDY_YEAR_OPTIONS.map((year) => (
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                   <select
                     value={timelineGraduationYear}
                     onChange={(event) => setTimelineGraduationYear(event.target.value)}
-                    className="w-full rounded-xl border border-[#d8cec2] bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="">{isZh ? "选填" : "Optional"}</option>
                     {graduationYearOptions.map((year) => (
@@ -359,7 +359,7 @@ export default function ProfilePage() {
             <button
               onClick={handleSaveProfile}
               disabled={saving}
-              className="w-full rounded-xl bg-[#b28a52] py-2.5 font-medium text-white transition-colors hover:bg-[#9d7844] disabled:opacity-50"
+              className="w-full rounded-xl bg-indigo-600 py-2.5 font-medium text-white transition-colors hover:bg-indigo-700 disabled:opacity-50"
             >
               {saving ? t("profile.saving") : t("profile.save_changes")}
             </button>
@@ -371,7 +371,7 @@ export default function ProfilePage() {
             <h2 className="font-semibold text-stone-800">{t("profile.change_password")}</h2>
             <button
               onClick={() => setShowPasswordForm((previous) => !previous)}
-              className="text-sm font-medium text-[#7a5a2f] hover:text-[#684a25]"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
             >
               {showPasswordForm ? t("profile.collapse") : t("profile.change")}
             </button>
@@ -387,7 +387,7 @@ export default function ProfilePage() {
                   type="password"
                   value={currentPassword}
                   onChange={(event) => setCurrentPassword(event.target.value)}
-                  className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="••••••••"
                 />
               </div>
@@ -399,7 +399,7 @@ export default function ProfilePage() {
                   type="password"
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
-                  className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="••••••••"
                 />
                 <p className="mt-1 text-xs text-stone-400">{t("auth.at_least_6_chars")}</p>
@@ -412,7 +412,7 @@ export default function ProfilePage() {
                   type="password"
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="w-full rounded-xl border border-[#d8cec2] px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#d9bf94]"
+                  className="w-full rounded-xl border border-slate-300 px-4 py-2.5 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   placeholder="••••••••"
                 />
               </div>

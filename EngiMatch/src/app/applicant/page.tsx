@@ -471,7 +471,7 @@ function ApplicantForm() {
 
       {(loadingEdit || checkingExistingProfile) && (
         <div className="max-w-2xl mx-auto px-4 pt-8 text-center">
-          <div className="w-8 h-8 border-4 border-[#e5d2ae] border-t-[#b28a52] rounded-full animate-spin mx-auto mb-3"></div>
+          <div className="w-8 h-8 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mx-auto mb-3"></div>
           <p className="text-slate-500 text-sm">{locale === "en" ? "Loading profile..." : "正在加载档案..."}</p>
         </div>
       )}
@@ -481,10 +481,10 @@ function ApplicantForm() {
         <div className="flex items-center gap-2 mb-8">
           {([1, 2, 3] as const).map((s) => (
             <div key={s} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${step >= s ? "bg-[#b28a52] text-white" : "bg-[#e9e0d5] text-stone-500"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${step >= s ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500"}`}>
                 {s}
               </div>
-              <span className={`text-sm hidden sm:inline ${step >= s ? "text-[#8a6638] font-medium" : "text-stone-400"}`}>{STEP_LABELS[s - 1]}</span>
+              <span className={`text-sm hidden sm:inline ${step >= s ? "text-indigo-600 font-medium" : "text-slate-400"}`}>{STEP_LABELS[s - 1]}</span>
               {s < 3 && <div className="w-8 h-px bg-slate-300 ml-1" />}
             </div>
           ))}
@@ -516,7 +516,7 @@ function ApplicantForm() {
                 <h2 className="font-semibold text-stone-900">{locale === "en" ? "Personal Information" : "个人信息"}</h2>
                 <button
                   onClick={() => setShowExample1(!showExample1)}
-                  className="text-xs text-[#8a6638] hover:text-[#71522c] underline"
+                  className="text-xs text-indigo-600 hover:text-indigo-700 underline"
                 >
                   {showExample1 ? t("applicant.hide_example") : t("applicant.auto_fill")}
                 </button>
@@ -539,7 +539,7 @@ Target Direction: Mechanical, Aerospace`
 目标方向: 机械, 航空航天`}</pre>
                   <textarea
                     placeholder={locale === "en" ? "Paste in the above format..." : "在此粘贴上述格式的文本..."}
-                    className="w-full mt-2 px-2 py-1.5 border border-[#dbc7a6] rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#d9bf94]"
+                    className="w-full mt-2 px-2 py-1.5 border border-indigo-200 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     rows={7}
                     onPaste={(e) => {
                       e.preventDefault();
@@ -588,8 +588,8 @@ Target Direction: Mechanical, Aerospace`
                     onClick={() => toggleTrack(track.value)}
                     className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                       form.target_tracks.includes(track.value)
-                        ? "bg-[#b28a52] text-white border-[#b28a52]"
-                        : "bg-white text-stone-600 border-[#d8cec2] hover:border-[#c8ab7d]"
+                        ? "bg-indigo-600 text-white border-indigo-600"
+                        : "bg-white text-slate-600 border-slate-300 hover:border-indigo-300"
                     }`}
                   >
                     {formatTrackLabel(track.value)}
@@ -601,7 +601,7 @@ Target Direction: Mechanical, Aerospace`
             <button
               onClick={() => setStep(2)}
               disabled={!canNext1}
-              className="w-full py-3 bg-[#b28a52] text-white rounded-xl font-semibold hover:bg-[#9d7844] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {t("applicant.next_step")}
             </button>
@@ -616,7 +616,7 @@ Target Direction: Mechanical, Aerospace`
                 <h2 className="font-semibold text-stone-900">{locale === "en" ? "GPA Score *" : "GPA 成绩 *"}</h2>
                 <button
                   onClick={() => setShowExample2(!showExample2)}
-                  className="text-xs text-[#8a6638] hover:text-[#71522c] underline"
+                  className="text-xs text-indigo-600 hover:text-indigo-700 underline"
                 >
                   {showExample2 ? t("applicant.hide_example") : t("applicant.auto_fill")}
                 </button>
@@ -629,7 +629,7 @@ IELTS: 6.5
 TOEFL: 92`}</pre>
                   <textarea
                     placeholder={locale === "en" ? "Paste in the above format..." : "在此粘贴上述格式的文本..."}
-                    className="w-full mt-2 px-2 py-1.5 border border-[#dbc7a6] rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#d9bf94]"
+                    className="w-full mt-2 px-2 py-1.5 border border-indigo-200 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     rows={5}
                     onPaste={(e) => {
                       e.preventDefault();
@@ -688,7 +688,7 @@ TOEFL: 92`}</pre>
               <button
                 onClick={() => setStep(3)}
                 disabled={!form.gpa_numeric}
-                className="flex-1 py-3 bg-[#b28a52] text-white rounded-xl font-semibold hover:bg-[#9d7844] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
                 {t("applicant.next_modules")}
               </button>
@@ -704,7 +704,7 @@ TOEFL: 92`}</pre>
                 <h2 className="font-semibold text-stone-900">{t("applicant.modules_title")}</h2>
                 <button
                   onClick={() => setShowExample3(!showExample3)}
-                  className="text-xs text-[#8a6638] hover:text-[#71522c] underline"
+                  className="text-xs text-indigo-600 hover:text-indigo-700 underline"
                 >
                   {showExample3 ? t("applicant.hide_example") : t("applicant.bulk_add")}
                 </button>
@@ -729,7 +729,7 @@ TOEFL: 92`}</pre>
                 <input className={inputClass} placeholder={t("applicant.grade")} value={newModule.grade_text} onChange={(e) => setNewModule((p) => ({ ...p, grade_text: e.target.value }))} />
                 <input className={inputClass} placeholder={t("applicant.credits")} value={newModule.credits} onChange={(e) => setNewModule((p) => ({ ...p, credits: e.target.value }))} />
               </div>
-              <button onClick={addModule} className="w-full py-2 border-2 border-dashed border-[#d8cec2] rounded-lg text-sm text-stone-500 hover:border-[#c8ab7d] hover:text-[#8a6638] transition-colors">
+              <button onClick={addModule} className="w-full py-2 border-2 border-dashed border-slate-300 rounded-lg text-sm text-slate-500 hover:border-indigo-300 hover:text-indigo-600 transition-colors">
                 {t("applicant.add_course")}
               </button>
 
@@ -752,7 +752,7 @@ Materials Mechanics | 90 | 3`
 材料力学 | 90 | 3`}</pre>
                   <textarea
                     placeholder={locale === "en" ? "Paste course list in the above format..." : "粘贴上述格式的课程列表..."}
-                    className="w-full px-2 py-1.5 border border-[#dbc7a6] rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#d9bf94]"
+                    className="w-full px-2 py-1.5 border border-indigo-200 rounded text-xs font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500"
                     rows={6}
                     onPaste={(e) => {
                       e.preventDefault();
@@ -765,7 +765,7 @@ Materials Mechanics | 90 | 3`
               )}
             </div>
             {pasteError && (
-              <div className="p-3 bg-[#f6eddc] border border-[#e5d2ae] rounded-lg text-[#7a5a2f] text-sm">{pasteError}</div>
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-700 text-sm">{pasteError}</div>
             )}
 
             <div className={sectionClass}>
@@ -783,7 +783,7 @@ Materials Mechanics | 90 | 3`
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex-1 py-3 bg-[#b28a52] text-white rounded-xl font-semibold hover:bg-[#9d7844] disabled:opacity-60 transition-colors"
+                className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-60 transition-colors"
               >
                 {submitting ? t("applicant.submitting") : isEditMode ? (locale === "en" ? "Update & Evaluate" : "更新并评估") : t("applicant.submit")}
               </button>

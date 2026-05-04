@@ -27,9 +27,9 @@ export function Toast({
   }, [id, onClose]);
 
   const toneClasses = {
-    success: "bg-[#b28a52]",
-    error: "bg-[#6d5a4a]",
-    info: "bg-[#c39a62]",
+    success: "bg-emerald-500",
+    error: "bg-rose-500",
+    info: "bg-sky-500",
   };
 
   const toneLabels = {

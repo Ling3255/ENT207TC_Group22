@@ -273,8 +273,8 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f6f1e8]">
-        <div className="text-[#6d747b]">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-slate-50">
+        <div className="text-slate-500">
           {isEnglish ? "Loading staff workspace..." : "正在加载工作人员工作台..."}
         </div>
       </div>
@@ -282,38 +282,38 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f6f1e8] text-[#192128]">
+    <div className="min-h-screen overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-slate-50 text-slate-900">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[-5rem] top-10 h-72 w-72 rounded-full bg-[#d7b47b]/20 blur-3xl" />
-        <div className="absolute right-[-6rem] top-[-2rem] h-96 w-96 rounded-full bg-[#294452]/12 blur-3xl" />
-        <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-[#ede2d1] blur-3xl" />
+        <div className="absolute left-[-5rem] top-10 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl" />
+        <div className="absolute right-[-6rem] top-[-2rem] h-96 w-96 rounded-full bg-violet-300/15 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-fuchsia-100 blur-3xl" />
       </div>
 
       <main className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-full border border-white/70 bg-white/72 px-5 py-3 shadow-[0_18px_50px_rgba(23,33,42,0.06)] backdrop-blur">
           {embedded ? (
-            <div className="text-sm text-[#66707a]">
+            <div className="text-sm text-slate-500">
               {isEnglish ? "Role-based staff workspace" : "按角色整合的工作人员工作台"}
             </div>
           ) : (
-            <Link href="/home" className="text-sm text-[#66707a] transition hover:text-[#182129]">
+            <Link href="/home" className="text-sm text-slate-500 transition hover:text-slate-900">
               {isEnglish ? "Back to home" : "返回首页"}
             </Link>
           )}
-          <div className="text-xs uppercase tracking-[0.28em] text-[#8a6639]">
+          <div className="text-xs uppercase tracking-[0.28em] text-indigo-600">
             {isEnglish ? "Staff launch workspace" : "工作人员入口工作台"}
           </div>
           <div className="flex items-center gap-2">
             <Link
               href="/profile"
-              className="rounded-full border border-[#e5d8ca] bg-white/80 px-4 py-2 text-sm text-[#5f6a73] transition hover:border-[#ccb08a] hover:text-[#182129]"
+              className="rounded-full border border-indigo-200 bg-white/80 px-4 py-2 text-sm text-indigo-600 transition hover:border-indigo-300 hover:text-indigo-700"
             >
               {isEnglish ? "Profile" : "个人资料"}
             </Link>
             <button
               type="button"
               onClick={handleLogout}
-              className="rounded-full bg-[#17313c] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#244451]"
+              className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
             >
               {isEnglish ? "Logout" : "退出登录"}
             </button>
@@ -321,18 +321,18 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
         </div>
 
         {error && (
-          <div className="mb-6 rounded-[1.75rem] border border-[#e4c8b7] bg-[#fff7f1] px-5 py-4 text-sm text-[#9b5c3f] shadow-[0_12px_34px_rgba(155,92,63,0.08)]">
+          <div className="mb-6 rounded-[1.75rem] border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-[0_12px_34px_rgba(239,68,68,0.08)]">
             {error}
           </div>
         )}
 
         <div className="grid gap-6 lg:grid-cols-[1.45fr_0.95fr]">
-          <section className="relative overflow-hidden rounded-[2rem] border border-[#203644] bg-gradient-to-br from-[#13242f] via-[#1d3340] to-[#8d673d] p-6 text-white shadow-[0_30px_80px_rgba(19,36,47,0.18)] sm:p-8">
+          <section className="relative overflow-hidden rounded-[2rem] border border-indigo-900/30 bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-700 p-6 text-white shadow-[0_30px_80px_rgba(49,46,129,0.22)] sm:p-8">
             <div className="absolute right-[-8%] top-[-12%] h-56 w-56 rounded-full border border-white/10" />
             <div className="absolute bottom-[-16%] left-[48%] h-52 w-52 rounded-full bg-white/5 blur-2xl" />
 
             <div className="relative max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-[#f1e6d6]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-indigo-100">
                 <span>EngiMatch</span>
                 <span>{isEnglish ? "Staff command surface" : "工作人员入口页"}</span>
               </div>
@@ -341,7 +341,7 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
                   ? "Keep university data sharp from a more designed working surface"
                   : "在更有设计感的工作界面里维护院校与项目数据"}
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#f0e7da] sm:text-base">
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-indigo-100 sm:text-base">
                 {isEnglish
                   ? "Move from review work to programme creation, school maintenance, and source checks without losing orientation in a maze of admin pages."
                   : "从审核、建项、院校维护到来源核验，都可以在同一个更清晰的入口里自然切换，不再被后台页面层级打断。"}
@@ -352,7 +352,7 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
                   href="/admin/verify"
                   className="rounded-[1.4rem] border border-white/15 bg-white/12 px-5 py-4 transition hover:bg-white/18"
                 >
-                  <div className="text-xs uppercase tracking-[0.24em] text-[#f0e7da]">
+                  <div className="text-xs uppercase tracking-[0.24em] text-indigo-100">
                     {isEnglish ? "First action" : "建议先做"}
                   </div>
                   <div className="mt-2 text-xl font-semibold">
@@ -367,15 +367,15 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
 
                 <Link
                   href="/admin/programmes/new"
-                  className="rounded-[1.4rem] border border-[#e1cbab] bg-[#f3eadf] px-5 py-4 text-[#1a242b] transition hover:bg-[#efe2d0]"
+                  className="rounded-[1.4rem] border border-indigo-200 bg-white/90 px-5 py-4 text-slate-900 transition hover:bg-indigo-50"
                 >
-                  <div className="text-xs uppercase tracking-[0.24em] text-[#8a6639]">
+                  <div className="text-xs uppercase tracking-[0.24em] text-indigo-600">
                     {isEnglish ? "Fast entry" : "快捷入口"}
                   </div>
                   <div className="mt-2 text-xl font-semibold">
                     {isEnglish ? "Create programme" : "新建项目"}
                   </div>
-                  <div className="mt-2 text-sm text-[#5d666d]">
+                  <div className="mt-2 text-sm text-slate-500">
                     {isEnglish
                       ? "Add a new programme once the university is in the system."
                       : "当学校已在系统中时，直接继续新增项目。"}
@@ -386,14 +386,14 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
           </section>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
-            <section className="rounded-[1.8rem] border border-[#e4d8cb] bg-white/82 p-5 shadow-[0_18px_50px_rgba(23,33,42,0.05)] backdrop-blur">
-              <div className="text-xs uppercase tracking-[0.26em] text-[#8b6638]">
+            <section className="rounded-[1.8rem] border border-slate-200 bg-white/82 p-5 shadow-[0_18px_50px_rgba(23,33,42,0.05)] backdrop-blur">
+              <div className="text-xs uppercase tracking-[0.26em] text-indigo-600">
                 {isEnglish ? "Signed in as" : "当前登录"}
               </div>
-              <div className="mt-4 text-lg font-semibold text-[#192129]">
+              <div className="mt-4 text-lg font-semibold text-slate-900">
                 {user?.name || user?.email}
               </div>
-              <p className="mt-2 text-sm leading-6 text-[#67717a]">
+              <p className="mt-2 text-sm leading-6 text-slate-500">
                 {isEnglish
                   ? "This page is the visual start point for staff operations before deeper edits."
                   : "这里是工作人员进入更深层编辑操作前的统一视觉入口。"}
@@ -501,12 +501,12 @@ export function StaffWorkspace({ embedded = false }: { embedded?: boolean }) {
                     ? "Search by programme, university, degree type, or intake"
                     : "按项目、学校、学位类型或入学季搜索"
                 }
-                className="w-full rounded-[1.4rem] border border-[#e1d5c7] bg-[#fffdf9] px-4 py-3 text-sm text-[#1a2229] outline-none transition focus:border-[#b6894f] focus:ring-2 focus:ring-[#ead8bf]"
+                className="w-full rounded-[1.4rem] border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               />
               <select
                 value={filterMode}
                 onChange={(event) => setFilterMode(event.target.value as FilterMode)}
-                className="rounded-[1.4rem] border border-[#e1d5c7] bg-[#fffdf9] px-4 py-3 text-sm text-[#1a2229] outline-none transition focus:border-[#b6894f] focus:ring-2 focus:ring-[#ead8bf]"
+                className="rounded-[1.4rem] border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               >
                 <option value="needs-review">
                   {isEnglish ? "Needs review first" : "优先查看待复核"}
@@ -858,17 +858,17 @@ function HighlightCard({
   accent: "mist" | "brass";
 }) {
   const styleMap = {
-    mist: "border-[#e4d8cb] bg-white/82 text-[#1b232a]",
-    brass: "border-[#d8c29f] bg-[#f7efdf] text-[#1b232a]",
+    mist: "border-slate-200 bg-white/82 text-slate-900",
+    brass: "border-indigo-100 bg-indigo-50 text-slate-900",
   };
 
   return (
     <div
       className={`rounded-[1.8rem] border p-5 shadow-[0_18px_50px_rgba(23,33,42,0.05)] backdrop-blur ${styleMap[accent]}`}
     >
-      <div className="text-xs uppercase tracking-[0.24em] text-[#8a6639]">{label}</div>
+      <div className="text-xs uppercase tracking-[0.24em] text-indigo-600">{label}</div>
       <div className="mt-4 text-3xl font-semibold">{value}</div>
-      <div className="mt-2 text-sm text-[#68717a]">{note}</div>
+      <div className="mt-2 text-sm text-slate-500">{note}</div>
     </div>
   );
 }
@@ -885,12 +885,12 @@ function StatCard({
   tone: "mist" | "ink" | "brass" | "sand" | "light";
 }) {
   const toneMap = {
-    mist: "border-[#e4d8cb] bg-white/82 text-[#1b232a]",
-    ink: "border-[#203644] bg-gradient-to-br from-[#13242f] via-[#1d3340] to-[#314c59] text-white",
+    mist: "border-slate-200 bg-white/82 text-slate-900",
+    ink: "border-indigo-900/30 bg-gradient-to-br from-indigo-950 via-indigo-900 to-violet-700 text-white",
     brass:
-      "border-[#d7c09b] bg-gradient-to-br from-[#c79c64] via-[#b68750] to-[#91693d] text-white",
-    sand: "border-[#e7d8c4] bg-[#f8f1e5] text-[#1b232a]",
-    light: "border-[#ece1d5] bg-[#fffdf9] text-[#1b232a]",
+      "border-indigo-300 bg-gradient-to-br from-indigo-600 via-violet-600 to-fuchsia-600 text-white",
+    sand: "border-indigo-100 bg-indigo-50 text-slate-900",
+    light: "border-slate-200 bg-white text-slate-900",
   };
 
   return (
@@ -899,7 +899,7 @@ function StatCard({
     >
       <div
         className={`text-sm ${
-          tone === "ink" || tone === "brass" ? "text-white/80" : "text-[#8a6639]"
+          tone === "ink" || tone === "brass" ? "text-white/80" : "text-indigo-600"
         }`}
       >
         {title}
@@ -907,7 +907,7 @@ function StatCard({
       <div className="mt-3 text-3xl font-semibold">{value}</div>
       <div
         className={`mt-2 text-xs ${
-          tone === "ink" || tone === "brass" ? "text-white/80" : "text-[#69727b]"
+          tone === "ink" || tone === "brass" ? "text-white/80" : "text-slate-500"
         }`}
       >
         {note}
@@ -924,10 +924,10 @@ function StatusBadge({
   tone: "green" | "amber" | "rose" | "slate";
 }) {
   const styles = {
-    green: "bg-[#f5eddf] text-[#7b5d39]",
-    amber: "bg-[#f2e4cb] text-[#8d6432]",
-    rose: "bg-[#f8e8dd] text-[#a05e47]",
-    slate: "bg-[#f1eee8] text-[#626b73]",
+    green: "bg-emerald-50 text-emerald-700",
+    amber: "bg-amber-50 text-amber-700",
+    rose: "bg-rose-50 text-rose-700",
+    slate: "bg-slate-100 text-slate-600",
   };
 
   return (
@@ -954,14 +954,14 @@ function FormField({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-[#5e6972]">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-slate-600">{label}</label>
       <input
         value={value}
         onChange={onChange}
         type={type}
         placeholder={placeholder}
         required={required}
-        className="w-full rounded-[1.3rem] border border-[#e1d5c7] bg-[#fffdf9] px-4 py-3 text-sm text-[#1a2229] outline-none transition focus:border-[#b6894f] focus:ring-2 focus:ring-[#ead8bf]"
+        className="w-full rounded-[1.3rem] border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
       />
     </div>
   );

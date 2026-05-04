@@ -14,14 +14,14 @@ export function Card({
   className = "",
   href,
   gradient = false,
-  gradientFrom = "from-[#c39a62]",
-  gradientTo = "to-[#a97848]",
+  gradientFrom = "from-indigo-600",
+  gradientTo = "to-violet-600",
 }: CardProps) {
   const base =
     "rounded-2xl shadow-sm border transition-all hover:shadow-md focus:ring-4";
 
-  const normal = "bg-white border-[#e8ddd0] hover:border-[#d8c2a0] focus:ring-[#e7d8c0]";
-  const grad = `bg-gradient-to-br ${gradientFrom} ${gradientTo} border-[#dfc7a4] text-white focus:ring-[#e7d8c0]`;
+  const normal = "bg-white border-slate-200 hover:border-indigo-200 focus:ring-indigo-300";
+  const grad = `bg-gradient-to-br ${gradientFrom} ${gradientTo} border-indigo-200 text-white focus:ring-indigo-300`;
 
   const classes = `${base} ${gradient ? grad : normal} ${className}`;
 

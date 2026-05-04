@@ -213,8 +213,8 @@ function ResultsContent() {
                 <div className="text-xs text-slate-500">{t("results.total")}</div>
               </div>
               <div className="bg-[#f8f1e6] rounded-xl border border-[#e5d4bd] p-4 text-center">
-                <div className="text-2xl font-bold text-[#7a5a2f]">{stats.eligible}</div>
-                <div className="text-xs text-[#7a5a2f]">{t("results.eligible")}</div>
+                <div className="text-2xl font-bold text-indigo-700">{stats.eligible}</div>
+                <div className="text-xs text-indigo-700">{t("results.eligible")}</div>
               </div>
               <div className="bg-[#f6eee3] rounded-xl border border-[#dcc6a8] p-4 text-center">
                 <div className="text-2xl font-bold text-[#8b6338]">{stats.borderline}</div>
@@ -233,7 +233,7 @@ function ResultsContent() {
                     key={f}
                     onClick={() => setFilter(f)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                      filter === f ? "bg-[#b28a52] text-white" : "bg-white border border-[#e8ddd0] text-stone-600 hover:bg-[#f7f2ea]"
+                      filter === f ? "bg-indigo-600 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
                     }`}
                   >
                     {f === "ALL" ? t("results.filter.all") : f === "eligible" ? t("results.filter.eligible") : f === "borderline" ? t("results.filter.borderline") : t("results.filter.not_eligible")}
@@ -243,12 +243,12 @@ function ResultsContent() {
               <div className="flex gap-3">
                 <button
                   onClick={() => { setAiSuggestOpen(true); fetchAiSuggestion(); }}
-                  className="text-sm bg-gradient-to-r from-[#c39a62] to-[#a97848] text-white px-4 py-1.5 rounded-lg font-medium hover:from-[#b28a52] hover:to-[#94693e] transition-colors"
+                  className="text-sm bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-4 py-1.5 rounded-lg font-medium hover:from-indigo-700 hover:to-violet-700 transition-colors"
                 >
                   ✨ {isZh ? "AI 申请建议" : "AI Suggestion"}
                 </button>
                 <button onClick={rerunEvaluation} disabled={rerunning}
-                  className="text-sm text-[#7a5a2f] hover:text-[#684a25] font-medium disabled:opacity-50">
+                  className="text-sm text-indigo-600 hover:text-indigo-700 font-medium disabled:opacity-50">
                   {rerunning ? t("results.rerun") : t("results.rerun_btn")}
                 </button>
               </div>
@@ -260,7 +260,7 @@ function ResultsContent() {
         {!loading && evaluations.length === 0 && (
           <div className="text-center py-16">
             <p className="text-slate-500 mb-4">{t("results.no_results")}</p>
-            <Link href="/applicant" className="text-[#7a5a2f] hover:underline">{t("results.go_create")}</Link>
+            <Link href="/applicant" className="text-indigo-600 hover:underline">{t("results.go_create")}</Link>
           </div>
         )}
 
@@ -350,7 +350,7 @@ function ResultsContent() {
 
                         {/* Summary */}
                         <div className="p-3 rounded-lg bg-[#f8f1e6] border border-[#e5d4bd]">
-                          <div className="text-xs font-semibold text-[#7a5a2f] mb-1">{t("results.summary_title")}</div>
+                          <div className="text-xs font-semibold text-indigo-700 mb-1">{t("results.summary_title")}</div>
                           <div className="text-sm text-stone-800 whitespace-pre-line leading-relaxed">{ev.explanation.summary_zh}</div>
                         </div>
 
@@ -358,7 +358,7 @@ function ResultsContent() {
                         {prog.official_url && (
                           <div className="text-center">
                             <a href={prog.official_url} target="_blank" rel="noopener noreferrer"
-                              className="text-xs text-[#7a5a2f] hover:underline">
+                              className="text-xs text-indigo-600 hover:underline">
                               {t("results.view_official")}
                             </a>
                           </div>
@@ -385,7 +385,7 @@ function ResultsContent() {
               <div className="p-6 overflow-y-auto">
                 {aiLoading ? (
                   <div className="flex flex-col items-center justify-center py-12 space-y-4">
-                    <div className="w-8 h-8 border-4 border-[#e5d4bd] border-t-[#b28a52] rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
                     <p className="text-slate-500 text-sm">{isZh ? "AI 正在分析您的申请档案和评估结果，请稍候..." : "AI is analyzing your profile and evaluation results..."}</p>
                   </div>
                 ) : (
