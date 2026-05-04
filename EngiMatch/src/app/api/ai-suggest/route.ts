@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {
@@ -11,22 +10,46 @@ import {
 } from "@/lib/api-utils";
 import { getOpenAIClient } from "@/lib/ai-client";
 
-type ApplicantWithModules = Prisma.ApplicantGetPayload<{
-  include: { modules: true };
-}>;
+type ApplicantWithModules = NonNullable<
+  Awaited<ReturnType<typeof findApplicantWithModules>>
+>;
 
-type EvaluationWithProgramme = Prisma.EvaluationGetPayload<{
-  include: { programme: { include: { university: true } } };
-}>;
+type EvaluationWithProgramme = Awaited<
+  ReturnType<typeof findEvaluationsWithProgramme>
+>[number];
 
-type ProgrammeWithDetails = Prisma.ProgrammeGetPayload<{
-  include: {
-    university: true;
-    academic_requirements: true;
-    language_requirements: true;
-    prerequisite_modules: true;
-  };
-}>;
+type ProgrammeWithDetails = Awaited<
+  ReturnType<typeof findProgrammesWithDetails>
+>[number];
+
+function findApplicantWithModules(applicantId: string, userEmail: string, userApplicantId?: string | null) {
+  return prisma.applicant.findFirst({
+    where: {
+      id: applicantId,
+      OR: [{ email: userEmail }, ...(userApplicantId ? [{ id: userApplicantId }] : [])],
+    },
+    include: { modules: true },
+  });
+}
+
+function findProgrammesWithDetails() {
+  return prisma.programme.findMany({
+    where: { is_active: true },
+    include: {
+      university: true,
+      academic_requirements: true,
+      language_requirements: true,
+      prerequisite_modules: true,
+    },
+  });
+}
+
+function findEvaluationsWithProgramme(applicantId: string) {
+  return prisma.evaluation.findMany({
+    where: { applicant_id: applicantId },
+    include: { programme: { include: { university: true } } },
+  });
+}
 
 // POST /api/ai-suggest
 // Body: { applicantId }
@@ -36,32 +59,19 @@ export const POST = apiHandler(async (request: NextRequest) => {
   const body = await parseJsonBody<Record<string, unknown>>(request);
   const applicantId = assertString(body.applicantId, "applicantId");
 
-  const applicant = await prisma.applicant.findFirst({
-    where: {
-      id: applicantId,
-      OR: [{ email: user.email }, ...(user.applicant_id ? [{ id: user.applicant_id }] : [])],
-    },
-    include: { modules: true },
-  });
+  const applicant = await findApplicantWithModules(
+    applicantId,
+    user.email,
+    user.applicant_id
+  );
 
   if (!applicant) {
     return errorResponse("Applicant not found or not authorized", 404);
   }
 
-  const programmes = await prisma.programme.findMany({
-    where: { is_active: true },
-    include: {
-      university: true,
-      academic_requirements: true,
-      language_requirements: true,
-      prerequisite_modules: true,
-    },
-  });
+  const programmes = await findProgrammesWithDetails();
 
-  const evaluations = await prisma.evaluation.findMany({
-    where: { applicant_id: applicantId },
-    include: { programme: { include: { university: true } } },
-  });
+  const evaluations = await findEvaluationsWithProgramme(applicantId);
 
   const typedApplicant = applicant as ApplicantWithModules;
   const typedProgrammes = programmes as ProgrammeWithDetails[];
