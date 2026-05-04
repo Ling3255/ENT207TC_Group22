@@ -1,27 +1,4 @@
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: engimatch-app
-    restart: unless-stopped
-    ports:
-      - "57402:3000"
-    env_file:
-      - .env
-    environment:
-      # Override DB URL to use internal Docker network
-      DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/engimatch"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/auth/session || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
   postgres:
     image: postgres:16-alpine
     container_name: engimatch-db
@@ -31,7 +8,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: engimatch
     ports:
-      - "5433:5432"
+      - "34873:5432"
     volumes:
       - postgres_engimatch:/var/lib/postgresql/data
     healthcheck:
