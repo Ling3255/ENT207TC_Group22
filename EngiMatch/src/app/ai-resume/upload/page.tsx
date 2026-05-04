@@ -4,7 +4,7 @@ import { Suspense, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
-import { getAiResumeMajorLabel, normalizeAiResumeMajor } from "@/lib/ai-resume-majors";
+import { getAiResumeMajorLabel, normalizeAiResumeMajor } from "@/modules/ai/taxonomy/majors";
 
 const STEPS = [
   { id: "usecase", labelKey: "ai.step.usecase" },

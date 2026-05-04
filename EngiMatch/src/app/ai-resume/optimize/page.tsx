@@ -4,10 +4,11 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
-import { optimizeSection } from "@/lib/resume-optimize";
-import type { OptimizationResult } from "@/lib/resume-optimize";
-import type { ResumeSection } from "@/lib/resume-parser";
-import { SECTION_TYPE_LABELS } from "@/lib/resume-parser";
+import { optimizeSection } from "@/modules/ai/local/resume-optimize";
+import type { OptimizationResult } from "@/modules/ai/local/resume-optimize";
+import type { ResumeSection } from "@/modules/ai/local/resume-parser";
+import { SECTION_TYPE_LABELS } from "@/modules/ai/local/resume-parser";
+import { parseAIOptimizeResponse } from "@/modules/ai";
 
 // 类型定义
 type StringRecord = { [key: string]: string };
@@ -97,42 +98,12 @@ function AIRResumeOptimizePageInner() {
       if (res.ok) {
         const data = await res.json();
         if (data.data?.optimized) {
-          // 解析AI返回的多个版本（支持 --- / ---- / --- 等分隔符，允许前后有空格）
-          const parts = data.data.optimized.split(/^---+\s*$/m);
-          const variants: Array<{ label: string; text: string }> = [];
-
-          for (let i = 0; i < parts.length; i++) {
-            const part = parts[i].trim();
-            if (!part) continue;
-
-            // 尝试匹配多种标题格式：
-            // 【xxx】 / 【xxx: / [xxx] / [xxx: / **xxx** / 1. xxx: / 版本一：xxx
-            const titleMatch = part.match(
-              /^(?:【|\[)([^\]】]+)(?::|】|\])|^\*\*\s*([^*]+?)\s*\*\*|^(?:\d+\.\s*)?(?:版本[一二三四五]|Version\s*\d+)\s*[:：]\s*(.+)$|^([^\n]+?)[:：]\s*$/m
-            );
-            if (titleMatch) {
-              const label = (titleMatch[1] || titleMatch[2] || titleMatch[3] || titleMatch[4] || "").trim();
-              // 去掉标题行（第一行），取剩余内容
-              const text = part.replace(/^[^\n]*\n/, "").trim();
-              variants.push({ label: label || (locale === "en" ? `Version ${i + 1}` : `版本 ${i + 1}`), text });
-            } else {
-              // 如果没有可识别的标题，使用序号，但尝试去掉第一行如果它看起来像标题
-              const labels = locale === "en"
-                ? ["Version 1", "Version 2", "Version 3"]
-                : ["版本 1", "版本 2", "版本 3"];
-              const firstLine = part.split("\n")[0].trim();
-              const looksLikeTitle = /^(?:版本|Version|选项|Option|保守|专业|成果|Conservative|Major|Results)/i.test(firstLine);
-              const text = looksLikeTitle ? part.replace(/^[^\n]*\n/, "").trim() : part;
-              variants.push({ label: labels[i] || (locale === "en" ? `Version ${i + 1}` : `版本 ${i + 1}`), text });
-            }
-          }
-
+          const variants = parseAIOptimizeResponse(data.data.optimized, locale);
           if (variants.length > 0) {
             setAiVariants(p => ({ ...p, [section.id]: variants }));
             setAiOptimizations(p => ({ ...p, [section.id]: variants[0].text }));
             setSelectedAiVariant(p => ({ ...p, [section.id]: variants[0].text }));
           } else {
-            // 只有一个版本的情况
             setAiOptimizations(p => ({ ...p, [section.id]: data.data.optimized }));
           }
         } else {

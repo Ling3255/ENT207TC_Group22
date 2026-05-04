@@ -1,4 +1,4 @@
-import { chatCompletion } from './src/lib/ai-client';
+import { chatCompletion } from './src/modules/ai/client';
 
 async function testAIClient() {
   try {

@@ -1,23 +1,6 @@
-export interface ResumeSection {
-  id: string;
-  type: ResumeSectionType;
-  title: string;
-  content: string;
-  order: number;
-  confirmed: boolean;
-}
+import type { ResumeSection, ResumeSectionType } from "../types";
 
-export type ResumeSectionType =
-  | "education"
-  | "project"
-  | "internship"
-  | "research"
-  | "competition"
-  | "skill"
-  | "award"
-  | "summary"
-  | "personal_info"
-  | "other";
+export type { ResumeSection, ResumeSectionType };
 
 export const SECTION_TYPE_LABELS: Record<ResumeSectionType, string> = {
   education: "教育背景",
@@ -32,7 +15,6 @@ export const SECTION_TYPE_LABELS: Record<ResumeSectionType, string> = {
   other: "其他",
 };
 
-// 所有可能的简历区块标题关键词
 const HEADER_KEYWORDS: Record<ResumeSectionType, string[]> = {
   education: [
     "教育背景", "学历", "教育经历", "教育", "Education", "EDUCATION",
@@ -74,28 +56,22 @@ const HEADER_KEYWORDS: Record<ResumeSectionType, string[]> = {
   other: [],
 };
 
-// 检查一行是否是区块标题
 function isHeaderLine(line: string, prevType: ResumeSectionType): { isHeader: boolean; type: ResumeSectionType; confidence: number } {
   const trimmed = line.trim();
   if (!trimmed) return { isHeader: false, type: prevType, confidence: 0 };
 
-  // 跳过纯分隔线
   if (/^[-=_*]{3,}$/.test(trimmed)) return { isHeader: false, type: prevType, confidence: 0 };
 
-  // 跳过纯日期行
-  if (/^\d{4}[年\-/\.到至]\d{1,2}(月)?[\-/\.到至]?\d{0,4}(至今|现在)?$/.test(trimmed)) {
+  if (/^\d{4}[年\-/.到至]\d{1,2}(月)?[\-/.到至]?\d{0,4}(至今|现在)?$/.test(trimmed)) {
     return { isHeader: false, type: prevType, confidence: 0 };
   }
 
-  // 跳过带点的前缀（如 "1." "2." 或 "•"）
   if (/^[•·\-\*]\s/.test(trimmed)) return { isHeader: false, type: prevType, confidence: 0 };
 
   const trimmedLower = trimmed.toLowerCase();
 
-  // 高置信度：匹配完整标题
   for (const [type, keywords] of Object.entries(HEADER_KEYWORDS)) {
     for (const keyword of keywords) {
-      // 精确匹配标题（开头或独立一行）
       if (
         trimmed === keyword ||
         trimmed.startsWith(keyword + "：") ||
@@ -108,11 +84,9 @@ function isHeaderLine(line: string, prevType: ResumeSectionType): { isHeader: bo
     }
   }
 
-  // 中等置信度：包含关键词
   for (const [type, keywords] of Object.entries(HEADER_KEYWORDS)) {
     for (const keyword of keywords) {
       if (trimmedLower.includes(keyword.toLowerCase())) {
-        // 加权：如果行很短且主要是关键词，置信度更高
         const lengthScore = Math.max(0, 1 - trimmed.length / 20);
         const confidence = 0.5 + lengthScore * 0.3;
         return { isHeader: true, type: type as ResumeSectionType, confidence };
@@ -120,10 +94,7 @@ function isHeaderLine(line: string, prevType: ResumeSectionType): { isHeader: bo
     }
   }
 
-  // 中文简历常见模式：独立成行的短行（3-10个字）
-  // 例如："教育背景", "项目经验", "实习经历"
   if (/^[\u4e00-\u9fa5]{2,8}$/.test(trimmed) && trimmed.length <= 10) {
-    // 尝试识别类型
     for (const [type, keywords] of Object.entries(HEADER_KEYWORDS)) {
       for (const keyword of keywords) {
         if (trimmed.includes(keyword)) {
@@ -133,7 +104,6 @@ function isHeaderLine(line: string, prevType: ResumeSectionType): { isHeader: bo
     }
   }
 
-  // 全大写英文（常见于简历标题）
   if (/^[A-Z]{3,}$/.test(trimmed) && trimmed.length <= 15) {
     const type = detectSectionTypeByTitle(trimmed);
     if (type !== "other") return { isHeader: true, type, confidence: 0.8 };
@@ -154,35 +124,25 @@ function detectSectionTypeByTitle(title: string): ResumeSectionType {
   return "other";
 }
 
-function detectSectionType(title: string): ResumeSectionType {
-  return detectSectionTypeByTitle(title);
-}
-
 function splitIntoLines(text: string): string[] {
   return text.split(/\r?\n/).map(l => l.trim()).filter(l => l.trim().length > 0);
 }
 
-// 智能分割中文简历文本
 export function parseResumeText(text: string): ResumeSection[] {
   const lines = splitIntoLines(text);
   if (lines.length === 0) return [];
 
-  // 方案1：基于标题行的分割
   const sections: ResumeSection[] = [];
   let currentSectionType: ResumeSectionType = "other";
   let currentSectionTitle = "";
   let currentSectionLines: string[] = [];
   let order = 0;
 
-  let pendingType: ResumeSectionType | null = null;
-  let pendingTitle = "";
-
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const { isHeader, type, confidence } = isHeaderLine(line, currentSectionType);
 
     if (isHeader && confidence >= 0.5) {
-      // 保存当前段落（如果有内容）
       if (currentSectionLines.length > 0) {
         sections.push({
           id: `section_${order}`,
@@ -195,17 +155,14 @@ export function parseResumeText(text: string): ResumeSection[] {
         order++;
       }
 
-      // 开始新段落
       currentSectionType = type;
       currentSectionTitle = line;
       currentSectionLines = [];
     } else {
-      // 内容行
       currentSectionLines.push(line);
     }
   }
 
-  // 保存最后一段
   if (currentSectionLines.length > 0) {
     sections.push({
       id: `section_${order}`,
@@ -217,13 +174,12 @@ export function parseResumeText(text: string): ResumeSection[] {
     });
   }
 
-  // 如果只分���出很少段落（<=2段），尝试方案2：基于双换行符分割
   if (sections.length <= 2 && lines.length > 10) {
     const blocks = text.split(/\n\s*\n/).filter(b => b.trim().length > 30);
     if (blocks.length >= 3 && blocks.length > sections.length) {
       return blocks.map((block, i) => {
         const firstLine = block.split("\n")[0].trim();
-        const detectedType = detectSectionType(firstLine);
+        const detectedType = detectSectionTypeByTitle(firstLine);
         return {
           id: `section_${i}`,
           type: detectedType,
@@ -236,14 +192,12 @@ export function parseResumeText(text: string): ResumeSection[] {
     }
   }
 
-  // 如果还是只有很少段落，尝试方案3：基于内容特征分割
   if (sections.length <= 2 && lines.length > 10) {
-    // 识别内容中是否有多个人名/日期模式（暗示有多个项目）
     const projectPatterns = [
-      /^\d{4}[年\-/\.到至]/,  // 2023年, 2023-
-      /^[A-Z][a-z]+\s+\d{4}/, // Sep 2023
-      /^\[[^\]]+\]/,          // [项目名称]
-      /^【[^】]+】/,          // 【项目名称】
+      /^\d{4}[年\-/.到至]/,
+      /^[A-Z][a-z]+\s+\d{4}/,
+      /^\[[^\]]+\]/,
+      /^【[^】]+】/,
     ];
 
     let projectStarts: number[] = [];
@@ -256,16 +210,12 @@ export function parseResumeText(text: string): ResumeSection[] {
       }
     }
 
-    // 如果找到多个项目起始点，尝试更细粒度分割
     if (projectStarts.length >= 2) {
-      // 找到段落的自然分界点
       const breakpoints: number[] = [0];
       for (let i = 1; i < projectStarts.length; i++) {
-        // 找到两个项目起始之间的空行位置
         const prevStart = projectStarts[i - 1];
         const currStart = projectStarts[i];
 
-        // 向前找空行或分隔线
         let breakPoint = prevStart;
         for (let j = prevStart; j < currStart; j++) {
           if (/^[-=_*]{3,}$/.test(lines[j]) || !lines[j].trim()) {
@@ -281,7 +231,6 @@ export function parseResumeText(text: string): ResumeSection[] {
       }
       breakpoints.push(lines.length);
 
-      // 构建更细粒度的段落
       const newSections: ResumeSection[] = [];
       for (let i = 0; i < breakpoints.length - 1; i++) {
         const start = breakpoints[i];
@@ -291,7 +240,7 @@ export function parseResumeText(text: string): ResumeSection[] {
         if (blockLines.length === 0) continue;
 
         const firstLine = blockLines[0];
-        const detectedType = detectSectionType(firstLine);
+        const detectedType = detectSectionTypeByTitle(firstLine);
 
         newSections.push({
           id: `section_${i}`,

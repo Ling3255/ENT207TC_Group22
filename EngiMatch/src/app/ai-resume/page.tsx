@@ -8,7 +8,7 @@ import {
   AI_RESUME_MAJOR_OPTIONS,
   getAiResumeMajorLabel,
   normalizeAiResumeMajor,
-} from "@/lib/ai-resume-majors";
+} from "@/modules/ai/taxonomy/majors";
 
 const STEPS = [
   { id: "usecase", labelKey: "ai.step.usecase" },

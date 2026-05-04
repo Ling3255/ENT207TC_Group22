@@ -1,34 +1,12 @@
-import { getAiResumeMajorLabel, normalizeAiResumeMajor } from "@/lib/ai-resume-majors";
+import { getAiResumeMajorLabel, normalizeAiResumeMajor } from "../taxonomy/majors";
+import type { Locale, OptimizationVariant, OptimizationResult } from "../types";
 
-export interface OptimizationVariant {
-  id: string;
-  label: string;
-  description: string;
-  text: string;
-}
-
-export interface OptimizationResult {
-  original: string;
-  variants: OptimizationVariant[];
-  missingHints: string[];
-}
-
-type Locale = "zh" | "en";
+export type { OptimizationVariant, OptimizationResult };
 
 const STRONG_VERBS = [
-  "Designed",
-  "Implemented",
-  "Developed",
-  "Analyzed",
-  "Optimized",
-  "Built",
-  "Configured",
-  "Simulated",
-  "Constructed",
-  "Integrated",
-  "Verified",
-  "Evaluated",
-  "Investigated",
+  "Designed", "Implemented", "Developed", "Analyzed", "Optimized", "Built",
+  "Configured", "Simulated", "Constructed", "Integrated", "Verified",
+  "Evaluated", "Investigated",
 ];
 
 const WEAK_PATTERNS: Array<{ pattern: RegExp; fix: string | ((match: string) => string) }> = [

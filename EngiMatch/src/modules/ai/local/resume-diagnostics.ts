@@ -1,17 +1,7 @@
-import { normalizeAiResumeMajor } from "@/lib/ai-resume-majors";
+import { normalizeAiResumeMajor } from "../taxonomy/majors";
+import type { Locale, Dimension, DiagnosticIssue } from "../types";
 
-export interface DiagnosticIssue {
-  id: string;
-  dimension: Dimension;
-  severity: "high" | "medium" | "low";
-  title: string;
-  description: string;
-  suggestion: string;
-  sectionId?: string;
-}
-
-export type Dimension = "structure" | "completeness" | "target_fit" | "english_quality";
-type Locale = "zh" | "en";
+export type { DiagnosticIssue, Dimension };
 
 export const DIMENSION_META: Record<Dimension, { label: string; icon: string; color: string }> = {
   structure: { label: "结构清晰度", icon: "🧱", color: "blue" },

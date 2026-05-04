@@ -4,9 +4,10 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
-import { runDiagnostics, DIMENSION_META, getDimensionMeta } from "@/lib/resume-diagnostics";
-import type { DiagnosticIssue } from "@/lib/resume-diagnostics";
-import type { ResumeSection } from "@/lib/resume-parser";
+import { runDiagnostics, DIMENSION_META, getDimensionMeta } from "@/modules/ai/local/resume-diagnostics";
+import type { DiagnosticIssue } from "@/modules/ai/local/resume-diagnostics";
+import type { ResumeSection } from "@/modules/ai/local/resume-parser";
+import { parseAIAnalysis, type AIAnalysis } from "@/modules/ai";
 
 const STEPS = [
   { id: "usecase", labelKey: "ai.step.usecase" },
@@ -27,28 +28,6 @@ function AIRResumeDiagnosePageInner() {
   const [issues, setIssues] = useState<DiagnosticIssue[]>([]);
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
 
-  interface AIAnalysis {
-    issues: {
-      dimension: string;
-      severity: string;
-      title: string;
-      description: string;
-      suggestion: string;
-      sectionIndex?: number;
-    }[];
-    overall_score: number;
-    summary: string;
-    missing: string[];
-  }
-
-  function parseAIAnalysis(raw: string): AIAnalysis | null {
-    try {
-      const json = raw.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim();
-      return JSON.parse(json);
-    } catch {
-      return null;
-    }
-  }
 
   function ScoreBadge({ score }: { score: number }) {
     const color = score >= 80 ? "bg-green-100 text-green-700" : score >= 60 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700";

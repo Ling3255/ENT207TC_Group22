@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
 import { useToast } from "@/components/ToastProvider";
-import { getAiResumeMajorLabel } from "@/lib/ai-resume-majors";
+import { getAiResumeMajorLabel } from "@/modules/ai/taxonomy/majors";
 
 interface ApplicantCard {
   id: string;

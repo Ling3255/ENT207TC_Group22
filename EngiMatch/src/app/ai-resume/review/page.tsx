@@ -4,8 +4,8 @@ import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useLocale } from "@/context/LocaleContext";
-import { parseResumeText } from "@/lib/resume-parser";
-import type { ResumeSection, ResumeSectionType } from "@/lib/resume-parser";
+import { parseResumeText } from "@/modules/ai/local/resume-parser";
+import type { ResumeSection, ResumeSectionType } from "@/modules/ai/local/resume-parser";
 
 const STEPS = [
   { id: "usecase", labelKey: "ai.step.usecase" },

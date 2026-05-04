@@ -5,6 +5,13 @@ const baseURL = process.env.OPENAI_BASE_URL || "https://api.deepseek.com";
 
 let _client: OpenAI | null = null;
 
+export function getAIConfig() {
+  const apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
+  const baseURL = process.env.OPENAI_BASE_URL || "https://api.deepseek.com";
+  const model = process.env.OPENAI_MODEL || "deepseek-chat";
+  return { apiKey, baseURL, model };
+}
+
 export function getOpenAIClient(): OpenAI {
   if (!_client) {
     if (!apiKey) {
