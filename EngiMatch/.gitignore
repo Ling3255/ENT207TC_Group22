@@ -16,7 +16,7 @@ retest-dev.log
 # next.js
 /.next/
 /out/
-
+.claude
 # production
 /build
 
