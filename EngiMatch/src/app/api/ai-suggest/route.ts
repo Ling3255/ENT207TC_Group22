@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth, apiHandler, successResponse, errorResponse, parseJsonBody, assertString } from "@/lib/api-utils";
 import { getOpenAIClient } from "@/lib/ai-client";
+import type { ApplicantModule, PrerequisiteModule } from "@prisma/client";
 
 // POST /api/ai-suggest
 // Body: { applicantId }
@@ -44,7 +45,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
   });
 
   // Build prompt
-  const modulesText = applicant.modules.map(m => `- ${m.module_name_raw} (${m.grade_text || "N/A"}, ${m.credits || "N/A"} credits)`).join("\n");
+  const modulesText = applicant.modules.map((m: ApplicantModule) => `- ${m.module_name_raw} (${m.grade_text || "N/A"}, ${m.credits || "N/A"} credits)`).join("\n");
 
   const evalSummary = evaluations.map(e => {
     const band = e.eligibility_band === "eligible" ? "符合" : e.eligibility_band === "borderline" ? "边缘" : "不符合";
@@ -54,7 +55,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
   const programmesText = programmes.slice(0, 20).map(p => {
     const ar = p.academic_requirements;
     const lr = p.language_requirements;
-    return `- ${p.university.name}: ${p.programme_name}\n  要求: ${ar?.min_uk_classification || "N/A"}, 雅思 ${lr?.ielts_overall || "N/A"}\n  先修: ${p.prerequisite_modules.map(m => m.display_text).join(", ") || "无"}`;
+    return `- ${p.university.name}: ${p.programme_name}\n  要求: ${ar?.min_uk_classification || "N/A"}, 雅思 ${lr?.ielts_overall || "N/A"}\n  先修: ${p.prerequisite_modules.map((m: PrerequisiteModule) => m.display_text).join(", ") || "无"}`;
   }).join("\n");
 
   const prompt = `你是一位英国工程硕士申请顾问。请根据以下学生背景，给出3-5所最适合申请的英国大学及专业建议，并说明理由。

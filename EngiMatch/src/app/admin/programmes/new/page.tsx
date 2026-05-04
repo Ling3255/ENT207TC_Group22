@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale } from "@/context/LocaleContext";
@@ -91,7 +91,7 @@ function formatDateInput(value: string | null) {
   return date.toISOString().slice(0, 10);
 }
 
-export default function NewProgrammePage() {
+function NewProgrammePageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -1197,6 +1197,18 @@ export default function NewProgrammePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewProgrammePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-slate-100">
+        <div className="text-slate-500">Loading...</div>
+      </div>
+    }>
+      <NewProgrammePageContent />
+    </Suspense>
   );
 }
 
