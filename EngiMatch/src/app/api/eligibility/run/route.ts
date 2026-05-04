@@ -13,6 +13,15 @@ import {
   assertString,
 } from "@/lib/api-utils";
 
+type ProgrammeIdRow = Awaited<ReturnType<typeof findActiveProgrammeIds>>[number];
+
+function findActiveProgrammeIds() {
+  return prisma.programme.findMany({
+    where: { is_active: true },
+    select: { id: true },
+  });
+}
+
 // POST /api/eligibility/run
 // Body: { applicantId, programmeId? }
 export const POST = apiHandler(async (request: NextRequest) => {
@@ -32,11 +41,8 @@ export const POST = apiHandler(async (request: NextRequest) => {
   } else if (Array.isArray(body.programmeIds) && body.programmeIds.length > 0) {
     targetIds = body.programmeIds.map(String);
   } else {
-    const all = await prisma.programme.findMany({
-      where: { is_active: true },
-      select: { id: true },
-    });
-    targetIds = all.map((p) => p.id);
+    const all = await findActiveProgrammeIds();
+    targetIds = all.map((p: ProgrammeIdRow) => p.id);
   }
 
   // Parallel evaluation for better performance
