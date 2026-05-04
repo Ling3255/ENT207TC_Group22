@@ -14,6 +14,38 @@ import { parseAIOptimizeResponse } from "@/modules/ai";
 type StringRecord = { [key: string]: string };
 type VariantArrayRecord = { [key: string]: Array<{ label: string; text: string }> };
 
+async function consumeSSE(
+  res: Response,
+  onToken: (accumulated: string) => void
+): Promise<string> {
+  if (!res.body) throw new Error("No response body");
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let accumulated = "";
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (raw === "[DONE]") return accumulated;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed.error) throw new Error(parsed.error);
+        if (parsed.token) { accumulated += parsed.token; onToken(accumulated); }
+      } catch (e) {
+        const msg = (e as Error).message;
+        if (msg !== "Unexpected end of JSON input") throw e;
+      }
+    }
+  }
+  return accumulated;
+}
+
 const STEPS = [
   { id: "usecase", labelKey: "ai.step.usecase" },
   { id: "upload", labelKey: "ai.step.upload" },
@@ -46,6 +78,7 @@ function AIRResumeOptimizePageInner() {
   const [completedSections, setCompletedSections] = useState<Set<string>>(new Set());
 
   const [optimizingSection, setOptimizingSection] = useState<string | null>(null);
+  const [aiStreamTexts, setAiStreamTexts] = useState<StringRecord>({});
   const [aiOptimizations, setAiOptimizations] = useState<StringRecord>({});
   const [aiOptimizeErrors, setAiOptimizeErrors] = useState<StringRecord>({});
   const [aiVariants, setAiVariants] = useState<VariantArrayRecord>({});
@@ -80,8 +113,11 @@ function AIRResumeOptimizePageInner() {
   const requestAiOptimize = async (section: ResumeSection) => {
     if (optimizingSection === section.id) return;
     setOptimizingSection(section.id);
+    setAiStreamTexts(p => ({ ...p, [section.id]: "" }));
+    setAiOptimizeErrors(p => { const n = { ...p }; delete n[section.id]; return n; });
+
     try {
-      const res = await fetch("/api/ai-resume/analyze", {
+      const res = await fetch("/api/ai-resume/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,34 +125,49 @@ function AIRResumeOptimizePageInner() {
           major,
           stage,
           action: "optimize",
-          sectionIndex: sections.findIndex(s => s.id === section.id),
           sectionType: section.type,
           original: section.content,
           locale,
         }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.data?.optimized) {
-          const variants = parseAIOptimizeResponse(data.data.optimized, locale);
-          if (variants.length > 0) {
-            setAiVariants(p => ({ ...p, [section.id]: variants }));
-            setAiOptimizations(p => ({ ...p, [section.id]: variants[0].text }));
-            setSelectedAiVariant(p => ({ ...p, [section.id]: variants[0].text }));
-          } else {
-            setAiOptimizations(p => ({ ...p, [section.id]: data.data.optimized }));
-          }
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setAiOptimizeErrors(p => ({
+          ...p,
+          [section.id]: err.error || (locale === "en" ? "Generation failed, please retry" : "生成失败，请重试"),
+        }));
+        return;
+      }
+
+      const raw = await consumeSSE(res, (text) =>
+        setAiStreamTexts(p => ({ ...p, [section.id]: text }))
+      );
+
+      if (raw) {
+        const variants = parseAIOptimizeResponse(raw, locale);
+        if (variants.length > 0) {
+          setAiVariants(p => ({ ...p, [section.id]: variants }));
+          setAiOptimizations(p => ({ ...p, [section.id]: variants[0].text }));
+          setSelectedAiVariant(p => ({ ...p, [section.id]: variants[0].text }));
         } else {
-          setAiOptimizeErrors(p => ({ ...p, [section.id]: locale === "en" ? "AI returned empty, please retry" : "AI 返回为空，请重试" }));
+          setAiOptimizations(p => ({ ...p, [section.id]: raw }));
         }
       } else {
-        const err = await res.json().catch(() => ({}));
-        setAiOptimizeErrors(p => ({ ...p, [section.id]: err.error || (locale === "en" ? "Generation failed, please retry" : "生成失败，请重试") }));
+        setAiOptimizeErrors(p => ({
+          ...p,
+          [section.id]: locale === "en" ? "AI returned empty, please retry" : "AI 返回为空，请重试",
+        }));
       }
     } catch {
-      setAiOptimizeErrors(p => ({ ...p, [section.id]: locale === "en" ? "Network error, please retry" : "网络错误，请重试" }));
+      setAiOptimizeErrors(p => ({
+        ...p,
+        [section.id]: locale === "en" ? "Network error, please retry" : "网络错误，请重试",
+      }));
+    } finally {
+      setOptimizingSection(null);
+      setAiStreamTexts(p => { const n = { ...p }; delete n[section.id]; return n; });
     }
-    setOptimizingSection(null);
   };
 
   const currentSection = sections[activeSection];
@@ -295,8 +346,39 @@ function AIRResumeOptimizePageInner() {
               </div>
 
               <div className="flex-1 p-4 overflow-auto">
+                {/* Streaming in progress */}
+                {optimizingSection === currentSection.id && (
+                  <div className="mb-3">
+                    {aiStreamTexts[currentSection.id] ? (
+                      <div>
+                        <div className="text-xs text-indigo-500 mb-2 font-medium flex items-center gap-1.5">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-500" />
+                          </span>
+                          {locale === "en" ? "Generating..." : "生成中..."}
+                        </div>
+                        <div className="text-sm font-mono text-slate-600 whitespace-pre-wrap max-h-48 overflow-auto bg-slate-50 rounded-xl p-3 border border-slate-200 leading-relaxed">
+                          {aiStreamTexts[currentSection.id]}
+                          <span className="inline-block w-0.5 h-4 bg-indigo-500 ml-0.5 align-text-bottom animate-[blink_1s_step-end_infinite]" />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2.5 py-4">
+                        <div className="flex gap-1">
+                          {[0, 1, 2].map((i) => (
+                            <span key={i} className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
+                          ))}
+                        </div>
+                        <span className="text-xs text-indigo-400">
+                          {locale === "en" ? "Connecting to AI..." : "正在连接 AI..."}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {/* AI 已返回多版本 → 卡片展示 */}
-                {aiVariants[currentSection.id] && aiVariants[currentSection.id].length > 0 ? (
+                {!optimizingSection && aiVariants[currentSection.id] && aiVariants[currentSection.id].length > 0 ? (
                   <div className="space-y-3">
                     {aiVariants[currentSection.id].map((variant, idx) => {
                       const isAdopted = customEdits[currentSection.id] === variant.text;
@@ -337,7 +419,7 @@ function AIRResumeOptimizePageInner() {
                       );
                     })}
                   </div>
-                ) : aiOptimizations[currentSection.id] ? (
+                ) : !optimizingSection && aiOptimizations[currentSection.id] ? (
                   /* AI 只返回了一个版本 */
                   <div>
                     <div className="text-xs text-indigo-500 mb-2 font-medium">✦ {locale === "en" ? "AI Rewritten Version:" : "AI 重写版本："}</div>
@@ -354,7 +436,7 @@ function AIRResumeOptimizePageInner() {
                       {locale === "en" ? "Adopt this AI rewrite" : "采纳这段 AI 改写"}
                     </button>
                   </div>
-                ) : (
+                ) : !optimizingSection ? (
                   /* AI 尚未调用 → 显示本地优化版本 */
                   <div>
                     {/* 本地版本选择按钮 */}
@@ -379,7 +461,7 @@ function AIRResumeOptimizePageInner() {
                       <div className="mt-2 text-xs text-indigo-400">{currentVariant.description}</div>
                     )}
                   </div>
-                )}
+                ) : null}
               </div>
             </div>
           </div>
@@ -450,6 +532,13 @@ function AIRResumeOptimizePageInner() {
           </div>
         </div>
       )}
+
+      <style jsx global>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </div>
   );
 }

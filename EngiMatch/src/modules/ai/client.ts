@@ -28,6 +28,31 @@ export function getOpenAIClient(): OpenAI {
   return _client;
 }
 
+export async function* chatCompletionStream(
+  messages: OpenAI.Chat.ChatCompletionMessageParam[],
+  options?: {
+    model?: string;
+    temperature?: number;
+    maxTokens?: number;
+  }
+): AsyncGenerator<string> {
+  const client = getOpenAIClient();
+  const model = process.env.OPENAI_MODEL || options?.model || "deepseek-chat";
+
+  const stream = await client.chat.completions.create({
+    model,
+    messages,
+    temperature: options?.temperature ?? 0.3,
+    max_tokens: options?.maxTokens ?? 2048,
+    stream: true,
+  });
+
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content;
+    if (content) yield content;
+  }
+}
+
 export async function chatCompletion(
   messages: OpenAI.Chat.ChatCompletionMessageParam[],
   options?: {
