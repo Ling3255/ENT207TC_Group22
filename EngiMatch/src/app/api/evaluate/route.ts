@@ -38,7 +38,7 @@ export const POST = apiHandler(async (request: NextRequest) => {
       where: { is_active: true },
       select: { id: true },
     });
-    targetProgrammeIds = allProgrammes.map((p) => p.id);
+    targetProgrammeIds = allProgrammes.map((p: { id: string }) => p.id);
   }
 
   // Parallel evaluation for better performance
