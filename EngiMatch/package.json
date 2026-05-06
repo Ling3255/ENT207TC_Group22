@@ -10,12 +10,13 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "node prisma/seed.js",
+    "db:seed": "node prisma/seed-full.js",
+    "db:export-seed": "node scripts/export-seed-data.js",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force"
   },
   "prisma": {
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed-full.js"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.6.0",
